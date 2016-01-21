@@ -1,0 +1,120 @@
+// 
+// English Language File for ViteroObject Plugin
+//
+
+<!-- language file start -->
+obj_xvit#:#vitero Session
+objs_xvit#:#vitero Sessions
+obj_xvit_duplicate#:#Copy
+objs_xvit_duplicate#:#Copy vitero Session
+xvit_add#:#Add vitero Session
+xvit_new#:#Add new vitero Session
+xvit_read#:#Read access to vitero Session
+xvit_write#:#Edit vitero Session
+xvit_delete#:#Delete vitero session
+xvit_visible#:#vitero session is visible
+xvit_edit_permission#:#Change permission settings
+crs_create_xvit#:#Create vitero session
+grp_create_xvit#:#Create vitero session
+fold_create_xvit#:#Create vitero session
+root_create_xvit#:#Create vitero session
+cat_create_xvit#:#Create vitero session
+content#:#Content
+properties#:#Settings
+edit_properties#:#Edit Settings
+title#:#Title
+description#:#Description
+save#:#Save
+cancel#:#Cancel
+edit#:#Edit
+status#:#Status
+offline#:#Offline
+created_vitero#:#Created new vitero session
+vitero_plugin_configuration#:#vitero Plugin Configuration
+saving_invoked#:#Save procedure has been executed. Please note that this example does not save anything to DB.
+server_uri#:#Webservice Server URL
+webstart_url#:#Webstart URL
+admin_user#:#Webservice User Name
+admin_pass#:#Webservice Password
+customer_id#:#Customer ID
+client_settings#:#Client Settings
+cafe_setting#:#vitero-Café
+cafe_setting_info#:#If enabled, it is possible to create vitero café rooms.
+standard_room#:#Create Appointments
+standard_room_info#:#If enabled, it is possible to create appointments for vitero sessions.
+ldap_setting#:#LDAP
+ldap_setting_info#:#If enabled, ILIAS uses ldap account names, for synchronising them with vitero.
+err_soap_0#:#Unknown error
+err_soap_51#:#Internal failure: A user with this name already exists.
+err_soap_101#:#Invalid customer Id given
+err_soap_152#:#The name of the group already exists for this customer
+err_soap_303#:#No groupname given
+err_soap_501#:#Could not create apointment since the group is already booked at this time.
+err_soap_505#:#It is not possible to create appointments in the past.
+app_type#:#Appointment Type
+app_type_cafe#:#Café
+app_type_standard#:#Standard Appointment
+app_tab#:#Appointments
+app_table#:#List of Appointments
+app_tbl_col_time#:#Time
+app_tbl_col_dur#:#Duration
+app_tbl_col_rec#:#Recurrence
+app_tbl_col_ends#:#Ends on
+start_session#:#Start Vitero Session
+uprefix#:#Username Prefix
+uprefix_info#:#The prefix that will be prepended to vitero user account names.
+time_buffer#:#Grace Period
+time_buffer_before#:#Before Appointment
+time_buffer_after#:#After Appointment
+rec_once#:#One-time
+rec_daily#:#Daily
+rec_weekly#:#Weekly
+rec_weekdays#:#Workdays
+rec_weekends#:#Weekends
+participants#:#Participants
+add_as_group_member#:#Add as Member
+add_as_group_admin#:#Add as Team Leader
+member#:#Member
+admin#:#Team Leader
+assigned_users#:#The selected users have been assigned.
+members#:#Members
+participants#:#Participants
+admins#:#Team Leaders
+room_size#:#Room Size
+std_grace_period_before#:#Grace Period Before
+std_grace_period_after#:#Grace Period After
+std_grace_period_before_info#:#Define the default grace period before the start of appointments in minutes.
+std_grace_period_after_info#:#Define the default grace period after the end of appointments in minutes.
+delete_appointment#:#Delete Appointment
+delete_reccurrence#:#Delete all Appointments in the Series
+confirm_delete_series_txt#:#Appointment starting at %s (Reccurrence: %s)
+sure_delete_appointment_series#:#Do you really want to delete all appointments in this series?
+sure_delete_appointment#:#Do you really want to delete the following appointments?
+delete_booking#:#The appointments have been deleted.
+tbbtn_add_appointment#:#Add Appointment
+tbl_add_appointment#:#Add Appointment
+btn_add_appointment#:#Add Appointment
+edit_booking#:#Edit Appointment
+edit_bookings#:#Edit Appointments
+tbl_update_appointment#:#Edit Appointment
+info_next_appointment#:#Next Appointment
+info_next_appointment_dt#:#Date/Time
+avatar#:#User Images
+avatar_info#:#If enabled, user images will be uploaded automatically as vitero avatar.
+avatar_warning#:#The installation of the "Webservices Framework für PHP" (<a href="http://wso2.org/downloads/wsf/php">WSF/PHP</a>) is required for using this feature.
+virtual_team_room#:#virtual team room
+il_xvit_member#:#Member
+il_xvit_admin#:#Team Leader
+tab_settings#:#Settings
+tab_appointments#:#Appointments
+account_unlocked#:#Access
+unlocked_txt#:#Access Allowed
+locked_txt#:#Access Denied
+btn_lock#:#Deny Access
+btn_unlock#:#Allow Access
+user_locked_info#:#The access to this vitero session has been denied by a team leader
+materials#:#Files
+content_admin#:#File Administration
+content_admin_info#:#The file administration can be used only with vitero versions >= 4.4.
+mtom_cert#:#Server Certificate
+mtom_cert_info#:#Enter the absolute path to the vitero server certificate, if you a SSL protected connection to the vitero server.

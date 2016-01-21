@@ -1,0 +1,22 @@
+<form method="post" name="participants" action="{FORMACTION}">
+<!-- BEGIN admin_block -->
+{ADMINS}
+<br/>
+<!-- END admin_block -->
+<!-- BEGIN member_block -->
+{MEMBERS}
+<br />
+<!-- END member_block -->
+
+<table class="fullwidth" style="clear: both;">
+	<tr class="tblheader">
+		<td>{TXT_SELECTED_USER}</td>
+	</tr>
+	<tr>
+		<td class="submit" align="left">
+			<img src="{ARROW_DOWN}" alt="{ARROW_ALT}" border="0" />
+            {BTN_REMOVE} {BTN_UNLOCK} {BTN_LOCK} {BTN_MAIL}
+		</td>
+	</tr>
+</table>
+</form>

@@ -1,0 +1,119 @@
+// 
+// English Language File for ViteroObject Plugin
+//
+
+<!-- language file start -->
+obj_xvit#:#vitero-Sitzung
+objs_xvit#:#vitero-Sitzungen
+obj_xvit_duplicate#:#Kopieren
+objs_xvit_duplicate#:#vitero-Sitzung kopieren
+xvit_add#:#Neue vitero-Sitzung anlegen
+xvit_new#:#Neue vitero-Sitzung anlegen
+xvit_read#:#Lesezugriff auf vitero-Sitzungen
+xvit_write#:#vitero-Sitzung bearbeiten
+xvit_delete#:#vitero-Sitzung löschen
+xvit_visible#:#vitero-Sitzung ist sichtbar
+xvit_edit_permission#:#rechteeinstellungen ändern
+crs_create_xvit#:#Neue vitero-Sitzung anlegen
+grp_create_xvit#:#Neue vitero-Sitzung anlegen
+fold_create_xvit#:#Neue vitero-Sitzung anlegen
+root_create_xvit#:#Neue vitero-Sitzung anlegen
+cat_create_xvit#:#Neue vitero-Sitzung anlegen
+content#:#Inhalt
+properties#:#Einstellungen
+edit_properties#:#Einstellungen bearbeiten
+title#:#Titel
+description#:#Beschreibung
+save#:#Speichern
+cancel#:#Abbrechen
+edit#:#Bearbeiten
+status#:#Status
+offline#:#Offline
+created_vitero#:#Eine neue vitero-Sitzung wurde angelegt.
+vitero_plugin_configuration#:#vitero-Plugin-Konfiguration
+server_uri#:#Webservice Server URL
+webstart_url#:#Webstart URL
+admin_user#:#Webservice Benutzername
+admin_pass#:#Webservice Passwort
+customer_id#:#Customer ID
+client_settings#:#Client-Einstellungen
+cafe_setting#:#vitero-Café
+cafe_setting_info#:#Wenn aktiviert, können vitero-Café angelegt werden.
+standard_room#:#Standardräume anlegen
+standard_room_info#:#Wenn aktiviert, können vitero-Standardräume angelegt werden.
+ldap_setting#:#LDAP
+ldap_setting_info#:#If enabled, ILIAS uses ldap account names, for synchronising them with vitero.
+err_soap_0#:#Ein unbekannter Fehler ist augetreten.
+err_soap_51#:#Ein Benutzer mit diesem Namen existiert bereits als vitero-Nutzer
+err_soap_101#:#Ungültige Customer-Id
+err_soap_152#:#Eine vitero-Sitzung mit diesem Namen existiert bereits und kann deshalb nicht angelegt werden.
+err_soap_303#:#Es wurde kein Sitzungsname angegeben.
+err_soap_501#:#Der Termin konnte wegen einer Überschneidung mit anderen Terminen nicht angelegt werden.
+err_soap_505#:#Es dürfen keine Termine in der Vergangenheit angelegt werden.
+app_type#:#Art des Termins
+app_type_cafe#:#Café
+app_type_standard#:#Standardraum
+app_tab#:#Termine
+app_table#:#Terminübersicht
+app_tbl_col_time#:#Zeit
+app_tbl_col_dur#:#Dauer
+app_tbl_col_rec#:#Wiederholung
+app_tbl_col_ends#:#Endet am
+start_session#:#vitero-Sitzung starten
+uprefix#:#Präfix für Benutzernamen
+uprefix_info#:#Das angegebene Präfix wird den vitero-Benutzerkonten vorangestellt.
+time_buffer#:#Zeitpuffer
+time_buffer_before#:#vor Terminbeginn
+time_buffer_after#:#nach Terminende
+rec_once#:#einmalig
+rec_daily#:#täglich
+rec_weekly#:#wöchentlich
+rec_weekdays#:#an Arbeitstagen
+rec_weekends#:#an Wochenenden
+participants#:#Teilnehmer
+add_as_group_member#:#Als Teilnehmer hinzufügen
+add_as_group_admin#:#Als Gruppenleiter hinzufügen
+member#:#vitero-Teilnehmer
+admin#:#vitero-Gruppenleiter
+assigned_users#:#Die ausgewählten Benutzer wurden der vitero-Sitzung zugeordnet.
+members#:#Mitglieder
+participants#:#Teilnehmer
+admins#:#Gruppenleiter
+room_size#:#Raumgröße
+std_grace_period_before#:#Zeitpuffer (vorher)
+std_grace_period_after#:#Zeitpuffer (nachher)
+std_grace_period_before_info#:#Bitte geben Sie einen Wert für den Standard-Zeitpuffer vor Terminbeginn ein.
+std_grace_period_after_info#:#Bitte geben Sie einen Wert für den Standard-Zeitpuffer nach Terminende ein.
+delete_appointment#:#Termin löschen
+delete_reccurrence#:#Alle Termine in der Terminserie löschen
+confirm_delete_series_txt#:#Termin beginnend am %s (Wiederholung: %s)
+sure_delete_appointment_series#:#Sind Sie sicher, dass Sie alle Termine dieser Terminserie löschen möchten?
+sure_delete_appointment#:#Sind Sie sicher, dass Sie die folgenden Termine löschen möchten?
+delete_booking#:#Die Termine wurden gelöscht.
+tbbtn_add_appointment#:#Termin hinzufügen
+tbl_add_appointment#:#Termin hinzufügen
+btn_add_appointment#:#Termin hinzufügen
+edit_booking#:#Termin bearbeiten
+edit_bookings#:#Termine bearbeiten
+tbl_update_appointment#:#Termin bearbeiten
+info_next_appointment#:#Nächster Termin
+info_next_appointment_dt#:#Datum/Uhrzeit
+avatar#:#Benutzerbilder
+avatar_info#:#Ermöglicht das automatische Hochladen von ILIAS-Profilbildern als vitero-Avatar.
+avatar_warning#:#Zum Nutzen dieser Funktionalität muss das Webservices Framework für PHP (<a href="http://wso2.org/downloads/wsf/php">WSF/PHP</a>) installiert sein.
+virtual_team_room#:#virtual team room
+il_xvit_member#:#Teilnehmer
+il_xvit_admin#:#Gruppenleiter
+tab_settings#:#Einstellungen
+tab_appointments#:#Termine
+account_unlocked#:#Zutritt
+unlocked_txt#:#Zutritt erlaubt
+locked_txt#:#Zutritt verweigert
+btn_lock#:#Zutritt sperren
+btn_unlock#:#Zutrittsperre aufheben
+user_locked_info#:#Der Zutritt zu dieser vitero-Sitzung wurde von einem Gruppenleiter gesperrt.
+materials#:#Dateien
+content_admin#:#Dateiverwaltung
+content_admin_info#:#Die Dateiverwaltung kann nur mit vitero-Versionen >= 4.4 genutzt werden.
+mtom_cert#:#Server-Zertifikat
+mtom_cert_info#:#Wenn Sie den vitero Server über eine verschlüsselte Verbindung aufrufen, müssen Sie hier den absoluten Pfad zu der Datei angeben, die das vitero Server-Zertifikat enthällt.
