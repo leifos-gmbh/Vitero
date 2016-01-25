@@ -14,6 +14,13 @@ class ilViteroAvatarSoapConnector extends ilViteroSoapConnector
 	const FILE_TYPE_NORMAL = 0;
 	const FILE_TYPE_SMILE = 1;
 
+	/**
+	 * Overwrite
+	 *
+	 * @var null|SoapClient
+	 */
+	private $client = null;
+
 
 	public function __construct()
 	{

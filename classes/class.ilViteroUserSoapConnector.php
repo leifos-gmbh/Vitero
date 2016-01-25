@@ -176,7 +176,7 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		$user->email = $iu->getEmail();
 		$user->company = $iu->getInstitution();
 
-		$user->locale = in_array($this->available_locales, $iu->getLanguage())
+		$user->locale = in_array($iu->getLanguage(), $this->available_locales)
 			? $iu->getLanguage()
 			: "en";
 

@@ -841,7 +841,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			);
 
 			$sc = new ilViteroSessionCodeSoapConnector();
-			$code = $sc->createPersonalBookingSessionCode($vuid, (int) $_GET['bid']);
+			$dur = new ilDateTime(time(), IL_CAL_UNIX);
+			$dur->increment(IL_CAL_HOUR,2);
+			$code = $sc->createPersonalBookingSessionCode($vuid, (int) $_GET['bid'], $dur);
 
 			$GLOBALS['ilLog']->write(__METHOD__.': '.ilViteroSettings::getInstance()->getWebstartUrl().'?code='.$code);
 			ilUtil::redirect(ilViteroSettings::getInstance()->getWebstartUrl().'?sessionCode='.$code);
@@ -891,7 +893,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			}
 			$table_gui->setTitle(
 				ilViteroPlugin::getInstance()->txt('admins'),
-				'icon_usr.gif',$this->lng->txt('grp_admins'));
+				'icon_usr.svg',$this->lng->txt('grp_admins'));
 			$table_gui->parse($rbacreview->assignedUsers((int) $this->object->getDefaultAdminRole()));
 			$tpl->setVariable('ADMINS',$table_gui->getHTML());
 		}
@@ -920,7 +922,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 			$table_gui->setTitle(
 				ilViteroPlugin::getInstance()->txt('participants'),
-				'icon_usr.gif',$this->lng->txt('grp_members'));
+				'icon_usr.svg',$this->lng->txt('grp_members'));
 			$table_gui->parse($rbacreview->assignedUsers((int) $this->object->getDefaultMemberRole()));
 			$tpl->setVariable('MEMBERS',$table_gui->getHTML());
 
@@ -945,7 +947,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$mail->setCaption("grp_mem_send_mail",true);
 		$tpl->setVariable('BTN_MAIL',$mail->render());
 
-		$tpl->setVariable('ARROW_DOWN',ilUtil::getImagePath('arrow_downright.gif'));
+		$tpl->setVariable('ARROW_DOWN',ilUtil::getImagePath('arrow_downright.svg'));
 		$tpl->setVariable('FORMACTION',$this->ctrl->getFormAction($this));
 
 		$GLOBALS['tpl']->setContent($tpl->get());
@@ -1049,7 +1051,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$confirm->addItem('participants[]',
 				$participant,
 				$names['lastname'].', '.$names['firstname'].' ['.$names['login'].']',
-				ilUtil::getImagePath('icon_usr.gif'));
+				ilUtil::getImagePath('icon_usr.svg'));
 		}
 		$this->tpl->setContent($confirm->getHTML());
 	}
