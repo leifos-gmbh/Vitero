@@ -76,7 +76,42 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
 		$class_file = $this->getClassesDirectory().'/class.'.$a_classname.'.php';
 		@include_once($class_file);
 	}
-	
+
+	/**
+	 * drop database tables and delete ilSetting entrys
+	 */
+	protected function uninstallCustom()
+	{
+		global $ilDB;
+
+		if ($ilDB->tableExists('rep_robj_xvit_data'))
+		{
+			$ilDB->dropTable('rep_robj_xvit_data');
+		}
+
+		if ($ilDB->tableExists('rep_robj_xvit_excl'))
+		{
+			$ilDB->dropTable('rep_robj_xvit_excl');
+		}
+
+		if ($ilDB->tableExists('rep_robj_xvit_locked'))
+		{
+			$ilDB->dropTable('rep_robj_xvit_locked');
+		}
+
+		if ($ilDB->tableExists('rep_robj_xvit_smap'))
+		{
+			$ilDB->dropTable('rep_robj_xvit_smap');
+		}
+
+		if ($ilDB->tableExists('rep_robj_xvit_umap'))
+		{
+			$ilDB->dropTable('rep_robj_xvit_umap');
+		}
+
+		$settings = new ilSetting('vitero_config');
+		$settings->deleteAll();
+	}
 	
 }
 ?>
