@@ -150,24 +150,58 @@
 ?>
 <#8>
 <?php
+if(!$ilDB->tableExists('rep_robj_xvit_locked'))
+{
+	$ilDB->createTable('rep_robj_xvit_locked', array(
+		   'usr_id' => array(
+			   'type' => 'integer',
+			   'length' => 4,
+			   'notnull' => TRUE
+		   ),
+		   'vgroup_id' => array(
+			   'type' => 'integer',
+			   'length' => 4,
+			   'notnull' => TRUE
+		   ),
+		   'locked' => array(
+			   'type' => 'integer',
+			   'length' => 1,
+			   'notnull' => TRUE,
+		   )
+	   )
+	);
 
-	$ilDB->createTable('rep_robj_xvit_locked',array(
+	$ilDB->addPrimaryKey('rep_robj_xvit_locked', array('usr_id', 'vgroup_id'));
+}
+?>
+<#9>
+<?php
+if(!$ilDB->tableExists('rep_robj_xvit_smap'))
+{
+	$ilDB->createTable('rep_robj_xvit_smap',array(
 		'usr_id'	=> array(
 			'type'	=> 'integer',
 			'length'=> 4,
 			'notnull' => TRUE
 		),
-		'vgroup_id'	=> array(
-			'type'	=> 'integer',
-			'length'=> 4,
+		'vsession'	=> array(
+			'type'	=> 'text',
+			'length'=> 128,
 			'notnull' => TRUE
 		),
-		'locked'	=> array(
+		'expirationdate'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE,
+		),
+		'vtype'	=> array(
 			'type'	=> 'integer',
 			'length'=> 1,
 			'notnull' => TRUE,
 		)
 	));
 
-	$ilDB->addPrimaryKey('rep_robj_xvit_locked',array('usr_id','vgroup_id'));
+	$ilDB->addPrimaryKey('rep_robj_xvit_smap',array('usr_id','vsession'));
+}
+
 ?>

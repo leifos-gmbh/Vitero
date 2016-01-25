@@ -151,12 +151,12 @@ class ilViteroParticipantsTableGUI extends ilTable2GUI
 		if($a_set['locked'])
 		{
 			$this->tpl->setVariable('UNLOCKED_ALT', ilViteroPlugin::getInstance()->txt('locked_txt'));
-			$this->tpl->setVariable('UNLOCKED_IMG',ilUtil::getImagePath('icon_not_ok.gif'));
+			$this->tpl->setVariable('UNLOCKED_IMG',ilUtil::getImagePath('icon_not_ok.svg'));
 		}
 		else
 		{
 			$this->tpl->setVariable('UNLOCKED_ALT', ilViteroPlugin::getInstance()->txt('unlocked_txt'));
-			$this->tpl->setVariable('UNLOCKED_IMG',ilUtil::getImagePath('icon_ok.gif'));
+			$this->tpl->setVariable('UNLOCKED_IMG',ilUtil::getImagePath('icon_ok.svg'));
 
 		}
 		
