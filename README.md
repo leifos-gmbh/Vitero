@@ -18,6 +18,9 @@ German, English
 **Related Plugins:**
 ViteroSingleLogout
 
+**Bug Tracker:**
+[ILIAS MantisBT](http://www.ilias.de/mantis/search.php?project_id=3&category=Vitero)
+
 ### Quick Installation Guide
 1. Copy the content of this folder in <ILIAS_directory>/Customizing/global/plugins/Services/Repository/RepositoryObject/Vitero
 
