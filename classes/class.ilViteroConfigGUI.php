@@ -111,11 +111,11 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			'admin_pass'
 		);
 		$pass->setSkipSyntaxCheck(true);
-		$pass->setRequired(true);
-		$pass->setRetype(false);
+		//$pass->setRequired(true);
+		$pass->setRetype(true);
 		$pass->setSize(12);
 		$pass->setMaxLength(32);
-		$pass->setValue($settings->getAdminPass());
+		//$pass->setValue($settings->getAdminPass());
 		$form->addItem($pass);
 
 
@@ -276,7 +276,10 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$settings = ilViteroSettings::getInstance();
 			$settings->setServerUrl($form->getInput('server_uri'));
 			$settings->setAdminUser($form->getInput('admin_user'));
-			$settings->setAdminPass($form->getInput('admin_pass'));
+			if(strlen($form->getInput('admin_pass')))
+			{
+				$settings->setAdminPass($form->getInput('admin_pass'));
+			}
 			$settings->setCustomer($form->getInput('customer'));
 			$settings->useLdap($form->getInput('ldap'));
 			$settings->enableCafe($form->getInput('cafe'));
