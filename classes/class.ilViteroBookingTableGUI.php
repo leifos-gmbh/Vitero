@@ -232,7 +232,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 				);
 			}
 
-			$booking_list[$counter]['duration'] = ilFormat::_secondsToString(
+			$booking_list[$counter]['duration'] = ilDatePresentation::secondsToString(
 					$booking_list[$counter]['end']->get(IL_CAL_UNIX) - $booking_list[$counter]['start']->get(IL_CAL_UNIX),
 					false
 			);
@@ -318,7 +318,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 					);
 				}
 				
-				$booking_list[$counter]['duration'] = ilFormat::_secondsToString(
+				$booking_list[$counter]['duration'] = ilDatePresentation::secondsToString(
 					$booking_list[$counter]['end']->get(IL_CAL_UNIX) - $booking_list[$counter]['start']->get(IL_CAL_UNIX),
 					false
 				);

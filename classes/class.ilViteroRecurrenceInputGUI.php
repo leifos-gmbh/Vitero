@@ -97,17 +97,15 @@ class ilViteroRecurrenceInputGUI extends ilCustomInputGUI
 	protected function loadRecurrence()
 	{
 		$this->freq_type = (int) $_POST['frequence'];
-
+		
 		switch($_POST['until_type'])
 		{
 			case 0:
 				break;
 
 			case 3:
-				$end_dt['year'] = (int) $_POST['until_end']['date']['y'];
-				$end_dt['mon'] = (int) $_POST['until_end']['date']['m'];
-				$end_dt['mday'] = (int) $_POST['until_end']['date']['d'];
-				$this->freq_end = new ilDate($end_dt,IL_CAL_FKT_GETDATE,$this->timezone);
+				include_once './Services/Calendar/classes/class.ilCalendarUtil.php';
+				$this->freq_end = ilCalendarUtil::parseIncomingDate($_POST['until_end']);
 				break;
 
 		}
