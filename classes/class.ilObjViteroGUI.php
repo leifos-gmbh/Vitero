@@ -392,7 +392,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 * @global <type> $ilUser
 	 * @param ilObjVitero $newObj
 	 */
-	public function afterSave($newObj)
+	public function afterSave(ilObject $newObj)
 	{
 		global $ilCtrl, $ilUser;
 

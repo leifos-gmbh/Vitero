@@ -170,7 +170,7 @@ class ilObjVitero extends ilObjectPlugin
 		}
 	}
 
-	public function doCloneObject($new_obj, $a_target_id, $a_copy_id)
+	public function doCloneObject($new_obj, $a_target_id, $a_copy_id = NULL)
 	{
 		$this->doClone($new_obj, $a_target_id, $a_copy_id);
 	}
@@ -178,7 +178,7 @@ class ilObjVitero extends ilObjectPlugin
 	/**
 	* Do Cloning
 	*/
-	public function doClone($new_obj,$a_target_id,$a_copy_id)
+	public function doClone($new_obj,$a_target_id,$a_copy_id = NULL)
 	{
 		global $ilDB, $ilUser;
 
@@ -203,6 +203,8 @@ class ilObjVitero extends ilObjectPlugin
 	{
 		try
 		{
+			ilLoggerFactory::getLogger('xvit')->debug('Creating new group');
+
 			$con = new ilViteroGroupSoapConnector();
 			$vgrp = new ilViteroGroupSoap();
 			$vgrp->initCustomer();
@@ -345,8 +347,10 @@ class ilObjVitero extends ilObjectPlugin
 
 	public function checkInit()
 	{
+		ilLoggerFactory::getLogger('xvit')->debug('Check init called');
 		if($this->getVGroupId())
 		{
+			ilLoggerFactory::getLogger('xvit')->debug('Vgroup available');
 			return true;
 		}
 		$this->initVitero(false);
