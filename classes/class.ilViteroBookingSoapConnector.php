@@ -65,6 +65,13 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->create($room, $a_group_id);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Creating vitero group failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -106,6 +113,13 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->updateBooking($room, $a_group_id);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->logStack();
 			$GLOBALS['ilLog']->write(__METHOD__.': Update vitero group failed with message code: '.$code);
@@ -133,6 +147,13 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->getByGroupAndDate($a_groupid, $start, $end);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Get booking list failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -159,6 +180,14 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 			return $ret;
 		}
 		catch(Exception $e) {
+			
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->getBookingListByDate($a_customer_id, $start, $end);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Get booking list failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -234,6 +263,13 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->getBookingById($a_id);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Get booking by id failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -257,6 +293,14 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->deleteBooking($a_id);
+			}
+			
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Delete booking by id failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());

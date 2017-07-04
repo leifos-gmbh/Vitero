@@ -35,6 +35,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->create($group);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Create vitero group failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -55,6 +62,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->delete($group);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Delete vitero group failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -73,6 +87,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->update($group);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Update vitero group failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -96,6 +117,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->addUserToGroup($a_vgroup_id,$a_vuser_id);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Add user to group failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -125,6 +153,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->changeGroupRole($a_vgroup_id, $a_vuser_id, $a_vgroup_role);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Change group role failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -180,6 +215,13 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->changeEnabled($usr_id, $group_id, $status);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Change enabled status failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());

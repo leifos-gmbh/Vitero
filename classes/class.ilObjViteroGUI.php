@@ -149,8 +149,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function  initCreateForm($a_new_type)
 	{
-		$GLOBALS['ilLog']->logStack();
-
 		// @todo: handle this in delete event
 		ilObjVitero::handleDeletedGroups();
 

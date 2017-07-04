@@ -32,9 +32,14 @@ class ilViteroLicenceSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->getModulesForCustomer($a_cust_id);
+			}
+			
 			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Reading modules failed with message: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
 			throw new ilViteroConnectorException($e->getMessage(),$code);
 		}
 	}

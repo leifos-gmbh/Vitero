@@ -59,6 +59,15 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->createUser($iu);
+			}
+			
+			
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Create user failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -83,6 +92,13 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->updateUser($a_vuserid,$iu);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Update user failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -102,6 +118,13 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->deleteUser($a_vuserid);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Delete user failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -127,6 +150,13 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->loadAvatar($a_vuserid);
+			}
+
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Loading avatar failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
@@ -154,6 +184,13 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
+			$this->getLogger()->warning('Calling webservice failed with message: ' . $e->getMessage().' with code: ' . $e->getCode());
+			if($this->shouldRetryCall($e))
+			{
+				$this->getLogger()->info('Retrying soap call.');
+				return $this->storeAvatarUsingBase64($a_vuser_id, $a_file_info);
+			}
+			
 			$code = $this->parseErrorCode($e);
 			$GLOBALS['ilLog']->write(__METHOD__.': Store avatar failed with message code: '.$code);
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
