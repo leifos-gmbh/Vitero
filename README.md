@@ -7,7 +7,7 @@ integrate and administrate virtual team rooms in ILIAS.
 5.1.0
 
 **Maximum ILIAS Version:**
-5.1.999
+5.2.999
 
 **Responsible Developer:**
 Stefan Meyer - meyer AT leifos.com
