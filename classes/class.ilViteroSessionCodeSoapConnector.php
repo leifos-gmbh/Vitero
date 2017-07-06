@@ -15,6 +15,12 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 	const SESSION_TYPE_PERSONAL_GROUP = 1;
 	const SESSION_TYPE_PERSONAL_BOOKING = 2;
 	const SESSION_TYPE_VMS = 3;
+	
+	
+	public function __construct()
+	{
+		parent::__construct();
+	}
 
 	public function createPersonalGroupSessionCode($a_user_id, $a_group_id, ilDateTime $expires)
 	{
@@ -41,10 +47,9 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Creating group session code  failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
+			$this->getLogger()->notice('Creating session code failed with message: ' . $e->getMessage());
+			$this->getLogger()->info('Last reuqest: ' . $this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage());
 		}
 	}
 
@@ -74,10 +79,9 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)
 		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Creating group session code  failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
+			$this->getLogger()->notice('Creating session code failed with message: ' . $e->getMessage());
+			$this->getLogger()->info('Last reuqest: ' . $this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage());
 		}
 	}
 
@@ -105,12 +109,9 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 			return $reps->code;
 		}
 		catch(SoapFault $e)  {
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Creating vms session code failed with message: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastResponse());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-
+			$this->getLogger()->notice('Creating vms code failed with message: ' . $e->getMessage());
+			$this->getLogger()->info('Last reuqest: ' . $this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage());
 		}
 	}
 
@@ -149,11 +150,9 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 		}
 		catch(SoapFault $e)  {
 
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Deleting session code failed with message: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastResponse());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
+			$this->getLogger()->notice('Deleting session code failed with message: ' . $e->getMessage());
+			$this->getLogger()->info('Last reuqest: ' . $this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage());
 		}
 	}
 

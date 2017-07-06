@@ -95,7 +95,8 @@ abstract class ilViteroSoapConnector
 	{
 		if($this->client_initialized)
 		{
-			return true;
+			// new initialization is required for different calls of same group
+			#return true;
 		}
 		
 		try {
@@ -117,8 +118,6 @@ abstract class ilViteroSoapConnector
 				)
 			);
 			$this->client_initialized = true;
-			
-
 			return;
 		}
 		catch(SoapFault $e) {
