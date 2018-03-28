@@ -170,7 +170,7 @@ class ilObjVitero extends ilObjectPlugin
 		}
 	}
 
-	public function doCloneObject($new_obj, $a_target_id, $a_copy_id)
+	public function doCloneObject($new_obj, $a_target_id, $a_copy_id = 0)
 	{
 		$this->doClone($new_obj, $a_target_id, $a_copy_id);
 	}

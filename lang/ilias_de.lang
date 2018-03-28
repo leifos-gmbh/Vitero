@@ -117,3 +117,5 @@ content_admin#:#Dateiverwaltung
 content_admin_info#:#Die Dateiverwaltung kann nur mit vitero-Versionen >= 4.4 genutzt werden.
 mtom_cert#:#Server-Zertifikat
 mtom_cert_info#:#Wenn Sie den vitero Server über eine verschlüsselte Verbindung aufrufen, müssen Sie hier den absoluten Pfad zu der Datei angeben, die das vitero Server-Zertifikat enthällt.
+event_start_date#:#Start
+event_end_date#:#Ende

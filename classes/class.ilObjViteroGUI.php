@@ -217,8 +217,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$dur->setDisabled(true);
 		}
 		
-		$dur->setStartText($lng->txt('event_start_date'));
-		$dur->setEndText($lng->txt('event_end_date'));
+		$dur->setStartText($this->getPlugin()->txt('event_start_date'));
+		$dur->setEndText($this->getPlugin()->txt('event_end_date'));
 		$dur->setShowTime(false);
 
 		$start = new ilDate(time(),IL_CAL_UNIX);
@@ -249,8 +249,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		include_once './Services/Form/classes/class.ilDateDurationInputGUI.php';
 		$dur = new ilDateDurationInputGUI($lng->txt('cal_fullday'),'std_time');
 		$dur->setMinuteStepSize(15);
-		$dur->setStartText($lng->txt('event_start_date'));
-		$dur->setEndText($lng->txt('event_end_date'));
+		$dur->setStartText($this->getPlugin()->txt('event_start_date'));
+		$dur->setEndText($this->getPlugin()->txt('event_end_date'));
 		$dur->setShowTime(true);
 
 		$start = new ilDate(time(),IL_CAL_UNIX);
@@ -392,7 +392,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 * @global <type> $ilUser
 	 * @param ilObjVitero $newObj
 	 */
-	public function afterSave($newObj)
+	public function afterSave(ilObject $newObj)
 	{
 		global $ilCtrl, $ilUser;
 
@@ -1511,7 +1511,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		// Show only start if type is "cafe"
 		if($booking->booking->cafe)
 		{
-			$start = new ilDateTimeInputGUI($lng->txt('event_start_date'), 'cstart');
+			$start = new ilDateTimeInputGUI($this->getPlugin()->txt('event_start_date'), 'cstart');
 			$start->setShowTime(false);
 			$start->setDate(ilViteroUtils::parseSoapDate($booking->booking->start));
 			$form->addItem($start);
@@ -1521,8 +1521,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			include_once './Services/Form/classes/class.ilDateDurationInputGUI.php';
 			$dt = new ilDateDurationInputGUI($lng->txt('cal_fullday'), 'roomduration');
 			$dt->setMinuteStepSize(15);
-			$dt->setStartText($lng->txt('event_start_date'));
-			$dt->setEndText($lng->txt('event_end_date'));
+			$dt->setStartText($this->getPlugin()->txt('event_start_date'));
+			$dt->setEndText($this->getPlugin()->txt('event_end_date'));
 			$dt->setShowTime(true);
 
 			$dt->setStart(ilViteroUtils::parseSoapDate($booking->booking->start));

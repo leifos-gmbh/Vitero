@@ -118,3 +118,5 @@ content_admin#:#File Administration
 content_admin_info#:#The file administration can be used only with vitero versions >= 4.4.
 mtom_cert#:#Server Certificate
 mtom_cert_info#:#Enter the absolute path to the vitero server certificate, if you a SSL protected connection to the vitero server.
+event_start_date#:#Start
+event_end_date#:#End
