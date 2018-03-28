@@ -104,12 +104,13 @@ class ilViteroRecurrenceInputGUI extends ilCustomInputGUI
 				break;
 
 			case 3:
-				$end_dt['year'] = (int) $_POST['until_end']['date']['y'];
-				$end_dt['mon'] = (int) $_POST['until_end']['date']['m'];
-				$end_dt['mday'] = (int) $_POST['until_end']['date']['d'];
-				$this->freq_end = new ilDate($end_dt,IL_CAL_FKT_GETDATE,$this->timezone);
+				$dtig = new ilDateTimeInputGUI('','until_end');
+				$dtig->setRequired(true);
+				if($dtig->checkInput())
+				{
+					$this->setFrequenceUntilDate($dtig->getDate());
+				}
 				break;
-
 		}
 	}
 
