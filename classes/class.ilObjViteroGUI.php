@@ -643,7 +643,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		$booking_id = ilViteroUtils::getOpenRoomBooking($this->object->getVGroupId());
-
+		
 		if($booking_id and $access)
 		{
 			$this->ctrl->setParameter($this,'bid',$booking_id);

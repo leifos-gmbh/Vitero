@@ -175,7 +175,7 @@ class ilViteroUtils
 		$later = clone $now;
 		$later->increment(IL_CAL_DAY, 5);
 		$booking = self::lookupNextBooking($earlier, $later, $a_group_id);
-
+		
 		if(!$booking['open'] instanceof  ilDateTime)
 		{
 			return 0;
