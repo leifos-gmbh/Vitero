@@ -173,7 +173,7 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 		$user->username = $prefix.$iu->getLogin();
 		$user->surname = $iu->getLastname();
 		$user->firstname = $iu->getFirstname();
-		$user->email = $iu->getEmail();
+		$user->email = strlen(trim($iu->getEmail())) ? $iu->getEmail() : '-';
 		$user->company = $iu->getInstitution();
 
 		$user->locale = in_array($iu->getLanguage(), $this->available_locales)

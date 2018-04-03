@@ -47,13 +47,28 @@ include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
 class ilObjViteroGUI extends ilObjectPluginGUI
 {
 	/**
+	 * @var ilLogger
+	 */
+	private $vitero_logger = null;
+	
+	
+	/**
 	* Initialisation
 	*/
 	protected function afterConstructor()
 	{
+		$this->vitero_logger = $GLOBALS['DIC']->logger()->xvit();
 		// anything needed after object has been constructed
 		// - example: append my_id GET parameter to each request
 		//   $ilCtrl->saveParameter($this, array("my_id"));
+	}
+	
+	/**
+	 * @return ilLogger
+	 */
+	protected function getLogger()
+	{
+		return $this->vitero_logger;
 	}
 	
 	/**
