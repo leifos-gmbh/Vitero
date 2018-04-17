@@ -110,7 +110,7 @@ class ilViteroUtils
 		{
 			$bookings_arr = $bookings->booking;
 		}
-
+		
 		include_once './Services/Calendar/classes/class.ilDateList.php';
 		$next_booking['start'] = NULL;
 		foreach($bookings_arr as $booking)
@@ -185,6 +185,22 @@ class ilViteroUtils
 			return $booking['id'];
 		}
 		return 0;
+	}
+	
+	/**
+	 * Returns the next booking independent from the "open status".
+	 */
+	public static function getNextBooking($a_group_id)
+	{
+		$now = new ilDateTime(time(), IL_CAL_UNIX);
+		$earlier = clone $now;
+		
+		$later = clone $now;
+		$later->increment(IL_CAL_DAY, 365);
+		
+		$booking = self::lookupNextBooking($earlier, $later, $a_group_id);
+		
+		return isset($booking['id']) ? $booking['id'] : 0;
 	}
 
 	public static function recurrenceToString($a_rec)

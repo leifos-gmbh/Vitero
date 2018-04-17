@@ -117,6 +117,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			case 'unlockUsers':
 			case 'lockUsers':
 			case 'materials':
+			case 'startAdminSession':
 			//case "...":
 				$this->checkPermission("write");
 				$this->$cmd();
@@ -164,8 +165,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function  initCreateForm($a_new_type)
 	{
-		$GLOBALS['ilLog']->logStack();
-
 		// @todo: handle this in delete event
 		ilObjVitero::handleDeletedGroups();
 
@@ -213,7 +212,27 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$this->initFormTimeBuffer($form);
 		$this->initFormRoomSize($form);
+		
+		$this->initFormAnonymousAccess($form);
 
+		return $form;
+	}
+	
+	/**
+	 * Init checkbox for anonymous access
+	 * @param ilPropertyFormGUI $form
+	 */
+	protected function initFormAnonymousAccess(ilPropertyFormGUI $form)
+	{
+		$anon = new ilCheckboxInputGUI(
+			ilViteroPlugin::getInstance()->txt('form_anonymous_access'),
+			'anonymous_access'
+		);
+		$anon->setInfo(
+			ilViteroPlugin::getInstance()->txt('form_anonymous_access_info')
+		);
+		$anon->setChecked(false);
+		$form->addItem($anon);
 		return $form;
 	}
 
@@ -442,7 +461,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		try {
 			$newObj->initVitero($ilUser->getId());
-			$newObj->initAppointment($room);
+			$newObj->initAppointment($room,true);
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);
 		}
 		catch(ilViteroConnectorException $e)
@@ -639,6 +658,65 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 		$tpl->setContent($table->getHTML());
 	}
+	
+	
+	protected function addInfoStartButton($info)
+	{
+		global $DIC, $ilCtrl, $ilUser, $ilAccess;
+		$user = $DIC->user();
+
+		$access = true;
+		if(ilViteroLockedUser::isLocked($ilUser->getId(), $this->object->getVGroupId()))
+		{
+			ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('user_locked_info'));
+			$access = false;
+		}
+		
+		// find next booking
+		$booking_id = ilViteroUtils::getOpenRoomBooking($this->object->getVGroupId());
+
+		if($booking_id)
+		{
+			// if user is anonymous, check anonymous access
+			$access = false;
+			if($user->getId() == ANONYMOUS_USER_ID)
+			{
+				$code = new ilViteroBookingCode(
+					$this->object->getVGroupId(),
+					$booking_id
+				);
+				if($code->exists())
+				{
+					$access = true;
+				}
+			}
+			else
+			{
+				$access = true;
+			}
+			
+			if($access)
+			{
+				$this->ctrl->setParameter($this,'bid',$booking_id);
+				$info->setFormAction($ilCtrl->getFormAction($this),'_blank');
+				$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
+					'<input type="submit" class="submit" name="cmd[startSession]" value="'.ilViteroPlugin::getInstance()->txt('start_session').
+					'" style="padding:10px;" /></div>';
+				$info->addSection("");
+				$info->addProperty("", $big_button);
+			}
+		}
+		
+		// check group access
+		if($ilAccess->checkAccess('write','',$this->object->getRefId()))
+		{
+			$info->setFormAction($ilCtrl->getFormAction($this),'_blank');
+			$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
+				'<input type="submit" class="submit" name="cmd[startAdminSession]" value="'.ilViteroPlugin::getInstance()->txt('start_admin_session').
+				'" style="padding:10px;" /></div>';
+			$info->addProperty("", $big_button);
+		}
+	}
 
 
 
@@ -648,29 +726,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function addInfoItems($info)
 	{
-		global $ilCtrl, $ilUser;
-
-		$access = true;
-		if(ilViteroLockedUser::isLocked($ilUser->getId(), $this->object->getVGroupId()))
-		{
-			ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('user_locked_info'));
-			$access = false;
-		}
-
-		$booking_id = ilViteroUtils::getOpenRoomBooking($this->object->getVGroupId());
+		global $ilCtrl, $ilUser, $ilAccess;
 		
-		if($booking_id and $access)
-		{
-			$this->ctrl->setParameter($this,'bid',$booking_id);
-			$info->setFormAction($ilCtrl->getFormAction($this),'_blank');
-			$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
-				'<input type="submit" class="submit" name="cmd[startSession]" value="'.ilViteroPlugin::getInstance()->txt('start_session').
-				'" style="padding:10px;" /></div>';
+		$this->addInfoStartButton($info);
 
-			$info->addSection("");
-			$info->addProperty("", $big_button);
-		}
-		
 		$start = new ilDateTime(time(),IL_CAL_UNIX);
 		$end = clone $start;
 		$end->increment(IL_CAL_YEAR,1);
@@ -763,12 +822,17 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		);
 		$GLOBALS['tpl']->setContent($tpl->get());
 	}
+	
+	public function startAdminSession()
+	{
+		return $this->startSession(true);
+	}
 
 	/**
 	 * start session
 	 * @global <type> $ilDB
 	 */
-	public function startSession()
+	public function startSession($a_is_admin_session = false)
 	{
 		global $ilDB, $ilUser, $ilCtrl, $ilAccess;
 
@@ -818,31 +882,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 				}
 			}
 
-			/*
-			if(ilViteroSettings::getInstance()->isAvatarEnabled() and 0)
-			{
-				try {
-					$avatar_service = new ilViteroAvatarSoapConnector();
-					$usr_image_path = ilUtil::getWebspaceDir().'/usr_images/usr_'.$ilUser->getId().'.jpg';
-
-					if(@file_exists($usr_image_path))
-					{
-						$avatar_service->storeAvatar(
-							$vuid,
-							array(
-								'name' => 'usr_image.jpg',
-								'type' => ilViteroAvatarSoapConnector::FILE_TYPE_NORMAL,
-								'file' => $usr_image_path
-							)
-						);
-					}
-				}
-				catch(ilViteroConnectorException $e)
-				{
-					// continue
-				}
-			}
-		    */
 			// Assign user to vitero group
 			$grp = new ilViteroGroupSoapConnector();
 			$grp->addUserToGroup($this->object->getVGroupId(), $vuid);
@@ -858,7 +897,19 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$sc = new ilViteroSessionCodeSoapConnector();
 			$dur = new ilDateTime(time(), IL_CAL_UNIX);
 			$dur->increment(IL_CAL_HOUR,2);
-			$code = $sc->createPersonalBookingSessionCode($vuid, (int) $_GET['bid'], $dur);
+			
+			if($a_is_admin_session)
+			{
+				$code = $sc->createPersonalGroupSessionCode(
+					$vuid, 
+					$this->object->getVGroupId(),
+					$dur
+				);
+			}
+			else
+			{
+				$code = $sc->createPersonalBookingSessionCode($vuid, (int) $_GET['bid'], $dur);
+			}
 
 			$GLOBALS['ilLog']->write(__METHOD__.': '.ilViteroSettings::getInstance()->getWebstartUrl().'?code='.$code);
 			ilUtil::redirect(ilViteroSettings::getInstance()->getWebstartUrl().'?sessionCode='.$code);
@@ -1409,6 +1460,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$this->initFormTimeBuffer($form);
 		$this->initFormRoomSize($form,$a_create);
+		
+		$this->initFormAnonymousAccess($form);
 
 		return $form;
 	}
@@ -1472,7 +1525,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		try {
-			$this->object->initAppointment($room);
+			$this->object->initAppointment($room, (bool) $form->getItemByPostVar('anonymous_access')->getChecked());
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);
 			$this->ctrl->redirect($this,'showContent');
 			return true;

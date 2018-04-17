@@ -58,10 +58,12 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 			$container = new stdClass();
 			$container->booking = $booking;
 
-			$this->getClient()->createBooking($container);
+			$response = $this->getClient()->createBooking($container);
 
 			$GLOBALS['ilLog']->write(__METHOD__.print_r($this->getClient()->__getLastRequest(),true));
 			$GLOBALS['ilLog']->write(__METHOD__.print_r($this->getClient()->__getLastResponse(),true));
+			
+			return $response->bookingid;
 		}
 		catch(SoapFault $e)
 		{

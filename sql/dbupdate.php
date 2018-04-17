@@ -205,3 +205,27 @@ if(!$ilDB->tableExists('rep_robj_xvit_smap'))
 }
 
 ?>
+<#10>
+<?php
+if(!$ilDB->tableExists('rep_robj_xvit_codes'))
+{
+	$ilDB->createTable('rep_robj_xvit_codes',array(
+		'vgroup_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'booking_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'code'	=> array(
+			'type'	=> 'text',
+			'length' => 8,
+			'notnull' => FALSE,
+		)
+	));
+}
+$ilDB->addPrimaryKey('rep_robj_xvit_codes',array('vgroup_id','booking_id'));
+?>

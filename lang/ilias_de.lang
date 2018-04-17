@@ -119,3 +119,6 @@ mtom_cert#:#Server-Zertifikat
 mtom_cert_info#:#Wenn Sie den vitero Server über eine verschlüsselte Verbindung aufrufen, müssen Sie hier den absoluten Pfad zu der Datei angeben, die das vitero Server-Zertifikat enthällt.
 event_start_date#:#Start
 event_end_date#:#Ende
+form_anonymous_access#:#Zugang ohne vitero-Benutzerkonto
+form_anonymous_access_info#:#Wenn aktiviert, wird ein Link generiert, der es ermöglicht, vitero-Sitzungen im "Öffentlichen Bereich" von anonymen Benutzern zu starten. Alternativ kann dieser direkte Link per e-Mail an Benutzer verschickt werden, die kein ILIAS-Benutzerkonto besitzen, um eine vitero-Sitzung zu starten.
+start_admin_session#:#Vorbereitungs-Sitzung starten

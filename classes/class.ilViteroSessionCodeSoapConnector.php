@@ -10,6 +10,7 @@
 class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 {
 	const CODELENGTH = 16;
+	const ANON_CODELENGTH = 8;
 	const WSDL_NAME = 'sessioncode.wsdl';
 
 	const SESSION_TYPE_PERSONAL_GROUP = 1;
@@ -79,6 +80,37 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
 			throw new ilViteroConnectorException($e->getMessage(),$code);
 		}
+	}
+	
+	public function createBookingSessionCode($a_booking_id, $a_vgroup_id)
+	{
+		try {
+
+			$this->initClient();
+
+			$sc = new stdClass();
+			$sc->sessioncode = new stdClass();
+			$sc->sessioncode->bookingid = $a_booking_id;
+			$sc->sessioncode->codelength = self::ANON_CODELENGTH;
+
+			$GLOBALS['ilLog']->write(__METHOD__.': '. print_r($sc,true));
+
+			$response = $this->getClient()->createBookingSessionCode($sc);
+
+			$booking_code = new ilViteroBookingCode($a_vgroup_id, $a_booking_id);
+			$booking_code->setCode($response->code);
+			$booking_code->save();
+
+			return $response->code;
+		}
+		catch(SoapFault $e)
+		{
+			$code = $this->parseErrorCode($e);
+			$GLOBALS['ilLog']->write(__METHOD__.': Creating group session code  failed with message code: '.$code);
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage(),$code);
+		}
+		
 	}
 
 	public function createVmsSessionCode($a_vuser_id, $a_group_id, ilDateTime $expires)
