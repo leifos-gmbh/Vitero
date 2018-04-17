@@ -637,6 +637,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$this->object->checkInit();
 
 		$table = new ilViteroBookingTableGUI($this,'showContent');
+		$table->setVGroupId($this->object->getVGroupId());
 		$table->setEditable((bool) $ilAccess->checkAccess('write','',$this->object->getRefId()));
 		$table->init();
 		

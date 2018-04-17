@@ -11,10 +11,26 @@ include_once './Services/Table/classes/class.ilTable2GUI.php';
  */
 class ilViteroBookingTableGUI extends ilTable2GUI
 {
+	
+	private $vgroup_id = 0;
 
 	private $editable = false;
 	private $admin_table = false;
 
+	/**
+	 * Set vgroup id
+	 * @param int $a_id
+	 */
+	public function setVGroupId($a_id)
+	{
+		$this->vgroup_id = $a_id;
+	}
+	
+	public function getVGroupId()
+	{
+		return $this->vgroup_id;
+	}
+	
 
 	/**
 	 * Init table
@@ -36,7 +52,8 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 		{
 			$this->setRowTemplate('tpl.booking_list_row.html', substr(ilViteroPlugin::getInstance()->getDirectory(),2));
 			$this->setTitle(ilViteroPlugin::getInstance()->txt('app_table'));
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt','45%');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt','25%');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_code'),'code','20%');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration','15%');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec','15%');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends','15%');
@@ -105,7 +122,30 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 		{
 			return true;
 		}
-
+		
+		
+		if($this->isEditable())
+		{
+			$code = new ilViteroBookingCode($this->getVGroupId(),$a_set['id']);
+			if($code->exists())
+			{
+				$this->tpl->setCurrentBlock('has_code');
+				$this->tpl->setVariable('CODE', $code->getCode());
+				$this->tpl->setVariable(
+					'LINK_DIRECT_LINK',
+					ilViteroSettings::getInstance()->getWebstartUrl().'?sessionCode='.$code->getCode()
+				);
+				$this->tpl->setVariable(
+					'TXT_DIRECT_LINK',
+					ilViteroPlugin::getInstance()->txt('direct_link_name')
+				);
+				$this->tpl->parseCurrentBlock();
+			}
+			else
+			{
+				$this->tpl->touchBlock('has_code');
+			}
+		}
 
 		include_once './Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php';
 		$list = new ilAdvancedSelectionListGUI();

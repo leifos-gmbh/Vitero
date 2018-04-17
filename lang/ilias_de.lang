@@ -122,3 +122,5 @@ event_end_date#:#Ende
 form_anonymous_access#:#Zugang ohne vitero-Benutzerkonto
 form_anonymous_access_info#:#Wenn aktiviert, wird ein Link generiert, der es ermöglicht, vitero-Sitzungen im "Öffentlichen Bereich" von anonymen Benutzern zu starten. Alternativ kann dieser direkte Link per e-Mail an Benutzer verschickt werden, die kein ILIAS-Benutzerkonto besitzen, um eine vitero-Sitzung zu starten.
 start_admin_session#:#Vorbereitungs-Sitzung starten
+app_tbl_col_code#:#Sitzungscode (anonym)
+direct_link_name#:#Link für Direktzugriff
