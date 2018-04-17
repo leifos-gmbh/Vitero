@@ -222,16 +222,24 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 * Init checkbox for anonymous access
 	 * @param ilPropertyFormGUI $form
 	 */
-	protected function initFormAnonymousAccess(ilPropertyFormGUI $form)
+	protected function initFormAnonymousAccess(ilPropertyFormGUI $form, $a_booking_id = 0)
 	{
 		$anon = new ilCheckboxInputGUI(
 			ilViteroPlugin::getInstance()->txt('form_anonymous_access'),
 			'anonymous_access'
 		);
+		$anon->setValue(1);
 		$anon->setInfo(
 			ilViteroPlugin::getInstance()->txt('form_anonymous_access_info')
 		);
-		$anon->setChecked(false);
+		if($a_booking_id)
+		{
+			$booking_info = new ilViteroBookingCode(
+				$this->object->getVGroupId(),
+				$a_booking_id
+			);
+			$anon->setChecked($booking_info->exists());
+		}
 		$form->addItem($anon);
 		return $form;
 	}
@@ -1614,6 +1622,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$form->getItemByPostVar('buffer_after')->setValue($booking->booking->endbuffer);
 		}
 
+		$this->initFormAnonymousAccess($form, $booking->booking->bookingid);
 
 		return $form;
 	}
@@ -1670,6 +1679,42 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 			$room->setStart($start);
 			$room->setEnd($end);
+		}
+		
+		// handle update of anonymous access
+		$code = new ilViteroBookingCode(
+			$this->object->getVGroupId(),
+			(int) $_REQUEST['bookid']
+		);
+		
+		$code_checked = (int) $_POST['anonymous_access'];
+		
+		// delete code if
+		if(!$code_checked && $code->exists())
+		{
+			try {
+				$con = new ilViteroSessionCodeSoapConnector();
+				$con->deleteSessionCodes([(int) $_REQUEST['bookid']]);
+				$code->delete();
+			} 
+			catch (ilViteroConnectorException $e) {
+				ilUtil::sendFailure($e->getViteroMessage(),true);
+				$form->setValuesByPost();
+				$GLOBALS['tpl']->setContent($form->getHTML());
+			}
+		}
+		// add code if
+		elseif($code_checked && !$code->exists())
+		{
+			try {
+				$session = new ilViteroSessionCodeSoapConnector();
+				$session->createBookingSessionCode((int) $_REQUEST['bookid'], $this->object->getVGroupId());
+			} 
+			catch (ilViteroConnectorException $e) {
+				ilUtil::sendFailure($e->getViteroMessage(),true);
+				$form->setValuesByPost();
+				$GLOBALS['tpl']->setContent($form->getHTML());
+			}
 		}
 
 		try {
