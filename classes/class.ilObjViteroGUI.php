@@ -834,7 +834,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function startSession($a_is_admin_session = false)
 	{
-		global $ilDB, $ilUser, $ilCtrl, $ilAccess;
+		global $DIC, $ilCtrl, $ilAccess;
+		$ilUser = $DIC->user();
 
 		// Handle deleted accounts
 		ilObjVitero::handleDeletedUsers();
@@ -905,6 +906,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 					$this->object->getVGroupId(),
 					$dur
 				);
+			}
+			elseif($ilUser->getId() == ANONYMOUS_USER_ID)
+			{
+				$booking_code = new ilViteroBookingCode(
+					$this->object->getVGroupId(),
+					(int) $_GET['bid']
+				);
+				$code = $booking_code->getCode();
 			}
 			else
 			{
