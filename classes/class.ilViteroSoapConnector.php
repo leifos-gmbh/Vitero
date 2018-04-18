@@ -20,13 +20,27 @@ abstract class ilViteroSoapConnector
 
 	private $client = null;
 
+	private $logger = null;
+
 	/**
 	 * Get instance
 	 */
 	public function __construct()
 	{
+		global $DIC;
+
+		$this->logger = $DIC->logger()->xvit();
+
 		$this->plugin = ilViteroPlugin::getInstance();
 		$this->settings = ilViteroSettings::getInstance();
+	}
+
+	/**
+	 * @return ilLogger $logger
+	 */
+	protected function getLogger()
+	{
+		return $this->logger;
 	}
 
 	/**
@@ -77,7 +91,9 @@ abstract class ilViteroSoapConnector
 					'cache_wsdl' => 0,
 					'trace' => 1,
 					'exceptions' => true,
-					'classmap'
+					'classmap' => [
+						'phonetype' => 'ilViteroPhone'
+					]
 				)
 			);
 			$this->client->__setSoapHeaders(

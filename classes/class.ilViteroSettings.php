@@ -6,6 +6,10 @@
  */
 class ilViteroSettings
 {
+	const PHONE_CONFERENCE = 1;
+	const PHONE_DIAL_OUT = 2;
+	const PHONE_DIAL_OUT_PART = 3;
+
 	private static $instance = null;
 	
 	private $storage = null;

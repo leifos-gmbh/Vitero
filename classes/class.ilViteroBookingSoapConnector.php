@@ -30,6 +30,8 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 			$booking->groupid = $a_group_id;
 			$booking->roomsize = $room->getRoomSize();
 
+			$booking->phone = $room->getPhone();
+
 			$booking->ignorefaults = false;
 			$booking->cafe = $room->isCafe();
 
@@ -55,6 +57,8 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 
 			$booking->timezone = self::WS_TIMEZONE;
 
+			$booking->phone = $room->getPhone();
+
 			$container = new stdClass();
 			$container->booking = $booking;
 
@@ -74,10 +78,15 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
+	/**
+	 * Update booking
+	 * @param ilViteroRoom $room
+	 * @param $a_group_id
+	 * @throws ilViteroConnectorException
+	 */
 	public function updateBooking(ilViteroRoom $room, $a_group_id)
 	{
 		try {
-
 			$this->initClient();
 
 			// Wrap into single group object
@@ -98,20 +107,18 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 
 			$booking->startbuffer = $room->getBufferBefore();
 			$booking->endbuffer = $room->getBufferAfter();
-			#$booking->timezone = self::WS_TIMEZONE;
 
 			$this->getClient()->updateBooking($booking);
+			$this->getLogger()->dump($booking,ilLogLevel::DEBUG);
+			$this->getLogger()->dump($this->getClient()->__getLastRequest(), ilLogLevel::DEBUG);
+			$this->getLogger()->dump($this->getClient()->__getLastResponse(), ilLogLevel::DEBUG);
 
-
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			$GLOBALS['ilLog']->write(__METHOD__.': Last response: '.$this->getClient()->__getLastResponse());
 		}
 		catch(SoapFault $e)
 		{
 			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->logStack();
-			$GLOBALS['ilLog']->write(__METHOD__.': Update vitero group failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			$this->getLogger()->logStack();
+			$this->getLogger()->warning('Update vitero booking failed with message code: '.$code);
 			throw new ilViteroConnectorException($e->getMessage(),$code);
 		}
 
@@ -230,7 +237,8 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 			$req->timezone = self::WS_TIMEZONE;
 
 			$ret = $this->getClient()->getBookingById($req);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			$this->getLogger()->dump($ret,ilLogLevel::DEBUG);
+			$this->getLogger()->debug('Last request: ' . $this->getClient()->__getLastRequest());
 
 			return $ret;
 		}

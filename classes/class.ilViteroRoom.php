@@ -30,6 +30,11 @@ class ilViteroRoom
 
 	private $roomsize = 20;
 
+	/**
+	 * @var ilViteroPhone
+	 */
+	private $phone = null;
+
 	public function setStart($a_start)
 	{
 		$this->start = $a_start;
@@ -138,5 +143,20 @@ class ilViteroRoom
 	{
 		$this->bookingid = $a_id;
 	}
+
+	/**
+	 * @param ilViteroPhone $phone
+	 */
+	public function setPhone(ilViteroPhone $phone) {
+		$this->phone = $phone;
+	}
+
+	/**
+	 * @return ilViteroPhone
+	 */
+	public function getPhone() {
+		return $this->phone;
+	}
+
 }
 ?>

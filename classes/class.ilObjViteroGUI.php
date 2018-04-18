@@ -211,9 +211,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		$this->initFormTimeBuffer($form);
-		$this->initFormRoomSize($form);
-		
+		$this->initFormPhone($form);
 		$this->initFormAnonymousAccess($form);
+		$this->initFormRoomSize($form);
+		//$this->initFormRecorder($form);
+		
 
 		return $form;
 	}
@@ -325,6 +327,65 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 	}
 
+	/**
+	 * @param ilPropertyFormGUI $form
+	 * @return bool
+	 */
+	protected function initFormPhone(ilPropertyFormGUI $form)
+	{
+		if(!ilViteroSettings::getInstance()->arePhoneOptionsEnabled())
+		{
+			return false;
+		}
+
+
+
+		// phone setting
+		$phone = new ilCheckboxInputGUI(
+			ilViteroPlugin::getInstance()->txt('form_phone'),
+			'phone'
+		);
+		$phone->setInfo(ilViteroPlugin::getInstance()->txt('form_phone_info'));
+		$phone->setValue(1);
+
+		$phone_group = new ilCheckboxGroupInputGUI(
+			'',
+			'phone_options'
+		);
+		$phone_group->setRequired(true);
+
+		// conference
+		$conference = new ilCheckboxOption(
+			ilViteroPlugin::getInstance()->txt('form_phone_conference'),
+			ilViteroSettings::PHONE_CONFERENCE,
+			ilViteroPlugin::getInstance()->txt('form_phone_conference_info')
+		);
+
+		$phone_group->addOption($conference);
+
+		// dial out
+		$dial_out = new ilCheckboxOption(
+			ilViteroPlugin::getInstance()->txt('form_phone_dial_out'),
+			ilViteroSettings::PHONE_DIAL_OUT,
+			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_info')
+		);
+		$phone_group->addOption($dial_out);
+
+		$dial_out_phone_part = new ilCheckboxOption(
+			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part'),
+			ilViteroSettings::PHONE_DIAL_OUT_PART,
+			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part_info')
+		);
+		$phone_group->addOption($dial_out_phone_part);
+		$phone->addSubItem($phone_group);
+		$form->addItem($phone);
+	}
+
+	/**
+	 * Init time buffer settings
+	 * @param ilPropertyFormGUI $form
+	 * @return bool
+	 */
 	protected function initFormTimeBuffer(ilPropertyFormGUI $form)
 	{
 		$tbuffer = new ilNonEditableValueGUI(
@@ -444,6 +505,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$room = new ilViteroRoom();
 		$room->setRoomSize($form->getInput('room_size'));
+
+		$phone = new ilViteroPhone();
+		$phone->initFromForm($form);
+		$room->setPhone($phone);
+
+
 		if($settings->isCafeEnabled() and $settings->isStandardRoomEnabled())
 		{
 			if($form->getInput('atype') == ilViteroRoom::TYPE_CAFE)
@@ -1477,9 +1544,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		$this->initFormTimeBuffer($form);
-		$this->initFormRoomSize($form,$a_create);
-		
+
+		$this->initFormPhone($form);
 		$this->initFormAnonymousAccess($form);
+		$this->initFormRoomSize($form,$a_create);
 
 		return $form;
 	}
@@ -1518,6 +1586,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$settings = ilViteroSettings::getInstance();
 
 		$room = new ilViteroRoom();
+
+		$phone = new ilViteroPhone();
+		$phone->initFromForm($form);
+		$room->setPhone($phone);
 		$room->setRoomSize($form->getInput('room_size'));
 
 		if($settings->isCafeEnabled() and $settings->isStandardRoomEnabled())
@@ -1579,6 +1651,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	}
 
 
+	/**
+	 * @param $booking
+	 * @return ilPropertyFormGUI
+	 */
 	protected function initUpdateBookingForm($booking)
 	{
 		global $lng;
@@ -1621,7 +1697,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$form->getItemByPostVar('buffer_before')->setValue($booking->booking->startbuffer);
 			$form->getItemByPostVar('buffer_after')->setValue($booking->booking->endbuffer);
 		}
-
 		$this->initFormAnonymousAccess($form, $booking->booking->bookingid);
 
 		return $form;
@@ -1720,6 +1795,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		try {
 
 			$con = new ilViteroBookingSoapConnector();
+
 			$con->updateBooking($room, $this->object->getVGroupId());
 			ilUtil::sendSuccess($GLOBALS['lng']->txt('settings_saved'), true);
 			$this->ctrl->redirect($this,'showContent');

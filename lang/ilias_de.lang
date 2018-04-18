@@ -130,3 +130,11 @@ settings_mobile#:#Zugriff über mobile Endgeräte
 settings_mobile_info#:#Wenn aktiviert, kann optional für alle Buchungen die Option "Zugriff über mobile Endgeräte erlauben" aktiviert werden.
 settings_recorder#:#Sitzungsaufnahmen
 settings_recorder_info#:#Wenn aktiviert, kann optional für alle Buchungen die Option "Sitzungsaufnahmen aktivieren" ausgewählt werden.
+form_phone#:#Telefoneinwahl ermöglichen
+form_phone_info#:#Telefoneinwahl ermöglichen (es entstehen zusätzliche Kosten).
+form_phone_conference#:#Telefoneinwahl direkt anbieten
+form_phone_conference_info#:#Die Einwahldaten werden sofort beim Betreten des Raumes angezeigt.
+form_phone_dial_out#:#Dial Out
+form_phone_dial_out_info#:#Teilnehmer können sich auch anrufen lassen.
+form_phone_dial_out_part#:#Teilnehmer per Telefon dazuschalten
+form_phone_dial_out_part_info#:#Wenn aktiviert, können Teilnehmer per Telefon dazugeschaltet werden.
