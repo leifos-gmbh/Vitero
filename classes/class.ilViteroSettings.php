@@ -23,6 +23,9 @@ class ilViteroSettings
 	private $user_prefix = 'il_';
 	private $avatar = 0;
 	private $mtom_cert = '';
+	private $phone_enabled = false;
+	private $mobile_access_enabled = false;
+	private $session_recorder = false;
 
 	private $grace_period_before = 15;
 	private $grace_period_after = 15;
@@ -211,6 +214,9 @@ class ilViteroSettings
 	}
 
 
+	/**
+	 * Save settings
+	 */
 	public function save()
 	{
 		$this->getStorage()->set('server', $this->getServerUrl());
@@ -227,8 +233,15 @@ class ilViteroSettings
 		$this->getStorage()->set('grace_period_after',$this->getStandardGracePeriodAfter());
 		$this->getStorage()->set('avatar',(int) $this->isAvatarEnabled());
 		$this->getStorage()->set('mtom_cert',$this->getMTOMCert());
+		$this->getStorage()->set('phone',(int) $this->arePhoneOptionsEnabled());
+		$this->getStorage()->set('mobile', (int) $this->isMobileAccessEnabled());
+		$this->getStorage()->set('recorder', (int) $this->isSessionRecorderEnabled());
+
 	}
-	
+
+	/**
+	 * Read settings
+	 */
 	protected function read()
 	{
 		$this->setServerUrl($this->getStorage()->get('server', $this->url));
@@ -237,7 +250,7 @@ class ilViteroSettings
 		$this->setCustomer($this->getStorage()->get('customer', $this->customer));
 		$this->useLdap($this->getStorage()->get('ldap', $this->use_ldap));
 		$this->enableCafe($this->getStorage()->get('cafe', $this->enable_cafe));
-		$this->enableContentAdministration($this->getStorage()->get('content'),$this->enable_content);
+		$this->enableContentAdministration($this->getStorage()->get('content',$this->enable_content));
 		$this->enableStandardRoom($this->getStorage()->get('std_room', $this->enable_standard_room));
 		$this->setWebstartUrl($this->getStorage()->get('webstart',$this->webstart));
 		$this->setUserPrefix($this->getStorage()->get('uprefix',$this->user_prefix));
@@ -245,6 +258,57 @@ class ilViteroSettings
 		$this->setStandardGracePeriodAfter($this->getStorage()->get('grace_period_after', $this->grace_period_after));
 		$this->enableAvatar($this->getStorage()->get('avatar', $this->avatar));
 		$this->setMTOMCert($this->getStorage()->get('mtom_cert',$this->mtom_cert));
+		$this->enablePhoneOptions($this->getStorage()->get('phone',$this->arePhoneOptionsEnabled()));
+		$this->enableMobileAccess($this->getStorage()->get('mobile',$this->isMobileAccessEnabled()));
+		$this->enableSessionRecorder($this->getStorage()->get('recorder',$this->isSessionRecorderEnabled()));
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSessionRecorderEnabled()
+	{
+		return $this->session_recorder;
+	}
+
+	/**
+	 * @param bool $a_session_recorder
+	 */
+	public function enableSessionRecorder($a_session_recorder)
+	{
+		$this->session_recorder = $a_session_recorder;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isMobileAccessEnabled()
+	{
+		return $this->mobile_access_enabled;
+	}
+
+	/**
+	 * @param bool $a_mobile_access
+	 */
+	public function enableMobileAccess($a_mobile_access)
+	{
+		$this->mobile_access_enabled = $a_mobile_access;
+	}
+
+	/**
+	 * @param bool $a_phone_enabled
+	 */
+	public function enablePhoneOptions($a_phone_enabled)
+	{
+		$this->phone_enabled = $a_phone_enabled;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function arePhoneOptionsEnabled()
+	{
+		return $this->phone_enabled;
 	}
 }
 ?>

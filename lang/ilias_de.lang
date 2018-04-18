@@ -124,3 +124,9 @@ form_anonymous_access_info#:#Wenn aktiviert, wird ein Link generiert, der es erm
 start_admin_session#:#Vorbereitungs-Sitzung starten
 app_tbl_col_code#:#Sitzungscode (anonym)
 direct_link_name#:#Link für Direktzugriff
+settings_phone#:#Telefoneinwahl ermöglichen
+settings_phone_info#:#Wenn aktiviert, können für alle Buchungen Optionen zur Telefonauswahl (Direkte Telefonauswahl, Dial Out und/oder Teilnehmer per Telefon dazuschalten) aktiviert werden.
+settings_mobile#:#Zugriff über mobile Endgeräte
+settings_mobile_info#:#Wenn aktiviert, kann optional für alle Buchungen die Option "Zugriff über mobile Endgeräte erlauben" aktiviert werden.
+settings_recorder#:#Sitzungsaufnahmen
+settings_recorder_info#:#Wenn aktiviert, kann optional für alle Buchungen die Option "Sitzungsaufnahmen aktivieren" ausgewählt werden.

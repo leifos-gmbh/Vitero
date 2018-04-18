@@ -64,12 +64,12 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 	/**
 	 * Init configuration form.
 	 *
-	 * @return object form object
+	 * @return ilPropertyFormGUI form
 	 */
 	public function initConfigurationForm()
 	{
 		global $lng, $ilCtrl;
-		
+
 		$pl = $this->getPluginObject();
 
 		$this->getPluginObject()->includeClass('class.ilViteroSettings.php');
@@ -82,7 +82,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$form->setFormAction($ilCtrl->getFormAction($this));
 		$form->addCommandButton('save', $lng->txt('save'));
 		$form->setShowTopButtons(false);
-	
+
 		// Server url
 		$uri = new ilTextInputGUI(
 			$this->getPluginObject()->txt('server_uri'),
@@ -157,16 +157,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$cafe->setValue(1);
 		$cafe->setChecked($settings->isCafeEnabled());
 		$form->addItem($cafe);
-		
-		// content
-		$content = new ilCheckboxInputGUI(
-			$this->getPluginObject()->txt('content_admin'),
-			'content'
-		);
-		$content->setInfo($this->getPluginObject()->txt('content_admin_info'));
-		$content->setValue(1);
-		$content->setChecked($settings->isContentAdministrationEnabled());
-		$form->addItem($content);
 
 		// Standard room
 		$standard = new ilCheckboxInputGUI(
@@ -179,6 +169,54 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$standard->setValue(1);
 		$standard->setChecked($settings->isStandardRoomEnabled());
 		$form->addItem($standard);
+
+		// phone settings
+		$phone = new ilCheckboxInputGUI(
+			$this->getPluginObject()->txt('settings_phone'),
+			'phone'
+		);
+		$phone->setInfo(
+			$this->getPluginObject()->txt('settings_phone_info')
+		);
+		$phone->setValue(1);
+		$phone->setChecked($settings->arePhoneOptionsEnabled());
+		$form->addItem($phone);
+
+		// mobile access
+		$mobile = new ilCheckboxInputGUI(
+			$this->getPluginObject()->txt('settings_mobile'),
+			'mobile'
+		);
+		$mobile->setInfo(
+			$this->getPluginObject()->txt('settings_mobile_info')
+		);
+		$mobile->setValue(1);
+		$mobile->setChecked($settings->isMobileAccessEnabled());
+		$form->addItem($mobile);
+
+		// recorder access
+		$recorder = new ilCheckboxInputGUI(
+			$this->getPluginObject()->txt('settings_recorder'),
+			'recorder'
+		);
+		$recorder->setInfo(
+			$this->getPluginObject()->txt('settings_recorder_info')
+		);
+		$recorder->setValue(1);
+		$recorder->setChecked($settings->isSessionRecorderEnabled());
+		$form->addItem($recorder);
+
+
+		// content
+		$content = new ilCheckboxInputGUI(
+			$this->getPluginObject()->txt('content_admin'),
+			'content'
+		);
+		$content->setInfo($this->getPluginObject()->txt('content_admin_info'));
+		$content->setValue(1);
+		$content->setChecked($settings->isContentAdministrationEnabled());
+		$form->addItem($content);
+
 
 		// ldap
 		$ldap = new ilCheckboxInputGUI(
@@ -212,7 +250,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$ava->setDisabled(true);
 			$ava->setAlert($this->getPluginObject()->txt('avatar_warning'));
 		}
-		
+
 		$cert = new ilTextInputGUI($this->getPluginObject()->txt('mtom_cert'),'mtom_cert');
 		$cert->setValue($settings->getMTOMCert());
 		$cert->setSize(100);
@@ -256,7 +294,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$form->addItem($gpa);
 		return $form;
 	}
-	
+
 	/**
 	 * Save form input (currently does not save anything to db)
 	 *
@@ -268,7 +306,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$ilTabs->activateTab('settings');
 
 		$pl = $this->getPluginObject();
-		
+
 		$form = $this->initConfigurationForm();
 		if($form->checkInput())
 		{
@@ -291,6 +329,9 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$settings->setStandardGracePeriodAfter($form->getInput('grace_period_after'));
 			$settings->enableAvatar((int) $form->getInput('avatar'));
 			$settings->setMTOMCert($form->getInput('mtom_cert'));
+			$settings->enablePhoneOptions($form->getInput('phone'));
+			$settings->enableMobileAccess($form->getInput('mobile'));
+			$settings->enableSessionRecorder($form->getInput('recorder'));
 			$settings->save();
 
 			ilUtil::sendSuccess($lng->txt('settings_saved'), true);
