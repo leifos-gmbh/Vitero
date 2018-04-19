@@ -31,6 +31,7 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 			$booking->roomsize = $room->getRoomSize();
 
 			$booking->phone = $room->getPhone();
+			$booking->capture = $room->isRecorderEnabled();
 
 			$booking->ignorefaults = false;
 			$booking->cafe = $room->isCafe();

@@ -236,6 +236,49 @@ class ilObjVitero extends ilObjectPlugin
 		}
 	}
 
+	/**
+	 * Handle mobile access
+	 * @param bool $a_is_enabled
+	 * @param int $a_booking_id
+	 */
+	public function handleMobileAccess($a_is_enabled, $a_booking_id)
+	{
+		ilLoggerFactory::getLogger('xvit')->debug('Handling mobile access settings.');
+		ilLoggerFactory::getLogger('xvit')->dump($a_is_enabled);
+
+		if(!ilViteroSettings::getInstance()->isMobileAccessEnabled()) {
+			ilLoggerFactory::getLogger('xvit')->debug('Disabled by global configuration.');
+			return false;
+		}
+
+		$mobile_access = new ilViteroBookingWebCode(
+			$this->getVGroupId(),
+			$a_booking_id
+		);
+		ilLoggerFactory::getLogger('xvit')->dump($mobile_access->exists());
+		if($mobile_access->exists() && !$a_is_enabled)
+		{
+			// delete session code manually
+			$mobile_access->delete();
+		}
+		elseif(!$mobile_access->exists() && $a_is_enabled)
+		{
+			// add session code
+			try {
+				$session_connect = new ilViteroSessionCodeSoapConnector();
+				$session_connect->createWebAccessSessionCode(
+					$this->getVGroupId(),
+					$a_booking_id
+				);
+			}
+			catch(ilViteroConnectorException $exception) {
+				ilLoggerFactory::getLogger('xvit')->error('Creating webaccess session code failed with message: ' . $exception->getMessage());
+				ilUtil::sendFailure('Creating webaccess session code failed with message: ' . $exception->getMessage(),true);
+			}
+		}
+		return true;
+	}
+
 	public function addParticipants($a_user_ids, $a_type)
 	{
 		global $rbacadmin;

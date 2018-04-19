@@ -212,12 +212,61 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$this->initFormTimeBuffer($form);
 		$this->initFormPhone($form);
+		$this->initFormRecorder($form);
+		$this->initFormMobileAccess();
 		$this->initFormAnonymousAccess($form);
 		$this->initFormRoomSize($form);
-		//$this->initFormRecorder($form);
-		
+
 
 		return $form;
+	}
+
+	/**
+	 * @param ilPropertyFormGUI $form
+	 */
+	protected function initFormMobileAccess(ilPropertyFormGUI $form, $a_booking_id = 0)
+	{
+		if(!ilViteroSettings::getInstance()->isMobileAccessEnabled())
+		{
+			return false;
+		}
+
+		$mobile = new ilCheckboxInputGUI(
+			$this->getPlugin()->txt('form_mobile'),
+			'mobile'
+		);
+		$mobile->setInfo($this->getPlugin()->txt('form_mobile_info'));
+		$mobile->setValue(1);
+
+		$web_access = new ilViteroBookingWebCode($this->object->getVGroupId(),$a_booking_id);
+		if($web_access->exists())
+		{
+			$mobile->setChecked(true);
+		}
+		$form->addItem($mobile);
+	}
+
+	/**
+	 * @param ilPropertyFormGUI $form
+	 * @return bool
+	 */
+	protected function initFormRecorder(ilPropertyFormGUI $form)
+	{
+		if(!ilViteroSettings::getInstance()->isSessionRecorderEnabled())
+		{
+			return false;
+		}
+
+		$recorder = new ilCheckboxInputGUI(
+			$this->getPlugin()->txt('form_recorder'),
+			'recorder'
+		);
+		$recorder->setInfo(
+			$this->getPlugin()->txt('form_recorder_info')
+		);
+		$recorder->setValue(1);
+		$form->addItem($recorder);
+		return true;
 	}
 	
 	/**
@@ -505,6 +554,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$room = new ilViteroRoom();
 		$room->setRoomSize($form->getInput('room_size'));
+		$room->enableRecorder($form->getInput('recorder'));
 
 		$phone = new ilViteroPhone();
 		$phone->initFromForm($form);
@@ -1464,7 +1514,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 	}
 
-	
+	/**
+	 * @param bool $a_create
+	 * @return ilPropertyFormGUI
+	 */
 	protected function initAppointmentCreationForm($a_create = true)
 	{
 		global $lng;
@@ -1546,6 +1599,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$this->initFormTimeBuffer($form);
 
 		$this->initFormPhone($form);
+		$this->initFormRecorder($form);
+		$this->initFormMobileAccess($form);
 		$this->initFormAnonymousAccess($form);
 		$this->initFormRoomSize($form,$a_create);
 
@@ -1586,6 +1641,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$settings = ilViteroSettings::getInstance();
 
 		$room = new ilViteroRoom();
+		$room->enableRecorder($form->getInput('recorder'));
 
 		$phone = new ilViteroPhone();
 		$phone->initFromForm($form);
@@ -1697,11 +1753,16 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$form->getItemByPostVar('buffer_before')->setValue($booking->booking->startbuffer);
 			$form->getItemByPostVar('buffer_after')->setValue($booking->booking->endbuffer);
 		}
+		$this->initFormMobileAccess($form, $booking->booking->bookingid);
 		$this->initFormAnonymousAccess($form, $booking->booking->bookingid);
 
 		return $form;
 	}
 
+	/**
+	 * Update a single booking
+	 * @return bool
+	 */
 	protected function updateBooking()
 	{
 		global $ilTabs;
@@ -1755,7 +1816,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$room->setStart($start);
 			$room->setEnd($end);
 		}
-		
+
+		$this->object->handleMobileAccess(
+			(bool) $form->getInput('mobile'),
+			(int) $_REQUEST['bookid']
+		);
+
 		// handle update of anonymous access
 		$code = new ilViteroBookingCode(
 			$this->object->getVGroupId(),

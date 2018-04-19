@@ -25,6 +25,8 @@ class ilViteroRoom
 	private $buffer_before = 0;
 	private $buffer_after = 0;
 
+	private $capture = false;
+
 	private $rep = self::REC_ONCE;
 	private $rep_date = null;
 
@@ -156,6 +158,20 @@ class ilViteroRoom
 	 */
 	public function getPhone() {
 		return $this->phone;
+	}
+
+	/**
+	 * @param bool $a_status
+	 */
+	public function enableRecorder($a_status) {
+		$this->capture = $a_status;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isRecorderEnabled() {
+		return $this->capture;
 	}
 
 }

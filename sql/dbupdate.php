@@ -229,3 +229,40 @@ if(!$ilDB->tableExists('rep_robj_xvit_codes'))
 }
 $ilDB->addPrimaryKey('rep_robj_xvit_codes',array('vgroup_id','booking_id'));
 ?>
+
+<#11>
+<?php
+if(!$ilDB->tableExists('rep_robj_xvit_webcodes'))
+{
+	$ilDB->createTable('rep_robj_xvit_webcodes',array(
+		'vgroup_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'booking_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'webcode'	=> array(
+			'type'	=> 'text',
+			'length' => 8,
+			'notnull' => FALSE,
+		),
+		'browserurl'	=> array(
+			'type'	=> 'text',
+			'length' => 512,
+			'notnull' => FALSE,
+		),
+		'appurl'	=> array(
+			'type'	=> 'text',
+			'length' => 512,
+			'notnull' => FALSE,
+		),
+
+	));
+}
+$ilDB->addPrimaryKey('rep_robj_xvit_webcodes',array('vgroup_id','booking_id'));
+?>
+

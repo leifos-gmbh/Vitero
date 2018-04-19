@@ -17,6 +17,13 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 	const SESSION_TYPE_PERSONAL_BOOKING = 2;
 	const SESSION_TYPE_VMS = 3;
 
+	/**
+	 * @param $a_user_id
+	 * @param $a_group_id
+	 * @param ilDateTime $expires
+	 * @return mixed
+	 * @throws ilViteroConnectorException
+	 */
 	public function createPersonalGroupSessionCode($a_user_id, $a_group_id, ilDateTime $expires)
 	{
 		try {
@@ -49,6 +56,13 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
+	/**
+	 * @param $a_vuser_id
+	 * @param $a_booking_id
+	 * @param ilDateTime $expires
+	 * @return mixed
+	 * @throws ilViteroConnectorException
+	 */
 	public function createPersonalBookingSessionCode($a_vuser_id, $a_booking_id, ilDateTime $expires)
 	{
 
@@ -81,7 +95,13 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 			throw new ilViteroConnectorException($e->getMessage(),$code);
 		}
 	}
-	
+
+	/**
+	 * @param $a_booking_id
+	 * @param $a_vgroup_id
+	 * @return mixed
+	 * @throws ilViteroConnectorException
+	 */
 	public function createBookingSessionCode($a_booking_id, $a_vgroup_id)
 	{
 		try {
@@ -113,6 +133,13 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 		
 	}
 
+	/**
+	 * @param $a_vuser_id
+	 * @param $a_group_id
+	 * @param ilDateTime $expires
+	 * @return mixed
+	 * @throws ilViteroConnectorException
+	 */
 	public function createVmsSessionCode($a_vuser_id, $a_group_id, ilDateTime $expires)
 	{
 
@@ -145,6 +172,44 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 
 		}
 	}
+
+	/**
+	 * @param $a_vgroup_id
+	 * @param $a_booking_id
+	 * @throws ilViteroConnectorException
+	 */
+	public function createWebAccessSessionCode($a_vgroup_id, $a_booking_id)
+	{
+		$this->getLogger()->debug('Creating new webaccess session code.');
+
+		try {
+			$this->initClient();
+			$req = new stdClass();
+			$req->sessioncode = new stdClass();
+			$req->sessioncode->bookingid = $a_booking_id;
+
+			$resp = $this->getClient()->createWebAccessSessionCode($req);
+
+			$webcode = new ilViteroBookingWebCode(
+				$a_vgroup_id,
+				$a_booking_id
+			);
+			$webcode->setWebCode($resp->code);
+			$webcode->setBrowserUrl($resp->browserurl);
+			$webcode->setAppUrl($resp->appurl);
+			$webcode->save();
+		}
+		catch(SoapFault $e)  {
+			$code = $this->parseErrorCode($e);
+			$GLOBALS['ilLog']->write(__METHOD__.': Creating webaccess session code failed with message: '.$code);
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastResponse());
+			throw new ilViteroConnectorException($e->getMessage(),$code);
+
+		}
+
+	}
+
 
 	/**
 	 * @param string[] $a_session_codes
@@ -190,7 +255,9 @@ class ilViteroSessionCodeSoapConnector extends ilViteroSoapConnector
 	}
 
 
-
+	/**
+	 * @return string
+	 */
 	protected function getWsdlName()
 	{
 		return self::WSDL_NAME;
