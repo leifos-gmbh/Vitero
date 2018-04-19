@@ -140,17 +140,23 @@ class ilViteroBookingWebCode
 			')';
 		$this->db->manipulate($query);
 	}
-	
+
+	/**
+	 * @throws ilDatabaseException
+	 */
 	private function read()
 	{
 		$query = 'SELECT * FROM rep_robj_xvit_webcodes '.
 			'WHERE vgroup_id = '.$this->db->quote($this->getVgroupId(), 'integer').' '.
 			'AND booking_id = '. $this->db->quote($this->getBookingId(), 'integer');
 		$res = $this->db->query($query);
+
+		ilLoggerFactory::getLogger('xvit')->info($query);
+
 		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			$this->exists = true;
-			$this->webcode = $row->webode;
+			$this->webcode = $row->webcode;
 			$this->browserurl = $row->browserurl;
 			$this->appurl = $row->appurl;
 		}

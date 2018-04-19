@@ -43,21 +43,24 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 		{
 			$this->setRowTemplate('tpl.booking_list_row.html', substr(ilViteroPlugin::getInstance()->getDirectory(),2));
 			$this->setTitle(ilViteroPlugin::getInstance()->txt('app_table'));
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt','55%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration','15%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec','15%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends','15%');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends');
 		}
 		else
 		{
 			$this->setRowTemplate('tpl.booking_list_row.html', substr(ilViteroPlugin::getInstance()->getDirectory(),2));
 			$this->setTitle(ilViteroPlugin::getInstance()->txt('app_table'));
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt','25%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_code'),'code','20%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration','15%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec','15%');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends','15%');
-			$this->addColumn($GLOBALS['lng']->txt('actions'),'','10%');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_code'),'code');
+			if(ilViteroSettings::getInstance()->isMobileAccessEnabled()) {
+				$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_webcode'),'webcode');
+			}
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec');
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends');
+			$this->addColumn($GLOBALS['lng']->txt('actions'),'');
 		}
 
 		$this->setDefaultOrderField('startt');
@@ -143,7 +146,24 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 			}
 			else
 			{
-				$this->tpl->touchBlock('has_code');
+				$this->tpl->touchBlock('direct_link');
+			}
+
+			if(ilViteroSettings::getInstance()->isMobileAccessEnabled())
+			{
+				$webcode = new ilViteroBookingWebCode($this->getVGroupId(),$a_set['id']);
+				if($webcode->exists())
+				{
+					$this->tpl->setCurrentBlock('has_webcode');
+					$this->tpl->setVariable('WEBCODE',$webcode->getWebCode());
+					$this->tpl->setVariable('LINK_WEB_LINK',$webcode->getAppUrl());
+					$this->tpl->setVariable('TXT_WEB_LINK', ilViteroPlugin::getInstance()->txt('app_link_name'));
+					$this->tpl->parseCurrentBlock();
+				}
+				else
+				{
+					$this->tpl->touchBlock('web_link');
+				}
 			}
 		}
 

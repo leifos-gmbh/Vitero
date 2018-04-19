@@ -213,7 +213,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$this->initFormTimeBuffer($form);
 		$this->initFormPhone($form);
 		$this->initFormRecorder($form);
-		$this->initFormMobileAccess();
+		$this->initFormMobileAccess($form);
 		$this->initFormAnonymousAccess($form);
 		$this->initFormRoomSize($form);
 
@@ -238,10 +238,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$mobile->setInfo($this->getPlugin()->txt('form_mobile_info'));
 		$mobile->setValue(1);
 
-		$web_access = new ilViteroBookingWebCode($this->object->getVGroupId(),$a_booking_id);
-		if($web_access->exists())
+		if($this->object instanceof ilObjVitero)
 		{
-			$mobile->setChecked(true);
+			$web_access = new ilViteroBookingWebCode($this->object->getVGroupId(),$a_booking_id);
+			if($web_access->exists())
+			{
+				$mobile->setChecked(true);
+			}
 		}
 		$form->addItem($mobile);
 	}

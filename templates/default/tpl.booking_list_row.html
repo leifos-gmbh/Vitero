@@ -8,11 +8,21 @@
 	<!-- BEGIN direct_link -->
 	<td class="std">
 		<!-- BEGIN has_code -->
-		{CODE}<br />
-		<a href="{LINK_DIRECT_LINK}">{TXT_DIRECT_LINK}</a>
+		{CODE}<br /><br />
+		<!-- BEGIN {TXT_DIRECT_LINK}:<br /><br /> -->
+		<input  value="{LINK_DIRECT_LINK}" readonly="readonly" onclick="this.focus();this.select();return false;" type="text" />
 		<!-- END has_code -->
 	</td>
 	<!-- END direct_link -->
+	<!-- BEGIN web_link -->
+	<td class="std">
+		<!-- BEGIN has_webcode -->
+		{WEBCODE}<br /><br />
+		<!-- BEGIN {TXT_DIRECT_LINK}:<br /><br /> -->
+		<input  value="{LINK_WEB_LINK}" readonly="readonly" onclick="this.focus();this.select();return false;" type="text" />
+		<!-- END has_webcode -->
+	</td>
+	<!-- END web_link -->
 	<td class="std">
 		{DURATION}
 	</td>

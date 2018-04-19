@@ -140,3 +140,7 @@ form_phone_dial_out_part#:#Teilnehmer per Telefon dazuschalten
 form_phone_dial_out_part_info#:#Wenn aktiviert, können Teilnehmer per Telefon dazugeschaltet werden.
 form_mobile#:#Zugang mit mobilen Endgeräten
 form_mobile_info#:#Wenn aktiviert, wird ein Zugangscode für mobile Endgeräte generiert.
+form_recorder#:#Aufnahmen
+form_recorder_info#:#Wenn aktiviert, können Sitzungsaufnahmen durchgeführt werden.
+app_tbl_col_webcode#:#Code mobiler Zugriff
+app_link_name#:#Link für mobilen Zugriff
