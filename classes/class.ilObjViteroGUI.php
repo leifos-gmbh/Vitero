@@ -791,8 +791,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 		$tpl->setContent($table->getHTML());
 	}
-	
-	
+
+	/**
+	 * @param $info
+	 */
 	protected function addInfoStartButton($info)
 	{
 		global $DIC, $ilCtrl, $ilUser, $ilAccess;
@@ -808,6 +810,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		// find next booking
 		$booking_id = ilViteroUtils::getOpenRoomBooking($this->object->getVGroupId());
 
+		$info_added_section = false;
 		if($booking_id)
 		{
 			// if user is anonymous, check anonymous access
@@ -837,6 +840,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 					'" style="padding:10px;" /></div>';
 				$info->addSection("");
 				$info->addProperty("", $big_button);
+
+				$info_added_section = true;
 			}
 		}
 		
@@ -847,6 +852,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
 				'<input type="submit" class="submit" name="cmd[startAdminSession]" value="'.ilViteroPlugin::getInstance()->txt('start_admin_session').
 				'" style="padding:10px;" /></div>';
+			if(!$info_added_section) {
+				$info->addSection("");
+			}
 			$info->addProperty("", $big_button);
 		}
 	}
