@@ -23,7 +23,7 @@ class ilViteroPhone
 		if(!$phone_group instanceof ilCheckboxGroupInputGUI) {
 			return false;
 		}
-		$options = $form->getInput('phone_options');
+		$options = (array) $form->getInput('phone_options');
 		$this->phoneconference = in_array(ilViteroSettings::PHONE_CONFERENCE, $options);
 		$this->dialout = in_array(ilViteroSettings::PHONE_DIAL_OUT, $options);
 		$this->dialoutphoneparticipant = in_array(ilViteroSettings::PHONE_DIAL_OUT_PART,$options);
