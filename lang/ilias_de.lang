@@ -138,3 +138,5 @@ form_phone_dial_out#:#Dial Out
 form_phone_dial_out_info#:#Teilnehmer können sich auch anrufen lassen.
 form_phone_dial_out_part#:#Teilnehmer per Telefon dazuschalten
 form_phone_dial_out_part_info#:#Wenn aktiviert, können Teilnehmer per Telefon dazugeschaltet werden.
+form_mobile#:#Zugang mit mobilen Endgeräten
+form_mobile_info#:#Wenn aktiviert, wird ein Zugangscode für mobile Endgeräte generiert.

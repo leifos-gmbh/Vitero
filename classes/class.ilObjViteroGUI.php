@@ -586,7 +586,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		try {
 			$newObj->initVitero($ilUser->getId());
-			$newObj->initAppointment($room,true);
+			$newObj->initAppointment(
+				$room,
+				true,
+				$form->getInput('mobile')
+			);
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);
 		}
 		catch(ilViteroConnectorException $e)
@@ -1671,7 +1675,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		try {
-			$this->object->initAppointment($room, (bool) $form->getItemByPostVar('anonymous_access')->getChecked());
+			$this->object->initAppointment(
+				$room,
+				(bool) $form->getItemByPostVar('anonymous_access')->getChecked(),
+				(bool) $form->getInput('mobile')
+			);
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);
 			$this->ctrl->redirect($this,'showContent');
 			return true;

@@ -217,7 +217,13 @@ class ilObjVitero extends ilObjectPlugin
 		}
 	}
 
-	public function initAppointment(ilViteroRoom $room, $a_anonymous_access = false)
+	/**
+	 * @param ilViteroRoom $room
+	 * @param bool $a_anonymous_access
+	 * @param bool $a_webaccess_codes
+	 * @throws ilViteroConnectorException
+	 */
+	public function initAppointment(ilViteroRoom $room, $a_anonymous_access = false, $a_webaccess_codes = false)
 	{
 		try {
 			$con = new ilViteroBookingSoapConnector();
@@ -227,8 +233,10 @@ class ilObjVitero extends ilObjectPlugin
 				$session = new ilViteroSessionCodeSoapConnector();
 				$session->createBookingSessionCode($booking_id, $this->getVGroupId());
 			}
-			
-			
+			if($a_webaccess_codes)
+			{
+				$this->handleMobileAccess($a_webaccess_codes, $booking_id);
+			}
 		}
 		catch(ilViteroConnectorException $e)
 		{
