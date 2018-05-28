@@ -144,3 +144,9 @@ form_recorder#:#Aufnahmen
 form_recorder_info#:#Wenn aktiviert, können Sitzungsaufnahmen durchgeführt werden.
 app_tbl_col_webcode#:#Code mobiler Zugriff
 app_link_name#:#Link für mobilen Zugriff
+table_phone_conference#:#Direkte Telefoneinwahl
+table_phone_dial_out#:#Dial Out
+table_phone_part#:#Teilnehmer hinzuschalten
+table_phone_active#:#(Aktiv)
+table_phone_inactive#:#(Inaktiv)
+app_tbl_col_phone#:#Telefonieeinstellungen

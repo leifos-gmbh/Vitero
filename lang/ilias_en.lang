@@ -120,3 +120,34 @@ mtom_cert#:#Server Certificate
 mtom_cert_info#:#Enter the absolute path to the vitero server certificate, if you a SSL protected connection to the vitero server.
 event_start_date#:#Start
 event_end_date#:#End
+form_anonymous_access#:#Access without vitero user account.
+form_anonymous_access_info#:#If enabled, a link will be generated to allow "Anonymous users" to access viter-Sessions in the "Public Section".
+start_admin_session#:#Start Admin-Session
+app_tbl_col_code#:#Session code (anonymous)
+direct_link_name#:#Link for direct access
+settings_phone#:#Allow Dial-in
+settings_phone_info#:#If enabled, additional phone settings can be confgured.
+settings_mobile#:#Mobile Access
+settings_mobile_info#:#If enabled, the setting "Allow Mobile Access" is available for all vitero-rooms.
+settings_recorder#:#Session Recordings
+settings_recorder_info#:#If enabled, the setting "Session Recordings" is available for all vitero-rooms.
+form_phone#:#Allow Dial-in
+form_phone_info#:#Allow Dial-In (with additional costs).
+form_phone_conference#:#Show dial-in
+form_phone_conference_info#:#Show dial-in credentials directly when entering a room
+form_phone_dial_out#:#Dial Out
+form_phone_dial_out_info#:#Participants can be called back.
+form_phone_dial_out_part#:#Invite Participants (using a phone)
+form_phone_dial_out_part_info#:#If enabled, participants - using a phone - can be added.
+form_mobile#:#Allow Mobile Access
+form_mobile_info#:#If enabled, a code for mobile access will be generated.
+form_recorder#:#Recordings
+form_recorder_info#:#If enabled, session recordings can be started
+app_tbl_col_webcode#:#Code for Mobile Access
+app_link_name#:#Link for Mobile Access
+table_phone_conference#:#Direct Dial-In
+table_phone_dial_out#:#Dial Out
+table_phone_part#:#Add Participants
+table_phone_active#:#(Active)
+table_phone_inactive#:#(Inactive)
+app_tbl_col_phone#:#Phone Settings
