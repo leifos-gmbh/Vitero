@@ -9,7 +9,7 @@ class ilViteroPhone
 {
 	private $phoneconference = false;
 	private $dialout = false;
-	private $dialoutphoneparticipant = true;
+	private $dialoutphoneparticipant = false;
 
 
 	/**
@@ -27,6 +27,21 @@ class ilViteroPhone
 		$this->phoneconference = in_array(ilViteroSettings::PHONE_CONFERENCE, $options);
 		$this->dialout = in_array(ilViteroSettings::PHONE_DIAL_OUT, $options);
 		$this->dialoutphoneparticipant = in_array(ilViteroSettings::PHONE_DIAL_OUT_PART,$options);
+	}
+
+	public function isConferenceEnabled()
+	{
+		return $this->phoneconference;
+	}
+
+	public function isDialoutEnabled()
+	{
+		return $this->dialout;
+	}
+
+	public function isDialoutParticipantEnabled()
+	{
+		return $this->dialoutphoneparticipant;
 	}
 
 

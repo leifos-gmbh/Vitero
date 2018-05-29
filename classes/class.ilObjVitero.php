@@ -280,8 +280,8 @@ class ilObjVitero extends ilObjectPlugin
 				);
 			}
 			catch(ilViteroConnectorException $exception) {
-				ilLoggerFactory::getLogger('xvit')->error('Creating webaccess session code failed with message: ' . $exception->getMessage());
-				ilUtil::sendFailure('Creating webaccess session code failed with message: ' . $exception->getMessage(),true);
+				ilLoggerFactory::getLogger('xvit')->error('Creating webaccess session code failed with message code: ' . $exception->getCode());
+				ilUtil::sendFailure('Creating webaccess session code failed with message code: ' . $exception->getCode(),true);
 			}
 		}
 		return true;

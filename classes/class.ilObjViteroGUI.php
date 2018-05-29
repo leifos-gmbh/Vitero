@@ -555,6 +555,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$form = $this->initCreateForm('xvit');
 		$form->checkInput();
 
+		//$phone_enabled = $form->getInput('')
+
 		$room = new ilViteroRoom();
 		$room->setRoomSize($form->getInput('room_size'));
 		$room->enableRecorder($form->getInput('recorder'));
@@ -562,6 +564,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$phone = new ilViteroPhone();
 		$phone->initFromForm($form);
 		$room->setPhone($phone);
+
 
 
 		if($settings->isCafeEnabled() and $settings->isStandardRoomEnabled())
@@ -591,7 +594,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$newObj->initVitero($ilUser->getId());
 			$newObj->initAppointment(
 				$room,
-				true,
+				$form->getInput('anonymous_access'),
 				$form->getInput('mobile')
 			);
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);
@@ -1688,7 +1691,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		try {
 			$this->object->initAppointment(
 				$room,
-				(bool) $form->getItemByPostVar('anonymous_access')->getChecked(),
+				(bool) $form->getInput('anonymous_access'),
 				(bool) $form->getInput('mobile')
 			);
 			ilUtil::sendSuccess(ilViteroPlugin::getInstance()->txt('created_vitero'), true);

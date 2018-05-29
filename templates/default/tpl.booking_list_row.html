@@ -5,15 +5,15 @@
 		<br />{OBJ_PATH}
 		<!-- END path_info -->
 	</td>
-	<!-- BEGIN direct_link -->
+	<!-- BEGIN phone -->
 	<td class="std">
-		<!-- BEGIN has_code -->
-		{CODE}<br /><br />
-		<!-- BEGIN {TXT_DIRECT_LINK}:<br /><br /> -->
-		<input  value="{LINK_DIRECT_LINK}" readonly="readonly" onclick="this.focus();this.select();return false;" type="text" />
-		<!-- END has_code -->
+		<ul>
+			<li>{OPTIONA_NAME} {OPTIONA_ACTIVE}</li>
+			<li>{OPTIONB_NAME} {OPTIONB_ACTIVE}</li>
+			<li>{OPTIONC_NAME} {OPTIONC_ACTIVE}</li>
+		</ul>
 	</td>
-	<!-- END direct_link -->
+	<!-- END phone -->
 	<!-- BEGIN web_link -->
 	<td class="std">
 		<!-- BEGIN has_webcode -->
@@ -23,6 +23,15 @@
 		<!-- END has_webcode -->
 	</td>
 	<!-- END web_link -->
+	<!-- BEGIN direct_link -->
+	<td class="std">
+		<!-- BEGIN has_code -->
+		{CODE}<br /><br />
+		<!-- BEGIN {TXT_DIRECT_LINK}:<br /><br /> -->
+		<input  value="{LINK_DIRECT_LINK}" readonly="readonly" onclick="this.focus();this.select();return false;" type="text" />
+		<!-- END has_code -->
+	</td>
+	<!-- END direct_link -->
 	<td class="std">
 		{DURATION}
 	</td>

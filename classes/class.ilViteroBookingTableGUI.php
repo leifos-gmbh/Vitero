@@ -53,10 +53,13 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 			$this->setRowTemplate('tpl.booking_list_row.html', substr(ilViteroPlugin::getInstance()->getDirectory(),2));
 			$this->setTitle(ilViteroPlugin::getInstance()->txt('app_table'));
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt');
-			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_code'),'code');
+			if(ilViteroSettings::getInstance()->arePhoneOptionsEnabled()) {
+				$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_phone'),'phone');
+			}
 			if(ilViteroSettings::getInstance()->isMobileAccessEnabled()) {
 				$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_webcode'),'webcode');
 			}
+			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_code'),'code');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_dur'),'duration');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_rec'),'rec');
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_ends'),'ends');
@@ -125,10 +128,44 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 		{
 			return true;
 		}
-		
-		
+
 		if($this->isEditable())
 		{
+			if(ilViteroSettings::getInstance()->arePhoneOptionsEnabled())
+			{
+				$this->tpl->setVariable('OPTIONA_NAME', ilViteroPlugin::getInstance()->txt('table_phone_conference'));
+				$this->tpl->setVariable('OPTIONB_NAME', ilViteroPlugin::getInstance()->txt('table_phone_dial_out'));
+				$this->tpl->setVariable('OPTIONC_NAME', ilViteroPlugin::getInstance()->txt('table_phone_part'));
+
+
+				$phone = $a_set['phone'];
+				if(!$phone instanceof ilViteroPhone)
+				{
+					$phone = new ilViteroPhone();
+				}
+
+				$this->tpl->setVariable(
+					'OPTIONA_ACTIVE',
+					$phone->isConferenceEnabled() ?
+						ilViteroPlugin::getInstance()->txt('table_phone_active') :
+						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+				);
+				$this->tpl->setVariable(
+					'OPTIONB_ACTIVE',
+					$phone->isDialoutEnabled() ?
+						ilViteroPlugin::getInstance()->txt('table_phone_active') :
+						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+				);
+				$this->tpl->setVariable(
+					'OPTIONC_ACTIVE',
+					$phone->isDialoutParticipantEnabled() ?
+						ilViteroPlugin::getInstance()->txt('table_phone_active') :
+						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+				);
+			}
+
+
+
 			$code = new ilViteroBookingCode($this->getVGroupId(),$a_set['id']);
 			if($code->exists())
 			{
@@ -269,6 +306,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 			$duration = $fend->get(IL_CAL_UNIX) - $fstart->get(IL_CAL_UNIX);
 			
 
+			$booking_list[$counter]['phone'] = $booking->phone;
 			$booking_list[$counter]['rec'] = $booking->repetitionpattern;
 			$booking_list[$counter]['id'] = $booking->bookingid;
 			$booking_list[$counter]['start'] = $fstart;
@@ -343,7 +381,6 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 			$booking_arr = $bookings->booking;
 		}
 
-
 		$counter = 0;
 		foreach($booking_arr as $booking)
 		{
@@ -353,6 +390,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 
 			foreach(ilViteroUtils::calculateBookingAppointments($start, $end, $booking) as $dl)
 			{
+				$booking_list[$counter]['phone'] = $booking->phone;
 				$booking_list[$counter]['rec'] = $booking->repetitionpattern;
 				$booking_list[$counter]['id'] = $booking->bookingid;
 				$booking_list[$counter]['start'] = $dl;
@@ -393,6 +431,8 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 	
 		$this->setMaxCount(count($booking_list));
 		$this->setData($booking_list);
+
+
 	}
 }
 ?>
