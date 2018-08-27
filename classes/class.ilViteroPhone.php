@@ -19,14 +19,20 @@ class ilViteroPhone
 	 */
 	public function initFromForm(ilPropertyFormGUI $form)
 	{
-		$phone_group = $form->getItemByPostVar('phone_options');
-		if(!$phone_group instanceof ilCheckboxGroupInputGUI) {
-			return false;
+		$settings = ilViteroSettings::getInstance();
+		if($settings->isPhoneConferenceEnabled())
+		{
+			$this->phoneconference = (bool) $form->getInput('phone_conference');
 		}
-		$options = (array) $form->getInput('phone_options');
-		$this->phoneconference = in_array(ilViteroSettings::PHONE_CONFERENCE, $options);
-		$this->dialout = in_array(ilViteroSettings::PHONE_DIAL_OUT, $options);
-		$this->dialoutphoneparticipant = in_array(ilViteroSettings::PHONE_DIAL_OUT_PART,$options);
+		if($settings->isPhoneDialOutEnabled())
+		{
+			$this->dialout = (bool) $form->getInput('phone_dial_out');
+		}
+
+		if($settings->isPhoneDialOutParticipantsEnabled())
+		{
+			$this->dialoutphoneparticipant = (bool) $form->getInput('phone_dial_out_part');
+		}
 	}
 
 	public function isConferenceEnabled()

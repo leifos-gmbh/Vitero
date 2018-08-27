@@ -385,52 +385,48 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	protected function initFormPhone(ilPropertyFormGUI $form)
 	{
-		if(!ilViteroSettings::getInstance()->arePhoneOptionsEnabled())
-		{
-			return false;
-		}
-
-
-
-		// phone setting
-		$phone = new ilCheckboxInputGUI(
-			ilViteroPlugin::getInstance()->txt('form_phone'),
-			'phone'
-		);
-		$phone->setInfo(ilViteroPlugin::getInstance()->txt('form_phone_info'));
-		$phone->setValue(1);
-
-		$phone_group = new ilCheckboxGroupInputGUI(
-			'',
-			'phone_options'
-		);
-		$phone_group->setRequired(true);
+		$settings = ilViteroSettings::getInstance();
 
 		// conference
-		$conference = new ilCheckboxOption(
-			ilViteroPlugin::getInstance()->txt('form_phone_conference'),
-			ilViteroSettings::PHONE_CONFERENCE,
-			ilViteroPlugin::getInstance()->txt('form_phone_conference_info')
-		);
-
-		$phone_group->addOption($conference);
+		if($settings->isPhoneConferenceEnabled())
+		{
+			$conference = new ilCheckboxInputGUI(
+				ilViteroPlugin::getInstance()->txt('form_phone_conference'),
+				'phone_conference'
+			);
+			$conference->setInfo(
+				ilViteroPlugin::getInstance()->txt('form_phone_conference_info')
+			);
+			$conference->setValue(1);
+			$form->addItem($conference);
+		}
 
 		// dial out
-		$dial_out = new ilCheckboxOption(
-			ilViteroPlugin::getInstance()->txt('form_phone_dial_out'),
-			ilViteroSettings::PHONE_DIAL_OUT,
-			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_info')
-		);
-		$phone_group->addOption($dial_out);
+		if($settings->isPhoneDialOutEnabled())
+		{
+			$dial_out = new ilCheckboxInputGUI(
+				ilViteroPlugin::getInstance()->txt('form_phone_dial_out'),
+				'phone_dial_out'
+			);
+			$dial_out->setValue(1);
+			$dial_out->setInfo(
+				ilViteroPlugin::getInstance()->txt('form_phone_dial_out_info')
+			);
+			$form->addItem($dial_out);
+		}
 
-		$dial_out_phone_part = new ilCheckboxOption(
-			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part'),
-			ilViteroSettings::PHONE_DIAL_OUT_PART,
-			ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part_info')
-		);
-		$phone_group->addOption($dial_out_phone_part);
-		$phone->addSubItem($phone_group);
-		$form->addItem($phone);
+		if($settings->isPhoneDialOutParticipantsEnabled())
+		{
+			$dial_out_phone_part = new ilCheckboxInputGUI(
+				ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part'),
+				'phone_dial_out_part'
+			);
+			$dial_out_phone_part->setValue(1);
+			$dial_out_phone_part->setInfo(
+				ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part_info')
+			);
+			$form->addItem($dial_out_phone_part);
+		}
 	}
 
 	/**

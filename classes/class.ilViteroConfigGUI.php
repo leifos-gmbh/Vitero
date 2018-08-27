@@ -171,16 +171,38 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$form->addItem($standard);
 
 		// phone settings
-		$phone = new ilCheckboxInputGUI(
-			$this->getPluginObject()->txt('settings_phone'),
-			'phone'
+		// -> phone conference
+		$conference = new ilCheckboxInputGUI(
+			ilViteroPlugin::getInstance()->txt('settings_phone_conference'),
+			'phone_conference'
 		);
-		$phone->setInfo(
-			$this->getPluginObject()->txt('settings_phone_info')
+		$conference->setInfo(
+			ilViteroPlugin::getInstance()->txt('settings_phone_conference_info')
 		);
-		$phone->setValue(1);
-		$phone->setChecked($settings->arePhoneOptionsEnabled());
-		$form->addItem($phone);
+		$conference->setChecked($settings->isPhoneConferenceEnabled());
+		$form->addItem($conference);
+
+		// -> phone dial-out
+		$dial_out = new ilCheckboxInputGUI(
+			ilViteroPlugin::getInstance()->txt('settings_phone_dial_out'),
+			'phone_dial_out'
+		);
+		$dial_out->setInfo(
+			ilViteroPlugin::getInstance()->txt('settings_phone_dial_out_info')
+		);
+		$dial_out->setChecked($settings->isPhoneDialOutEnabled());
+		$form->addItem($dial_out);
+
+		// -> phone dial-out participant
+		$dial_out_phone_part = new ilDclCheckboxInputGUI(
+			ilViteroPlugin::getInstance()->txt('settings_phone_dial_out_part'),
+			'phone_dial_out_part'
+		);
+		$dial_out_phone_part->setInfo(
+			ilViteroPlugin::getInstance()->txt('settings_phone_dial_out_part_info')
+		);
+		$dial_out_phone_part->setChecked($settings->isPhoneDialOutParticipantsEnabled());
+		$form->addItem($dial_out_phone_part);
 
 		// mobile access
 		$mobile = new ilCheckboxInputGUI(
@@ -205,7 +227,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$recorder->setValue(1);
 		$recorder->setChecked($settings->isSessionRecorderEnabled());
 		$form->addItem($recorder);
-
 
 		// content
 		$content = new ilCheckboxInputGUI(
@@ -329,7 +350,9 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$settings->setStandardGracePeriodAfter($form->getInput('grace_period_after'));
 			$settings->enableAvatar((int) $form->getInput('avatar'));
 			$settings->setMTOMCert($form->getInput('mtom_cert'));
-			$settings->enablePhoneOptions($form->getInput('phone'));
+			$settings->enablePhoneConference($form->getInput('phone_conference'));
+			$settings->enablePhoneDialOut($form->getInput('phone_dial_out'));
+			$settings->enablePhoneDialOutParticipants($form->getInput('phone_dial_out_part'));
 			$settings->enableMobileAccess($form->getInput('mobile'));
 			$settings->enableSessionRecorder($form->getInput('recorder'));
 			$settings->save();

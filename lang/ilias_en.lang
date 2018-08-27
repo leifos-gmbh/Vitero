@@ -151,3 +151,9 @@ table_phone_part#:#Add Participants
 table_phone_active#:#(Active)
 table_phone_inactive#:#(Inactive)
 app_tbl_col_phone#:#Phone Settings
+settings_phone_conference#:#Show dial-in
+settings_phone_conference_info#:#Show optional dial-in credentials directly when entering a room
+settings_phone_dial_out#:#Dial Out
+settings_phone_dial_out_info#:#Participants can be called back.
+settings_phone_dial_out_part#:#Invite Participants (using a phone)
+settings_phone_dial_out_part_info#:#If enabled, participants - using a phone - can be added.

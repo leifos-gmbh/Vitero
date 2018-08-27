@@ -73,8 +73,9 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		catch(SoapFault $e)
 		{
 			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Creating vitero group failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			$this->getLogger()->warning('Creating vitero booking failed with message code: ' . $code);
+			$this->getLogger()->dump($this->getClient()->__getLastRequest(), ilLogLevel::WARNING);
+			$this->getLogger()->dump($this->getClient()->__getLastResponse(), ilLogLevel::WARNING);
 			throw new ilViteroConnectorException($e->getMessage(),$code);
 		}
 	}

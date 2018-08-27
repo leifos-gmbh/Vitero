@@ -27,7 +27,9 @@ class ilViteroSettings
 	private $user_prefix = 'il_';
 	private $avatar = 0;
 	private $mtom_cert = '';
-	private $phone_enabled = false;
+	private $phone_conference = false;
+	private $phone_dial_out = false;
+	private $phone_dial_out_part = false;
 	private $mobile_access_enabled = false;
 	private $session_recorder = false;
 
@@ -237,7 +239,9 @@ class ilViteroSettings
 		$this->getStorage()->set('grace_period_after',$this->getStandardGracePeriodAfter());
 		$this->getStorage()->set('avatar',(int) $this->isAvatarEnabled());
 		$this->getStorage()->set('mtom_cert',$this->getMTOMCert());
-		$this->getStorage()->set('phone',(int) $this->arePhoneOptionsEnabled());
+		$this->getStorage()->set('phone_conference', (int) $this->isPhoneConferenceEnabled());
+		$this->getStorage()->set('phone_dial_out', (int) $this->isPhoneDialOutEnabled());
+		$this->getStorage()->set('phone_dial_out_participants',$this->isPhoneDialOutParticipantsEnabled());
 		$this->getStorage()->set('mobile', (int) $this->isMobileAccessEnabled());
 		$this->getStorage()->set('recorder', (int) $this->isSessionRecorderEnabled());
 
@@ -262,7 +266,9 @@ class ilViteroSettings
 		$this->setStandardGracePeriodAfter($this->getStorage()->get('grace_period_after', $this->grace_period_after));
 		$this->enableAvatar($this->getStorage()->get('avatar', $this->avatar));
 		$this->setMTOMCert($this->getStorage()->get('mtom_cert',$this->mtom_cert));
-		$this->enablePhoneOptions($this->getStorage()->get('phone',$this->arePhoneOptionsEnabled()));
+		$this->enablePhoneConference($this->getStorage()->get('phone_conference', $this->isPhoneConferenceEnabled()));
+		$this->enablePhoneDialOut($this->getStorage()->get('phone_dial_out', $this->isPhoneDialOutEnabled()));
+		$this->enablePhoneDialOutParticipants($this->getStorage()->get('phone_dial_out_participants', $this->isPhoneDialOutParticipantsEnabled()));
 		$this->enableMobileAccess($this->getStorage()->get('mobile',$this->isMobileAccessEnabled()));
 		$this->enableSessionRecorder($this->getStorage()->get('recorder',$this->isSessionRecorderEnabled()));
 	}
@@ -312,7 +318,59 @@ class ilViteroSettings
 	 */
 	public function arePhoneOptionsEnabled()
 	{
-		return $this->phone_enabled;
+		return
+			$this->isPhoneConferenceEnabled() ||
+			$this->isPhoneDialOutEnabled() ||
+			$this->isPhoneDialOutParticipantsEnabled();
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPhoneConferenceEnabled()
+	{
+		return $this->phone_conference;
+	}
+
+	/**
+	 * @param $a_stat
+	 */
+	public function enablePhoneConference($a_stat)
+	{
+		$this->phone_conference = $a_stat;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPhoneDialOutEnabled()
+	{
+		return $this->phone_dial_out;
+	}
+
+	/**
+	 * @param $a_stat
+	 */
+	public function enablePhoneDialOut($a_stat)
+	{
+		$this->phone_dial_out = $a_stat;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isPhoneDialOutParticipantsEnabled()
+	{
+		return $this->phone_dial_out_part;
+	}
+
+	/**
+	 * @param $a_stat
+	 */
+	public function enablePhoneDialOutParticipants($a_stat)
+	{
+		$this->phone_dial_out_part = $a_stat;
+	}
+
 }
 ?>

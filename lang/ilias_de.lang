@@ -150,3 +150,9 @@ table_phone_part#:#Teilnehmer hinzuschalten
 table_phone_active#:#(Aktiv)
 table_phone_inactive#:#(Inaktiv)
 app_tbl_col_phone#:#Telefonieeinstellungen
+settings_phone_conference#:#Telefoneinwahl direkt anbieten
+settings_phone_conference_info#:#Wenn aktiviert, können optional die Einwahldaten sofort beim Betreten des Raumes angezeigt werden.
+settings_phone_dial_out#:#Dial Out
+settings_phone_dial_out_info#:#Wenn aktiviert, können sich Teilnehmer auch anrufen lassen.
+settings_phone_dial_out_part#:#Teilnehmer per Telefon dazuschalten
+settings_phone_dial_out_part_info#:#Wenn aktiviert, können Teilnehmer per Telefon dazugeschaltet werden.

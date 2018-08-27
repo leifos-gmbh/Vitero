@@ -131,40 +131,56 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 
 		if($this->isEditable())
 		{
-			if(ilViteroSettings::getInstance()->arePhoneOptionsEnabled())
+			$settings = ilViteroSettings::getInstance();
+
+			if($settings->arePhoneOptionsEnabled())
 			{
-				$this->tpl->setVariable('OPTIONA_NAME', ilViteroPlugin::getInstance()->txt('table_phone_conference'));
-				$this->tpl->setVariable('OPTIONB_NAME', ilViteroPlugin::getInstance()->txt('table_phone_dial_out'));
-				$this->tpl->setVariable('OPTIONC_NAME', ilViteroPlugin::getInstance()->txt('table_phone_part'));
-
-
 				$phone = $a_set['phone'];
 				if(!$phone instanceof ilViteroPhone)
 				{
 					$phone = new ilViteroPhone();
 				}
 
-				$this->tpl->setVariable(
-					'OPTIONA_ACTIVE',
-					$phone->isConferenceEnabled() ?
-						ilViteroPlugin::getInstance()->txt('table_phone_active') :
-						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
-				);
-				$this->tpl->setVariable(
-					'OPTIONB_ACTIVE',
-					$phone->isDialoutEnabled() ?
-						ilViteroPlugin::getInstance()->txt('table_phone_active') :
-						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
-				);
-				$this->tpl->setVariable(
-					'OPTIONC_ACTIVE',
-					$phone->isDialoutParticipantEnabled() ?
-						ilViteroPlugin::getInstance()->txt('table_phone_active') :
-						ilViteroPlugin::getInstance()->txt('table_phone_inactive')
-				);
+				if($settings->isPhoneConferenceEnabled())
+				{
+					$this->tpl->setCurrentBlock('optiona');
+					$this->tpl->setVariable('OPTIONA_NAME', ilViteroPlugin::getInstance()->txt('table_phone_conference'));
+					$this->tpl->setVariable(
+						'OPTIONA_ACTIVE',
+						$phone->isConferenceEnabled() ?
+							ilViteroPlugin::getInstance()->txt('table_phone_active') :
+							ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+					);
+					$this->tpl->parseCurrentBlock();
+				}
+				if($settings->isPhoneDialOutEnabled())
+				{
+					$this->tpl->setCurrentBlock('optionb');
+					$this->tpl->setVariable('OPTIONB_NAME', ilViteroPlugin::getInstance()->txt('table_phone_dial_out'));
+					$this->tpl->setVariable(
+						'OPTIONB_ACTIVE',
+						$phone->isDialoutEnabled() ?
+							ilViteroPlugin::getInstance()->txt('table_phone_active') :
+							ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+					);
+					$this->tpl->parseCurrentBlock();
+				}
+				if($settings->isPhoneDialOutParticipantsEnabled())
+				{
+					$this->tpl->setCurrentBlock('optionc');
+					$this->tpl->setVariable('OPTIONC_NAME', ilViteroPlugin::getInstance()->txt('table_phone_part'));
+					$this->tpl->setVariable(
+						'OPTIONC_ACTIVE',
+						$phone->isDialoutParticipantEnabled() ?
+							ilViteroPlugin::getInstance()->txt('table_phone_active') :
+							ilViteroPlugin::getInstance()->txt('table_phone_inactive')
+					);
+					$this->tpl->parseCurrentBlock();
+				}
+
+
+
 			}
-
-
 
 			$code = new ilViteroBookingCode($this->getVGroupId(),$a_set['id']);
 			if($code->exists())
