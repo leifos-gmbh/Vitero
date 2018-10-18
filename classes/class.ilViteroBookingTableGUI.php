@@ -147,7 +147,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 					$this->tpl->setVariable('OPTIONA_NAME', ilViteroPlugin::getInstance()->txt('table_phone_conference'));
 					$this->tpl->setVariable(
 						'OPTIONA_ACTIVE',
-						$phone->isConferenceEnabled() ?
+						$phone->isShowDialogueEnabled() ?
 							ilViteroPlugin::getInstance()->txt('table_phone_active') :
 							ilViteroPlugin::getInstance()->txt('table_phone_inactive')
 					);
