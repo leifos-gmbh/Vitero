@@ -41,7 +41,7 @@ include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
 *
 * @ilCtrl_isCalledBy ilObjViteroGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
 * @ilCtrl_Calls ilObjViteroGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilRepositorySearchGUI
-* @ilCtrl_Calls ilObjViteroGUI: ilCommonActionDispatcherGUI
+* @ilCtrl_Calls ilObjViteroGUI: ilCommonActionDispatcherGUI, ilLearningProgressGUI
 *
 */
 class ilObjViteroGUI extends ilObjectPluginGUI
@@ -666,6 +666,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			);
 		}
 
+		include_once './Services/Tracking/classes/class.ilLearningProgressAccess.php';
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()))
+		{
+			$ilTabs->addTab(
+				'learning_progress',
+				$this->txt('learning_progress'),
+				$ilCtrl->getLinkTargetByClass('illearningprogressgui',''));
+		}
 
 		// standard epermission tab
 		$this->addPermissionTab();
