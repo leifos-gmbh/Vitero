@@ -265,4 +265,26 @@ if(!$ilDB->tableExists('rep_robj_xvit_webcodes'))
 }
 $ilDB->addPrimaryKey('rep_robj_xvit_webcodes',array('vgroup_id','booking_id'));
 ?>
+<#12>
+<?php
+include_once('./Services/Migration/DBUpdate_3560/classes/class.ilDBUpdateNewObjectType.php');
+$edit_operation_id = ilDBUpdateNewObjectType::getCustomRBACOperationId("edit_learning_progress");
+$write_operation_id = ilDBUpdateNewObjectType::getCustomRBACOperationId('write');
+
+if($edit_operation_id)
+{
+	$lp_types = array("xvit");
+
+	foreach($lp_types as $lp_type)
+	{
+		$lp_type_id = ilDBUpdateNewObjectType::getObjectTypeId($lp_type);
+
+		if($lp_type_id)
+		{
+			ilDBUpdateNewObjectType::addRBACOperation($lp_type_id, $edit_operation_id);
+			ilDBUpdateNewObjectType::cloneOperation($lp_type, $write_operation_id, $edit_operation_id);
+		}
+	}
+}
+?>
 
