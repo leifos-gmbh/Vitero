@@ -32,6 +32,7 @@ class ilViteroSettings
 	private $phone_dial_out_part = false;
 	private $mobile_access_enabled = false;
 	private $session_recorder = false;
+	private $enable_learning_progress = false;
 
 	private $grace_period_before = 15;
 	private $grace_period_after = 15;
@@ -219,6 +220,16 @@ class ilViteroSettings
 		return $this->mtom_cert;
 	}
 
+	public function enableLearningProgress($a_stat)
+	{
+		$this->enable_learning_progress = $a_stat;
+	}
+
+	public function isLearningProgressEnabled()
+	{
+		return $this->enable_learning_progress;
+	}
+
 
 	/**
 	 * Save settings
@@ -244,6 +255,7 @@ class ilViteroSettings
 		$this->getStorage()->set('phone_dial_out_participants',$this->isPhoneDialOutParticipantsEnabled());
 		$this->getStorage()->set('mobile', (int) $this->isMobileAccessEnabled());
 		$this->getStorage()->set('recorder', (int) $this->isSessionRecorderEnabled());
+		$this->getStorage()->set('learning_progress', $this->isLearningProgressEnabled());
 
 	}
 
@@ -271,6 +283,7 @@ class ilViteroSettings
 		$this->enablePhoneDialOutParticipants($this->getStorage()->get('phone_dial_out_participants', $this->isPhoneDialOutParticipantsEnabled()));
 		$this->enableMobileAccess($this->getStorage()->get('mobile',$this->isMobileAccessEnabled()));
 		$this->enableSessionRecorder($this->getStorage()->get('recorder',$this->isSessionRecorderEnabled()));
+		$this->enableLearningProgress($this->getStorage()->get('learning_progress', $this->isLearningProgressEnabled()));
 	}
 
 	/**

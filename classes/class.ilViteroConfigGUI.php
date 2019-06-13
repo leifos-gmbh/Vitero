@@ -313,6 +313,19 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		);
 		$gpa->setValue($settings->getStandardGracePeriodAfter());
 		$form->addItem($gpa);
+
+		//TODO FINISH THIS CHECKBOX HERE
+
+		//ALSO TO DISPLAY THIS OPTION WE HAVE TO CHECK VITERO
+		//Monitor-Modul“ freigeschaltet ist und die eingesetzte vitero-Server-Version das „Statistik-Modul bereitstellt.
+
+		//check if lp enabled in administration globaly
+		$learning_progress = new ilCheckboxInputGUI($this->getPluginObject()->txt('activate_learning_progress'), 'learning_progress');
+		$learning_progress->setChecked($settings->isLearningProgressEnabled());
+
+		$learning_progress->setInfo($this->getPluginObject()->txt('activate_learning_progress_info'));
+		$form->addItem($learning_progress);
+
 		return $form;
 	}
 
@@ -355,6 +368,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$settings->enablePhoneDialOutParticipants($form->getInput('phone_dial_out_part'));
 			$settings->enableMobileAccess($form->getInput('mobile'));
 			$settings->enableSessionRecorder($form->getInput('recorder'));
+			$settings->enableLearningProgress($form->getInput('learning_progress'));
 			$settings->save();
 
 			ilUtil::sendSuccess($lng->txt('settings_saved'), true);
