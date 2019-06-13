@@ -50,8 +50,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 * @var ilLogger
 	 */
 	private $vitero_logger = null;
-	
-	
+
 	/**
 	* Initialisation
 	*/
@@ -506,7 +505,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		return true;
 	}
 
-
 	protected function loadCafeSettings($form,$room)
 	{
 		$room->enableCafe(true);
@@ -603,9 +601,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$newObj->addParticipants(array($ilUser->getId()), ilObjVitero::ADMIN);
 		parent::afterSave($newObj);
 	}
-
-
-
 
 	/**
 	* After object has been created -> jump to this command
@@ -882,8 +877,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 	}
 
-
-
 	/**
 	 * Add info items
 	 * @param ilInfoScreenGUI $info 
@@ -1093,7 +1086,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$ilCtrl->redirect($this,'infoScreen');
 		}
 	}
-
 
 	/**
 	 * Show participants
@@ -1348,7 +1340,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		return true;
 	}
 
-
 	/**
 	 * set preferences (show/hide tabel content)
 	 *
@@ -1368,7 +1359,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$ilUser->writePref('xvit_member_hide',(int) $_GET['member_hide']);
 		}
 	}
-
 
 	protected function addSearchToolbar()
 	{
@@ -1747,7 +1737,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$form = $this->initUpdateBookingForm($booking);
 		$GLOBALS['tpl']->setContent($form->getHTML());
 	}
-
 
 	/**
 	 * @param $booking
