@@ -415,11 +415,10 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 	/**
 	 * TODO: MISSING THE STATISTIC MODULE!
 	 * TODO: This method should be in a non GUI class
-	 * @throws ilViteroConnectorException
 	 */
 	private function hasAccessToLearningProgress()
 	{
-		if(ilObjUserTracking::_enabledLearningProgress() && $this->hasCustomerMonitoringMode())
+		if(ilObjUserTracking::_enabledLearningProgress() && ilViteroUtils::hasCustomerMonitoringMode())
 		{
 			return true;
 		}
@@ -427,22 +426,5 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		return false;
 	}
 
-	private function hasCustomerMonitoringMode()
-	{
-		$this->getPluginObject()->includeClass('class.ilViteroLicenceSoapConnector.php');
-
-		$licence_connector = new ilViteroLicenceSoapConnector();
-
-		$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
-
-		foreach($modules->modules->module as $module)
-		{
-			if($module->type == "MONITORING"){
-				return true;
-			}
-		}
-
-		return false;
-	}
 }
 ?>

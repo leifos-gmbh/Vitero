@@ -712,9 +712,25 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-		
+
+		//TODO extract this conditional to a method.
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId())
+			&& ilViteroSettings::getInstance()->isLearningProgressEnabled()
+			&& ilViteroUtils::hasCustomerMonitoringMode())
+		{
+			$pres = new ilFormSectionHeaderGUI();
+			$pres->setTitle($this->lng->txt('edit_learning_progress_properties'));
+			$this->form->addItem($pres);
+
+			//TODO : Implement Appointments check, café mode etc.
+
+			$learning_progress = new ilCheckboxInputGUI($this->lng->txt('activate_learning_progress'), 'learning_progress');
+			$learning_progress->setInfo($this->lng->txt('activate_learning_progress_info'));
+			$this->form->addItem($learning_progress);
+		}
+
 		$this->form->addCommandButton("updateProperties", $this->txt("save"));
-	                
+
 		$this->form->setTitle($this->txt("edit_properties"));
 		$this->form->setFormAction($ilCtrl->getFormAction($this));
 	}

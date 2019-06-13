@@ -251,5 +251,22 @@ class ilViteroUtils
 		}
 		return $available_rooms;
 	}
+
+	/** Checks if the customer has Monitor Mode */
+	public static function hasCustomerMonitoringMode()
+	{
+		$licence_connector = new ilViteroLicenceSoapConnector();
+
+		$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+
+		foreach($modules->modules->module as $module)
+		{
+			if($module->type == "MONITORING"){
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 ?>
