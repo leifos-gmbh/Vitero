@@ -419,13 +419,24 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 	 */
 	private function hasAccessToLearningProgress()
 	{
+		if(ilObjUserTracking::_enabledLearningProgress() && $this->hasCustomerMonitoringMode())
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	private function hasCustomerMonitoringMode()
+	{
 		$this->getPluginObject()->includeClass('class.ilViteroLicenceSoapConnector.php');
 
 		$licence_connector = new ilViteroLicenceSoapConnector();
-		
+
 		$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
 
-		foreach($modules->modules->module as $module) {
+		foreach($modules->modules->module as $module)
+		{
 			if($module->type == "MONITORING"){
 				return true;
 			}
