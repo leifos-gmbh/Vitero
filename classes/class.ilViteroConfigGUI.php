@@ -315,16 +315,16 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$form->addItem($gpa);
 
 		//TODO FINISH THIS CHECKBOX HERE
+		//Step 1 check if lp enabled in administration globaly
+		//Step 2 check Statistik-Modul
+		if($this->hasAccessToLearningProgress())
+		{
+			$learning_progress = new ilCheckboxInputGUI($this->getPluginObject()->txt('activate_learning_progress'), 'learning_progress');
+			$learning_progress->setChecked($settings->isLearningProgressEnabled());
 
-		//ALSO TO DISPLAY THIS OPTION WE HAVE TO CHECK VITERO
-		//Monitor-Modul“ freigeschaltet ist und die eingesetzte vitero-Server-Version das „Statistik-Modul bereitstellt.
-
-		//check if lp enabled in administration globaly
-		$learning_progress = new ilCheckboxInputGUI($this->getPluginObject()->txt('activate_learning_progress'), 'learning_progress');
-		$learning_progress->setChecked($settings->isLearningProgressEnabled());
-
-		$learning_progress->setInfo($this->getPluginObject()->txt('activate_learning_progress_info'));
-		$form->addItem($learning_progress);
+			$learning_progress->setInfo($this->getPluginObject()->txt('activate_learning_progress_info'));
+			$form->addItem($learning_progress);
+		}
 
 		return $form;
 	}
@@ -412,5 +412,26 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$tpl->setContent($table->getHTML());
 	}
 
+	/**
+	 * TODO: MISSING THE STATISTIC MODULE!
+	 * TODO: This method should be in a non GUI class
+	 * @throws ilViteroConnectorException
+	 */
+	private function hasAccessToLearningProgress()
+	{
+		$this->getPluginObject()->includeClass('class.ilViteroLicenceSoapConnector.php');
+
+		$licence_connector = new ilViteroLicenceSoapConnector();
+		
+		$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+
+		foreach($modules->modules->module as $module) {
+			if($module->type == "MONITORING"){
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 ?>
