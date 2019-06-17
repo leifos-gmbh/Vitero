@@ -287,4 +287,40 @@ if($edit_operation_id)
 	}
 }
 ?>
+<#13>
+<?php
+if(!$ilDB->tableExists('rep_robj_xvit_lp'))
+{
+	$ilDB->createTable('rep_robj_xvit_lp',array(
+		'obj_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'active'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => FALSE
+		),
+		'min_percent'	=> array(
+			'type'	=> 'integer',
+			'length' => 4,
+			'notnull' => FALSE,
+		),
+		'mode_multi'	=> array(
+			'type'	=> 'integer',
+			'length' => 4,
+			'notnull' => FALSE,
+		),
+		'min_sessions'	=> array(
+			'type'	=> 'integer',
+			'length' => 4,
+			'notnull' => FALSE,
+		),
+
+	));
+}
+$ilDB->addPrimaryKey('rep_robj_xvit_lp',array('obj_id'));
+?>
+
 

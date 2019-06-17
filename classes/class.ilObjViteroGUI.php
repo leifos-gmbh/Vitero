@@ -57,6 +57,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	protected function afterConstructor()
 	{
 		$this->vitero_logger = $GLOBALS['DIC']->logger()->xvit();
+
+		$this->object->readLearningProgressSettings();
+
 		// anything needed after object has been constructed
 		// - example: append my_id GET parameter to each request
 		//   $ilCtrl->saveParameter($this, array("my_id"));
@@ -695,6 +698,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	public function initPropertiesForm()
 	{
 		global $ilCtrl;
+
+		$vitero_plugin = ilViteroPlugin::getInstance();
 	
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
@@ -714,13 +719,43 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			&& ilViteroUtils::hasCustomerMonitoringMode())
 		{
 			$pres = new ilFormSectionHeaderGUI();
-			$pres->setTitle($this->lng->txt('edit_learning_progress_properties'));
+			$pres->setTitle($vitero_plugin->txt('edit_learning_progress_properties'));
 			$this->form->addItem($pres);
 
 			//TODO : Implement Appointments check, café mode etc.
 
-			$learning_progress = new ilCheckboxInputGUI($this->lng->txt('activate_learning_progress'), 'learning_progress');
-			$learning_progress->setInfo($this->lng->txt('activate_learning_progress_info'));
+			$learning_progress = new ilCheckboxInputGUI($vitero_plugin->txt('activate_learning_progress'), 'learning_progress');
+			$learning_progress->setInfo($vitero_plugin->txt('activate_learning_progress_info'));
+
+			$minimum_percentage = new ilNumberInputGUI($vitero_plugin->txt("min_percentage"),"min_percentage");
+			$minimum_percentage->setInfo($vitero_plugin->txt("min_sessions_info"));
+			$minimum_percentage->setMaxValue(100);
+			$minimum_percentage->setMinValue(0);
+			$minimum_percentage->setMaxLength(3);
+			$minimum_percentage->setSize(3);
+			$minimum_percentage->setSuffix("%");
+			$minimum_percentage->setRequired(true);
+
+			$learning_progress->addSubItem($minimum_percentage);
+
+			$mode = new ilRadioGroupInputGUI($vitero_plugin->txt("mode"),"mode");
+			$mode->setRequired(true);
+
+			$one_session = new ilRadioOption($vitero_plugin->txt("one_session"),ilObjVitero::LP_MODE_ONE);
+			$mode->addOption($one_session);
+
+			$multi_session = new ilRadioOption($vitero_plugin->txt("multi_session"), ilObjVitero::LP_MODE_MULTI);
+			$minimum_sessions = new ilNumberInputGUI($vitero_plugin->txt("min_sessions"), "min_sessions");
+			$minimum_sessions->setInfo($vitero_plugin->txt("min_sessions_info"));
+			$minimum_sessions->setMinValue(1);
+			$minimum_sessions->setMaxLength(3);
+			$minimum_sessions->setSize(3);
+			$minimum_sessions->setRequired(true);
+			$multi_session->addSubItem($minimum_sessions);
+			$mode->addOption($multi_session);
+
+			$learning_progress->addSubItem($mode);
+
 			$this->form->addItem($learning_progress);
 		}
 
@@ -737,6 +772,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	{
 		$values["title"] = $this->object->getTitle();
 		$values["desc"] = $this->object->getDescription();
+		$values['learning_progress'] = $this->object->getLearningProgress();
+		$values['min_percentage'] = $this->object->getLearningProgressMinPercentage();
+		$values['mode'] = $this->object->getLearningProgressModeMulti();
+		$values['min_sessions'] = $this->object->getLearningProgressMinSessions();
+
 		$this->form->setValuesByArray($values);
 	}
 	
@@ -752,7 +792,15 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		{
 			$this->object->setTitle($this->form->getInput("title"));
 			$this->object->setDescription($this->form->getInput("desc"));
-			$this->object->update();
+
+			$this->object->setLearningProgress($this->form->getInput("learning_progress"));
+			$this->object->setLearningProgressMinPercentage($this->form->getInput("min_percentage"));
+			$this->object->setLearningProgressModeMulti($this->form->getInput("mode"));
+			$this->object->setLearningProgressMinSessions($this->form->getInput("min_sessions"));
+
+			$this->object->saveLearningProgressData();
+			$this->updateObject();
+
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 			$ilCtrl->redirect($this, "editProperties");
 		}
@@ -760,7 +808,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$this->form->setValuesByPost();
 		$tpl->setContent($this->form->getHtml());
 	}
-	
+
 //
 // Show content
 //

@@ -157,3 +157,13 @@ settings_phone_dial_out#:#Dial Out
 settings_phone_dial_out_info#:#Participants can be called back.
 settings_phone_dial_out_part#:#Invite Participants (using a phone)
 settings_phone_dial_out_part_info#:#If enabled, participants - using a phone - can be added.
+edit_learning_progress_properties#:#Learning Progress settings
+activate_learning_progress#:#Activate Learning Progress
+activate_learning_progress_info#:#Vitero sessions will have Learning Progress configuration.
+min_percentage#:#Minimum percentage
+min_percentage_info#:#Minimum attended time to set the session "passed";
+mode#:#Mode
+one_session#:#One session
+multi_session#:#Multipe sessions
+min_sessions#:#Minimum sessions
+min_sessions_info#:#Minimum number of sessions which have to be attended the established minimum percent.

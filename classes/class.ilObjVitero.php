@@ -35,9 +35,18 @@ class ilObjVitero extends ilObjectPlugin
 	const MEMBER = 1;
 	const ADMIN = 2;
 
+	const LP_MODE_ONE = 0;
+	const LP_MODE_MULTI = 1;
+
 	private $vgroup_id = 0;
 
 	private $local_roles = NULL;
+
+	protected $learning_progress = false;
+	protected $learning_progress_min_percentage;
+	protected $learning_progress_mode_multi = false;
+	protected $learning_progress_min_sessions;
+	protected $is_learning_progress_stored = false;
 
 	/**
 	* Constructor
@@ -538,6 +547,116 @@ class ilObjVitero extends ilObjectPlugin
 			return $row->obj_id;
 		}
 		return 0;
+	}
+
+	public function setLearningProgress($learning_progress)
+	{
+		$this->learning_progress = (bool)$learning_progress;
+	}
+
+	public function getLearningProgress()
+	{
+		return $this->learning_progress;
+	}
+
+	public function setLearningProgressMinPercentage($percentage)
+	{
+		$this->learning_progress_min_percentage = $percentage;
+	}
+
+	public function getLearningProgressMinPercentage()
+	{
+		return $this->learning_progress_min_percentage;
+	}
+
+	public function setLearningProgressModeMulti($is_multi)
+	{
+		$this->learning_progress_mode_multi = (bool)$is_multi;
+	}
+
+	public function getLearningProgressModeMulti()
+	{
+		return $this->learning_progress_mode_multi;
+	}
+
+	public function setLearningProgressMinSessions($num_sessions)
+	{
+		$this->learning_progress_min_sessions = (int)$num_sessions;
+	}
+
+	public function getLearningProgressMinSessions()
+	{
+		return $this->learning_progress_min_sessions;
+	}
+
+	public function saveLearningProgressData()
+	{
+		if($this->is_learning_progress_stored)
+		{
+			return $this->updateLearningProgress();
+		}
+
+		return $this->insertLearningProgress();
+	}
+
+	protected function updateLearningProgress()
+	{
+		global $ilDB;
+
+		$query = "UPDATE rep_robj_xvit_lp SET" .
+			" active = " . $ilDB->quote($this->getLearningProgress(), "integer") . ", " .
+			" min_percent = " . $ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
+			" mode_multi = " . $ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
+			" min_sessions = " . $ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
+			" WHERE obj_id = ".$ilDB->quote($this->getId(), "integer");
+
+		return $ilDB->manipulate($query);
+	}
+
+	protected function insertLearningProgress()
+	{
+		global $ilDB;
+
+		$query = "INSERT INTO rep_robj_xvit_lp (obj_id,active,min_percent,mode_multi,min_sessions)" .
+			" VALUES(" .
+			$ilDB->quote($this->getId(), "integer") . ", " .
+			$ilDB->quote($this->getLearningProgress(), "integer") . ", " .
+			$ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
+			$ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
+			$ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
+			")";
+
+		$affected_rows = $ilDB->manipulate($query);
+
+		if($affected_rows > 0){
+			$this->setLearningProgressStored();
+		}
+
+		return $affected_rows;
+	}
+
+	public function readLearningProgressSettings()
+	{
+		global $ilDB;
+
+		$query = "SELECT * FROM rep_robj_xvit_lp WHERE obj_id =" . $ilDB->quote($this->getId(), "integer");
+
+		$res = $ilDB->query($query);
+
+		while ($row = $res->fetchAssoc($res))
+		{
+			$this->setLearningProgress($row['active']);
+			$this->setLearningProgressMinPercentage($row['min_percent']);
+			$this->setLearningProgressModeMulti($row['mode_multi']);
+			$this->setLearningProgressMinSessions($row['min_sessions']);
+
+			$this->setLearningProgressStored();
+		}
+	}
+
+	protected function setLearningProgressStored()
+	{
+		$this->is_learning_progress_stored = true;
 	}
 }
 ?>
