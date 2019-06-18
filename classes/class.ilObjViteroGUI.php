@@ -58,7 +58,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	{
 		$this->vitero_logger = $GLOBALS['DIC']->logger()->xvit();
 
-		$this->object->readLearningProgressSettings();
+		if($this->object) {
+			$this->object->readLearningProgressSettings();
+		}
 
 		// anything needed after object has been constructed
 		// - example: append my_id GET parameter to each request
@@ -838,7 +840,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$table->setVGroupId($this->object->getVGroupId());
 		$table->setEditable((bool) $ilAccess->checkAccess('write','',$this->object->getRefId()));
 		$table->init();
-		
+
+		//TODO START-END ISSUE
 		$start = new ilDateTime(time(),IL_CAL_UNIX);
 		$start->increment(ilDateTime::HOUR,-1);
 		$end = clone $start;
