@@ -724,7 +724,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$pres->setTitle($vitero_plugin->txt('edit_learning_progress_properties'));
 			$this->form->addItem($pres);
 
-			//TODO : Implement Appointments check, café mode etc.
+			$num_appointments = $this->object->getNumberOfAppointmentsForSession();
 
 			$learning_progress = new ilCheckboxInputGUI($vitero_plugin->txt('activate_learning_progress'), 'learning_progress');
 			$learning_progress->setInfo($vitero_plugin->txt('activate_learning_progress_info'));
@@ -744,6 +744,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$mode->setRequired(true);
 
 			$one_session = new ilRadioOption($vitero_plugin->txt("one_session"),ilObjVitero::LP_MODE_ONE);
+			if($num_appointments > 1) {
+				$one_session->setDisabled(true);
+				$one_session->setInfo($vitero_plugin->txt("currently_multi_appointments"));
+			}
 			$mode->addOption($one_session);
 
 			$multi_session = new ilRadioOption($vitero_plugin->txt("multi_session"), ilObjVitero::LP_MODE_MULTI);
@@ -754,6 +758,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$minimum_sessions->setSize(3);
 			$minimum_sessions->setRequired(true);
 			$multi_session->addSubItem($minimum_sessions);
+			if($num_appointments === 1){
+				$multi_session->setDisabled(true);
+				$multi_session->setInfo($vitero_plugin->txt("currently_one_appointment"));
+			}
 			$mode->addOption($multi_session);
 
 			$learning_progress->addSubItem($mode);

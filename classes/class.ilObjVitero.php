@@ -658,5 +658,50 @@ class ilObjVitero extends ilObjectPlugin
 	{
 		$this->is_learning_progress_stored = true;
 	}
+
+	//groups here = teams in vitero website
+
+	/**
+	 * @return int total number of appointments.
+	 * @throws ilDateTimeException
+	 */
+	public function getNumberOfAppointmentsForSession()
+	{
+		$start = new ilDateTime(time(),IL_CAL_UNIX);
+		$end = clone $start;
+		$start->increment(IL_CAL_YEAR,-5);
+		$end->increment(IL_CAL_YEAR,1);
+
+		$vitero_group_id = $this->getVGroupId();
+
+		try {
+			$con = new ilViteroBookingSoapConnector();
+			$bookings = $con->getByGroupAndDate($vitero_group_id, $start, $end);
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+
+		$booking_arr = array();
+		if(is_object($bookings->booking))
+		{
+			$booking_arr = array($bookings->booking);
+		}
+		elseif(is_array($bookings->booking))
+		{
+			$booking_arr = $bookings->booking;
+		}
+
+		$total_appointments = 0;
+		foreach($booking_arr as $booking)
+		{
+			//one booking can contain more than one appointment
+			foreach (ilViteroUtils::calculateBookingAppointments($start, $end, $booking) as $dl) {
+				$total_appointments++;
+			}
+		}
+
+		return $total_appointments;
+	}
 }
 ?>
