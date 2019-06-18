@@ -169,3 +169,4 @@ min_sessions#:#Minimum sessions
 min_sessions_info#:#Minimum number of sessions which have to be attended the established minimum percent.
 currently_multi_appointments#:#This session has multiple appointments.
 currently_one_appointment#:#This session has only one appointment.
+learning_progress#:#Learning Progress
