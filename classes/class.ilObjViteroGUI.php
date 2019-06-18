@@ -849,7 +849,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$table->setEditable((bool) $ilAccess->checkAccess('write','',$this->object->getRefId()));
 		$table->init();
 
-		//TODO START-END ISSUE
 		$start = new ilDateTime(time(),IL_CAL_UNIX);
 		$start->increment(ilDateTime::HOUR,-1);
 		$end = clone $start;
