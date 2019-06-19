@@ -667,7 +667,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		include_once './Services/Tracking/classes/class.ilLearningProgressAccess.php';
-		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()))
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->getLearningProgress())
 		{
 			$ilTabs->addTab(
 				'learning_progress',
