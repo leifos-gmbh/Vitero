@@ -828,18 +828,32 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	*/
 	public function showContent()
 	{
-		global $tpl, $ilTabs, $ilAccess, $ilToolbar;
+		global $tpl, $ilTabs, $ilAccess, $ilToolbar, $DIC;
+
+		$ui_factory = $DIC->ui()->factory();
 
 		$ilTabs->activateTab("content");
 
 		// Show add appointment
 		if($ilAccess->checkAccess('write','',$this->object->getRefId()))
 		{
-			// Edit appointment
-			$ilToolbar->addButton(
+			$add_app_button = $ui_factory->button()->standard(
 				ilViteroPlugin::getInstance()->txt('tbbtn_add_appointment'),
 				$this->ctrl->getLinkTarget($this,'showAppointmentCreation')
 			);
+
+			//TODO rename this method to avoid if negate
+			if(!$this->canCreateAppointmentsByLearningProgressMode())
+			{
+				$add_app_button = $add_app_button->withUnavailableAction();
+				$ilToolbar->addComponent($add_app_button);
+				$ilToolbar->addText(ilViteroPlugin::getInstance()->txt("add_appointment_disabled_info"));
+			}
+			else {
+				$ilToolbar->addComponent($add_app_button);
+			}
+
+
 		}
 
 		$this->object->checkInit();
@@ -1470,6 +1484,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$this->ctrl->redirect($this,'participants');
 	}
 
+	//TODO add one step before validating if the user can delete the sessions or not depending on LP mode configuration.
 	public function confirmDeleteBooking()
 	{
 		global $tpl, $ilTabs;
@@ -1486,6 +1501,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			ilUtil::sendFailure($e->getMessage(), true);
 			$GLOBALS['ilCtrl']->redirect($this,'showContent');
 		}
+
+		$this->controlDeletionByLearningModuleMode($book);
 
 		include_once './Services/Utilities/classes/class.ilConfirmationGUI.php';
 		$confirm = new ilConfirmationGUI();
@@ -1509,6 +1526,45 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$confirm->setConfirm($GLOBALS['lng']->txt('delete'), 'deleteBooking');
 		$confirm->setCancel($GLOBALS['lng']->txt('cancel'), 'showContent');
 		$tpl->setContent($confirm->getHTML());
+	}
+
+	/**
+	 * TODO -> shoud we move this method to another place?
+	 * @param $book ViteroBookingResponse
+	 * return void
+	 */
+	protected function controlDeletionByLearningModuleMode($book)
+	{
+		if($this->object->getLearningProgress())
+		{
+			$total_appointments = $this->object->getNumberOfAppointmentsForSession();
+			$start = new ilDateTime(time(),IL_CAL_UNIX);
+			$end = clone $start;
+			$start->increment(IL_CAL_YEAR,-5);
+			$end->increment(IL_CAL_YEAR,1);
+
+			//todo extract the logic of start, end and calculate booking appointments to a method.
+			$number_app_to_delete = 0;
+			foreach (ilViteroUtils::calculateBookingAppointments($start, $end, $book->booking) as $dl) {
+				$number_app_to_delete++;
+			}
+
+			$appointments_after_deletion = $total_appointments - $number_app_to_delete;
+
+			//todo extract this to a method.
+			if ($this->object->getLearningProgressModeMulti() && $appointments_after_deletion < 2) {
+				ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('delete_info_minimum_app'), true);
+				$GLOBALS['ilCtrl']->redirect($this, 'showContent');
+			}
+
+			if (!$this->object->getLearningProgressModeMulti() && $appointments_after_deletion < 1) {
+				ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('delete_info_disable_lp'), true);
+				$GLOBALS['ilCtrl']->redirect($this, 'showContent');
+			}
+		}
+
+		return;
+
 	}
 
 	protected function deleteBooking()
@@ -1549,7 +1605,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$ilTabs->activateTab('content');
 
 		try {
-
 			$booking_service = new ilViteroBookingSoapConnector();
 			$book = $booking_service->getBookingById($_REQUEST['bookid']);
 		}
@@ -1558,6 +1613,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			ilUtil::sendFailure($e->getMessage(), true);
 			$GLOBALS['ilCtrl']->redirect($this,'showContent');
 		}
+
+		$this->controlDeletionByLearningModuleMode($book);
 
 		include_once './Services/Utilities/classes/class.ilConfirmationGUI.php';
 		$confirm = new ilConfirmationGUI();
@@ -1871,7 +1928,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$form = $this->initUpdateBookingForm($booking);
 
-
 		if(!$form->checkInput())
 		{
 			$form->setValuesByPost();
@@ -1948,7 +2004,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		try {
-
 			$con = new ilViteroBookingSoapConnector();
 
 			$con->updateBooking($room, $this->object->getVGroupId());
@@ -1962,6 +2017,23 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$form->setValuesByPost();
 			$GLOBALS['tpl']->setContent($form->getHTML());
 		}
+	}
+
+	/**
+	 * Returns false if learning progress has mode "one session" and we have an appointment already
+	 * @return bool
+	 */
+	public function canCreateAppointmentsByLearningProgressMode()
+	{
+		if($this->object->getLearningProgress()) {
+			$total_appointments = $this->object->getNumberOfAppointmentsForSession();
+
+			if (!$this->object->getLearningProgressModeMulti() && ($this->object->getNumberOfAppointmentsForSession() >= 1)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
 ?>

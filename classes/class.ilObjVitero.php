@@ -554,6 +554,7 @@ class ilObjVitero extends ilObjectPlugin
 		$this->learning_progress = (bool)$learning_progress;
 	}
 
+	//TODO isLearningProgressActive will be better when consume this class
 	public function getLearningProgress()
 	{
 		return $this->learning_progress;
@@ -574,6 +575,7 @@ class ilObjVitero extends ilObjectPlugin
 		$this->learning_progress_mode_multi = (bool)$is_multi;
 	}
 
+	//TODO isLearningProgressModeMulti will be better when consume this class
 	public function getLearningProgressModeMulti()
 	{
 		return $this->learning_progress_mode_multi;
