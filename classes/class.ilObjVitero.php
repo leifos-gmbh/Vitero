@@ -30,7 +30,7 @@ include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 *
 * $Id: class.ilObjVitero.php 56608 2014-12-19 10:11:57Z fwolf $
 */
-class ilObjVitero extends ilObjectPlugin
+class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
 	const MEMBER = 1;
 	const ADMIN = 2;
@@ -704,6 +704,72 @@ class ilObjVitero extends ilObjectPlugin
 		}
 
 		return $total_appointments;
+	}
+
+	/**
+	 * Get all user ids with LP status completed
+	 *
+	 * @return array
+	 */
+	public function getLPCompleted()
+	{
+		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+
+		return array();
+	}
+
+	/**
+	 * Get all user ids with LP status not attempted
+	 *
+	 * @return array
+	 */
+	public function getLPNotAttempted()
+	{
+		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+
+		return array();
+	}
+
+	/**
+	 * Get all user ids with LP status failed
+	 *
+	 * @return array
+	 */
+	public function getLPFailed()
+	{
+		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+
+		return array();
+	}
+
+	/**
+	 * Get all user ids with LP status in progress
+	 *
+	 * @return array
+	 */
+	public function getLPInProgress()
+	{
+		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+
+		return array();
+	}
+
+	/**
+	 * Get current status for given user
+	 *
+	 * @param int $a_user_id
+	 * @return int
+	 */
+	public function getLPStatusForUser($a_user_id)
+	{
+		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+
+		//Will return one of these status:
+		//  const LP_STATUS_NOT_ATTEMPTED_NUM = 0;
+		//	const LP_STATUS_IN_PROGRESS_NUM = 1;
+		//	const LP_STATUS_COMPLETED_NUM = 2;
+		//	const LP_STATUS_FAILED_NUM = 3;
+		return ilLPStatus::LP_STATUS_COMPLETED_NUM;
 	}
 }
 ?>
