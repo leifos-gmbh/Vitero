@@ -834,8 +834,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		$ilTabs->activateTab("content");
 
+		$user_has_write_access = $ilAccess->checkAccess('write','',$this->object->getRefId());
+
 		// Show add appointment
-		if($ilAccess->checkAccess('write','',$this->object->getRefId()))
+		if($user_has_write_access)
 		{
 			$add_app_button = $ui_factory->button()->standard(
 				ilViteroPlugin::getInstance()->txt('tbbtn_add_appointment'),
@@ -864,7 +866,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$table->init();
 
 		$start = new ilDateTime(time(),IL_CAL_UNIX);
-		$start->increment(ilDateTime::HOUR,-1);
+		if($user_has_write_access) {
+			$start->increment(ilDateTime::YEAR,-1);
+		} else {
+			$start->increment(ilDateTime::HOUR,-1);
+		}
 		$end = clone $start;
 		$end->increment(IL_CAL_YEAR,1);
 		try {
