@@ -810,6 +810,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 			$this->object->saveLearningProgressData();
 			$this->updateObject();
+			//TODO -> read: with this refresh thing we recalculate everything when update the settings.
+			ilLPStatusWrapper::_refreshStatus($this->object->getId());
 
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 			$ilCtrl->redirect($this, "editProperties");
