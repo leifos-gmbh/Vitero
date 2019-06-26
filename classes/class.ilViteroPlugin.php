@@ -112,6 +112,13 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
 		$settings = new ilSetting('vitero_config');
 		$settings->deleteAll();
 	}
-	
+
+	//Method called by external cron job plugin
+	public function updateLearningProgress()
+	{
+		$vitero_lp = new ilViteroLearningProgress();
+		$vitero_lp->updateLearningProgress();
+	}
+
 }
 ?>
