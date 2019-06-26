@@ -76,5 +76,19 @@ class ilViteroUserMapping
 		return 0;
 	}
 
+	public function getIUserId($a_user_id)
+	{
+		global $ilDB;
+
+		$query = 'SELECT * FROM rep_robj_xvit_umap '.
+			'WHERE vuid = '.$ilDB->quote($a_user_id,'integer');
+		$res = $ilDB->query($query);
+		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		{
+			return $row->iuid;
+		}
+		return 0;
+	}
+
 }
 ?>
