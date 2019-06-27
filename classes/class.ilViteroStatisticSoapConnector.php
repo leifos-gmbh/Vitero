@@ -53,10 +53,10 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 		try {
 			$this->initClient();
 
-			$session = new stdClass();
-			$session->timeslotstart = $a_time_slot_start;
-			$session->timeslotend = $a_time_slot_end;
-			$session_recording = $this->getClient()->getSessionRecordingsByTimeSlot($session);
+			$request = new stdClass();
+			$request->timeslotstart = $a_time_slot_start;
+			$request->timeslotend = $a_time_slot_end;
+			$session_recording = $this->getClient()->getSessionRecordingsByTimeSlot($request);
 
 			return $session_recording;
 		}
@@ -70,9 +70,28 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 
 	}
 
-	public function getSessionAndUserRecordingsByTimeSlot()
+	public function getSessionAndUserRecordingsByTimeSlot($a_time_slot_start, $a_time_slot_end, $a_customer_id = 0)
 	{
+		try {
+			$this->initClient();
 
+			$request = new stdClass();
+
+			$request->timeslotstart = $a_time_slot_start;
+			$request->timeslotend = $a_time_slot_end;
+			$request->customerid = $a_customer_id;
+
+			$recording_data = $this->getClient()->getSessionAndUserRecordingsByTimeSlot($request);
+
+			return $recording_data;
+		}
+		catch(Exception $e)
+		{
+			$code = $this->parseErrorCode($e);
+			$GLOBALS['ilLog']->write(__METHOD__.': Get session recordings by timeslot failed with message code: '.$code);
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage(),$code);
+		}
 	}
 
 	public function getCapacityRecordingByDate()
