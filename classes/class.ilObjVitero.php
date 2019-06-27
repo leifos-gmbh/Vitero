@@ -24,6 +24,8 @@
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 
 /**
+ * TODO centralize the load of lp settings readLearningProgressSettings
+ * TODO DRY for the Query getLPInProgress getLTCompleted etc... 99% duplicated
 * Application class for vitero repository object.
 *
 * @author Stefan Meyer <smeyer.ilias@gmx.de>
@@ -46,7 +48,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	protected $learning_progress_min_percentage;
 	protected $learning_progress_mode_multi = false;
 	protected $learning_progress_min_sessions;
-	protected $is_learning_progress_stored = false;
+	protected $is_learning_progress_stored = false; //TODO maybe this var and setters/getters should be renamed to something using the word settings.
 
 	/**
 	* Constructor
@@ -713,9 +715,35 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPCompleted()
 	{
-		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+		global $DIC;
 
-		return array();
+		$db = $DIC->database();
+		$this->readLearningProgressSettings();
+
+		$min_percent = $this->getLearningProgressMinPercentage();
+		$min_sessions_passed = $this->getLearningProgressMinSessions();
+
+		$sql = "SELECT user_id," .
+			" COUNT( CASE WHEN percentage >= " .$min_percent. " THEN 1 END) count_passed" .
+			" FROM rep_robj_xvit_recs" .
+			" WHERE obj_id = " . $this->getId() .
+			" GROUP BY user_id";
+
+		ilLoggerFactory::getRootLogger()->debug("Query => ".$sql);
+
+		$res = $db->query($sql);
+
+		$users_completed = array();
+		while($row = $db->fetchAll($res))
+		{
+			if($row['count_passed'] >= $min_sessions_passed)
+			{
+				array_push($users_completed, $row['user_id']);
+			}
+		}
+
+		ilLoggerFactory::getRootLogger()->dump($users_completed);
+		return $users_completed;
 	}
 
 	/**
@@ -725,6 +753,13 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPNotAttempted()
 	{
+
+		/*global $DIC;
+
+		$review = $DIC->rbac()->review();
+
+		return $review->assignedUsers($this->getDefaultMemberRole());*/
+
 		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
 
 		return array();
@@ -749,12 +784,39 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPInProgress()
 	{
-		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+		global $DIC;
 
-		return array();
+		$db = $DIC->database();
+		$this->readLearningProgressSettings();
+
+		$min_percent = $this->getLearningProgressMinPercentage();
+		$min_sessions_passed = $this->getLearningProgressMinSessions();
+
+		$sql = "SELECT user_id," .
+			" COUNT( CASE WHEN percentage > " .$min_percent. " THEN 1 END) count_passed" .
+			" FROM rep_robj_xvit_recs" .
+			" WHERE obj_id = " . $this->getId() .
+			" GROUP BY user_id";
+
+		ilLoggerFactory::getRootLogger()->debug("Query => ".$sql);
+
+		$res = $db->query($sql);
+
+		$users_completed = array();
+		while($row = $db->fetchAll($res))
+		{
+			if($row['count_passed'] < $min_sessions_passed || 1==1)
+			{
+				array_push($users_completed, $row['user_id']);
+			}
+		}
+
+		ilLoggerFactory::getRootLogger()->dump($users_completed);
+		return $users_completed;
 	}
 
 	/**
+	 * TODO: Is this the best way?
 	 * Get current status for given user
 	 *
 	 * @param int $a_user_id
@@ -762,14 +824,13 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPStatusForUser($a_user_id)
 	{
-		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
+		if(ilLPStatus::_hasUserCompleted($this->getId(), $a_user_id))
+		{
+			return ilLPStatus::LP_STATUS_COMPLETED_NUM;
+		}
 
-		//Will return one of these status:
-		//  const LP_STATUS_NOT_ATTEMPTED_NUM = 0;
-		//	const LP_STATUS_IN_PROGRESS_NUM = 1;
-		//	const LP_STATUS_COMPLETED_NUM = 2;
-		//	const LP_STATUS_FAILED_NUM = 3;
-		return ilLPStatus::LP_STATUS_COMPLETED_NUM;
+		return ilLPStatus::LP_STATUS_IN_PROGRESS_NUM;
 	}
+
 }
 ?>
