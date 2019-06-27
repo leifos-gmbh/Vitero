@@ -322,5 +322,35 @@ if(!$ilDB->tableExists('rep_robj_xvit_lp'))
 }
 $ilDB->addPrimaryKey('rep_robj_xvit_lp',array('obj_id'));
 ?>
+<#14>
+<?php
+if(!$ilDB->tableExists('rep_robj_xvit_recs'))
+{
+	$ilDB->createTable('rep_robj_xvit_recs', array(
+		'user_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'obj_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'recording_id'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		),
+		'percent'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		)
+	));
+
+	$ilDB->addPrimaryKey('rep_robj_xvit_recs',array('user_id','obj_id','recording_id'));
+}
+?>
 
 
