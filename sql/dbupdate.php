@@ -352,5 +352,15 @@ if(!$ilDB->tableExists('rep_robj_xvit_recs'))
 	$ilDB->addPrimaryKey('rep_robj_xvit_recs',array('user_id','obj_id','recording_id'));
 }
 ?>
+<#15>
+<?php
+if($ilDB->tableExists('rep_robj_xvit_recs'))
+{
+	if($ilDB->tableColumnExists('rep_robj_xvit_recs','percent'))
+	{
+		$ilDB->renameTableColumn('rep_robj_xvit_recs','percent', 'percentage');
+	}
+}
+?>
 
 
