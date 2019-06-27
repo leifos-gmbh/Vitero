@@ -192,5 +192,24 @@ class ilViteroGroupSoapConnector extends ilViteroSoapConnector
 	{
 		return self::WSDL_NAME;
 	}
+
+	public function getGroupListByCustomer($customer_id)
+	{
+		try {
+			$this->initClient();
+
+			$request = new stdClass();
+			$request->customerid = $customer_id;
+
+			return $this->getClient()->getGroupListByCustomer($request);
+		}
+		catch(SoapFault $e)
+		{
+			$code = $this->parseErrorCode($e);
+			$GLOBALS['ilLog']->write(__METHOD__.': Change group role failed with message code: '.$code);
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage(),$code);
+		}
+	}
 }
 ?>
