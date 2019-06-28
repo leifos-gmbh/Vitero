@@ -868,13 +868,15 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$table->init();
 
 		$start = new ilDateTime(time(),IL_CAL_UNIX);
+		$end = clone $start;
 		if($user_has_write_access) {
 			$start->increment(ilDateTime::YEAR,-1);
 		} else {
 			$start->increment(ilDateTime::HOUR,-1);
 		}
-		$end = clone $start;
+
 		$end->increment(IL_CAL_YEAR,1);
+
 		try {
 			$table->parse(
 				$this->object->getVGroupId(),
