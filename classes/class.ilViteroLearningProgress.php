@@ -52,22 +52,29 @@ class ilViteroLearningProgress
 		$end = $end->getUnixTime();
 		$end = date('YmtHi',$end);
 
+		ilLoggerFactory::getRootLogger()->debug("Start date = ".$start);
+		ilLoggerFactory::getRootLogger()->debug("End date = ".$end);
+		ilLoggerFactory::getRootLogger()->debug("Customer id = ".$customer_id);
+
+
 		//TODO uncomment this and remove dummy array.
-		//$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($start, $end, $customer_id);
+		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot('201906281030', '201906281145', $customer_id);
+
+		ilLoggerFactory::getRootLogger()->dump($session_and_user_recordings);
 
 		//TODO parse the recordings
 		//$session_and_user_recordings = $this->parseRecordings($session_and_user_recordings);
-		$session_and_user_recordings = $this->dummyArray();
+		//$session_and_user_recordings = $this->dummyArray();
 
 		// READ ONLY SESSIONS WITH FUTURE APPOINTMENTS.
-		$usersAndStatusToUpdate = $this->getUsersAndStatusToUpdate($session_and_user_recordings);
+		/*$usersAndStatusToUpdate = $this->getUsersAndStatusToUpdate($session_and_user_recordings);
 		ilLoggerFactory::getRootLogger()->dump($usersAndStatusToUpdate);
 		foreach ($usersAndStatusToUpdate as $status_data)
 		{
 			//TODO-> This is the current process ending.
 			$this->updateUserRecordingAttendance($status_data['userrecordingid'], $status_data['userid'], $status_data['percentage']);
 		}
-		ilLoggerFactory::getRootLogger()->dump($usersAndStatusToUpdate);
+		ilLoggerFactory::getRootLogger()->dump($usersAndStatusToUpdate);*/
 	}
 
 	/**

@@ -287,8 +287,11 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 				$GLOBALS['ilCtrl']->getLinkTarget($this->getParentObject(),'confirmDeleteBooking')
 			);
 		}
-		$this->tpl->setVariable('ACTION_PART',$list->getHTML());
-
+		if($a_set['has_actions']){
+			$this->tpl->setVariable('ACTION_PART',$list->getHTML());
+		} else {
+			$this->tpl->setVariable('ACTION_PART',"");
+		}
 
 	}
 
@@ -441,6 +444,13 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 					$repend = ilViteroUtils::parseSoapDate($booking->repetitionenddate);
 					$booking_list[$counter]['ends'] = ilDatePresentation::formatDate(new ilDate($repend->get(IL_CAL_UNIX),IL_CAL_UNIX));
 				}
+
+				if($bend->get(IL_CAL_UNIX) < time()) {
+					$booking_list[$counter]['has_actions'] = false;
+				} else {
+					$booking_list[$counter]['has_actions'] = true;
+				}
+
 				$counter++;
 			}
 		}
