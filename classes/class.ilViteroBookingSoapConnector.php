@@ -253,6 +253,28 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
+	public function getBookingByBookingTimeId($a_booking_time_id)
+	{
+		try{
+			$this->initClient();
+
+			$req = new stdClass();
+			$req->bookingtimeid = $a_booking_time_id;
+			$req->timezone = self::WS_TIMEZONE;
+
+			$ret = $this->getClient()->getBookingByBookingTimeId($req);
+
+			return $ret;
+		}
+		catch (SoapFault $e)
+		{
+			$code = $this->parseErrorCode($e);
+			$GLOBALS['ilLog']->write(__METHOD__.': Get Booking By BookingTimeId id failed with message code: '.$code);
+			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
+			throw new ilViteroConnectorException($e->getMessage(),$code);
+		}
+	}
+
 	public function deleteBooking($a_id)
 	{
 		try {
