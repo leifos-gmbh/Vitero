@@ -18,7 +18,7 @@ class ilViteroUtils
 
 	/**
 	 * Parse date string from soap
-	 * @param <type> $a_datetime
+	 * @param string $a_datetime
 	 * @return ilDateTime 
 	 */
 	public static function parseSoapDate($a_datetime)
