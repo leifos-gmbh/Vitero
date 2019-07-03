@@ -1,0 +1,15 @@
+Comments about development
+---------------------------
+
+1 - Booking id issue in getSessionAndUserRecordingsByTimeSlot
+
+Method getSessionAndUserRecordingsByTimeSlot from vitero returns bookingid value.
+This bookingid id, is in fact, a booking time id. They did not change the "bookingid" name to keep back compatibility.
+
+To obtain a booking object from  this booking time id we use the method getBookingByBookingTimeId($bookingTimeId);
+
+3- Percentage round issue
+
+After doing the maths with the attendance percentage we can obtain decimal values like for example 74.6666%
+The current values are stored discriminating the decimals. For this example the stored value is 74%
+
