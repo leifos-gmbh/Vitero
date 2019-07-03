@@ -29,52 +29,103 @@ class ilViteroLearningProgress
 	}
 
 	/**
+	 * Booking in vitero = Appointment in ILIAS
 	 * TODO pending real sessions in vitero platform to test this.
 	 * @throws ilDateTimeException
 	 */
 	public function updateLearningProgress()
 	{
 		$statistic_connector = new ilViteroStatisticSoapConnector();
+		$booking_connector = new ilViteroBookingSoapConnector();
 
 		$settings = new ilViteroSettings();
 		$customer_id = $settings->getCustomer();
 
-		//TODO define properly these slots. Store them if necessary (current end time will be next start)
+		//TODO Improve this date stuff
+		$start_range = new ilDateTime(time(),IL_CAL_UNIX);
+		$end_range = clone $start_range;
 
-		$start = new ilDateTime(time(),IL_CAL_UNIX);//2019-06-24 17:04:57
+		$start_range->increment(IL_CAL_YEAR,-5);
+		$start_unix = $start_range->getUnixTime();
+		$start_str = date('YmtHi',$start_unix);
 
-		$end = clone $start;
+		$end_range->increment(IL_CAL_YEAR,1);
+		$end_unix = $end_range->getUnixTime();
+		$end_str = date('YmtHi',$end_unix);
 
-		$start->increment(IL_CAL_YEAR,-5);
-		$start = $start->getUnixTime();
-		$start = date('YmtHi',$start);
-		$end->increment(IL_CAL_YEAR,1);
-		$end = $end->getUnixTime();
-		$end = date('YmtHi',$end);
+		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($start_str, $end_str, $customer_id);
 
-		ilLoggerFactory::getRootLogger()->debug("Start date = ".$start);
-		ilLoggerFactory::getRootLogger()->debug("End date = ".$end);
-		ilLoggerFactory::getRootLogger()->debug("Customer id = ".$customer_id);
+		//Todo parse recordings (only with future events etc.)
+		//$session_and_user_recordings = $this->parseRecordingsByInitialCriteria($session_and_user_recordings);
 
-
-		//TODO uncomment this and remove dummy array.
-		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot('201906281030', '201906281145', $customer_id);
-
-		ilLoggerFactory::getRootLogger()->dump($session_and_user_recordings);
-
-		//TODO parse the recordings
-		//$session_and_user_recordings = $this->parseRecordings($session_and_user_recordings);
-		//$session_and_user_recordings = $this->dummyArray();
-
-		// READ ONLY SESSIONS WITH FUTURE APPOINTMENTS.
-		/*$usersAndStatusToUpdate = $this->getUsersAndStatusToUpdate($session_and_user_recordings);
-		ilLoggerFactory::getRootLogger()->dump($usersAndStatusToUpdate);
-		foreach ($usersAndStatusToUpdate as $status_data)
+		if(is_object($session_and_user_recordings->sessionrecording))
 		{
-			//TODO-> This is the current process ending.
-			$this->updateUserRecordingAttendance($status_data['userrecordingid'], $status_data['userid'], $status_data['percentage']);
+			$session_and_user_recordings = array($session_and_user_recordings->sessionrecording);
 		}
-		ilLoggerFactory::getRootLogger()->dump($usersAndStatusToUpdate);*/
+		else if(is_array($session_and_user_recordings->sessionrecording))
+		{
+			$session_and_user_recordings = $session_and_user_recordings->sessionrecording;
+		}
+
+		//TODO: The booking id here is not a real booking id because vitero needs this to keep backward compatibility.
+		//TODO: The booking id is a bookingTimeId and we can get a booking obj. via getBookingTimeId(bookingTimeId)
+		foreach ($session_and_user_recordings as $session_user_recording)
+		{
+			$ilias_object_id = ilObjVitero::lookupObjIdByGroupId($session_user_recording->groupid);
+
+			$this->vitero_object->setId($ilias_object_id);
+
+			$this->vitero_object->readLearningProgressSettings();
+
+			if($this->vitero_object->getLearningProgress())
+			{
+				$booking = $booking_connector->getBookingByBookingTimeId($session_user_recording->bookingid);
+
+				$user_recording_id = $session_user_recording->userrecording->userrecordingid;
+
+				if($session_user_recording->sessionend >= $booking->booking->start)
+				{
+					$user_time_attended = 0;
+					$user_percent_attended = 0;
+
+					//parse vitero string dates to ilDateTime
+					$booking_start = ilViteroUtils::parseSoapDate($booking->booking->start)->getUnixTime();
+					$booking_end = ilViteroUtils::parseSoapDate($booking->booking->end)->getUnixTime();
+
+					$booking_duration_seconds = $booking_end - $booking_start;
+
+					$user_start = ilViteroUtils::parseSoapDate($session_user_recording->sessionstart)->getUnixTime();
+					$user_end = ilViteroUtils::parseSoapDate($session_user_recording->sessionend)->getUnixTime();
+
+					//get the effective start and end
+					$real_start = max($booking_start, $user_start);
+					$real_end = min($booking_end, $user_end);
+
+					//get the effective time spent by the user in the booking session
+					$user_time_attended = $real_end - $real_start;
+
+					//get percentage of the effective time spent rounded always down only if user has effective time.
+					if($user_time_attended > 0){
+						$user_percent_attended = floor($user_time_attended * 100 / $booking_duration_seconds);
+					}
+
+					$user_id = $this->user_mapping->getIUserId($session_user_recording->userrecording->userid);
+
+					//if user mapped properly
+					if($user_id)
+					{
+						$this->updateUserRecordingAttendance($ilias_object_id, $user_id, $user_recording_id, $user_percent_attended);
+					}
+				}
+
+			}
+
+			//TODO : Is this ok????
+			ilLPStatusWrapper::_refreshStatus($ilias_object_id);
+		}
+
+
+
 	}
 
 	/**
@@ -90,123 +141,6 @@ class ilViteroLearningProgress
 		return $recordings;
 	}
 
-	public function dummyArray()
-	{
-		$array_user_recording = array();
-
-		$array_user_recording[] = array(
-			"userstart" => "201906251545",
-			"userend" => "201906251615",
-			"userid" => 3,
-			"sessionrecordingid" => 1,
-			"userrecordingid" => 1
-		);
-
-		/*$array_user_recording[] = array(
-			"userstart" => "201906251640",
-			"userend" => "201906251645",
-			"userid" => 3,
-			"sessionrecordingid" => 1,
-			"userrecordingid" => 2
-		);*/
-
-		/*$array_user_recording[] = array(
-			"userstart" => "201906251650",
-			"userend" => "201906251715",
-			"userid" => 3,
-			"sessionrecordingid" => 1,
-			"userrecordingid" => 3
-		);*/
-
-		$array_user_recording[] = array(
-			"userstart" => "201906251700",
-			"userend" => "201906251715",
-			"userid" => 3,
-			"sessionrecordingid" => 2,
-			"userrecordingid" => 4
-		);
-
-		$array_user_recording[] = array(
-			"userstart" => "201906251605",
-			"userend" => "201906251715",
-			"userid" => 4,
-			"sessionrecordingid" => 1,
-			"userrecordingid" => 5
-		);
-
-		$session_and_user_recordings = array();
-		$session_and_user_recordings[] = array(
-			"groupid" => 4,
-			"sessionstart" => "201906251600",
-			"sessionend" => "201906251700",
-			"userrecording" => $array_user_recording
-		);
-
-		return $session_and_user_recordings;
-	}
-
-	/**
-	 * get the moment when the session started for the user
-	 * @param $a_session_start
-	 * @param $a_user_start
-	 * @return mixed
-	 */
-	public function getRealStartDateTime($a_session_start, $a_user_start)
-	{
-		$real_start = $a_session_start;
-
-		if($a_user_start > $a_session_start){
-			$real_start = $a_user_start;
-		}
-
-		return $real_start;
-	}
-
-	/**
-	 * Get the moment when the session finished for the user
-	 * @param $a_session_end
-	 * @param $a_user_end
-	 * @return mixed
-	 */
-	public function getRealEndDateTime($a_session_end, $a_user_end)
-	{
-		$real_end = $a_session_end;
-
-		if($a_user_end < $a_session_end) {
-			$real_end = $a_user_end;
-		}
-
-		return $real_end;
-	}
-
-	/**
-	 * @param $a_recordings
-	 * @return array
-	 */
-	public function getUsersAndStatusToUpdate($a_recordings)
-	{
-		$sessions_user_data = array();
-
-		foreach($a_recordings as $recording)
-		{
-			$ilias_object_id = ilObjVitero::lookupObjIdByGroupId($recording['groupid']);
-
-			$this->vitero_object->setId($ilias_object_id);
-
-			$this->vitero_object->readLearningProgressSettings();
-
-			if($this->vitero_object->getLearningProgress())
-			{
-				$session_start  = strtotime($recording['sessionstart']);
-				$session_end    = strtotime($recording['sessionend']);
-
-				$sessions_user_data = $this->getUserSessionsAttended($recording['userrecording'], $session_start, $session_end);
-			}
-		}
-
-		return $sessions_user_data;
-	}
-
 	/**
 	 * @param $a_user_recording
 	 * @param $a_session_start
@@ -217,35 +151,31 @@ class ilViteroLearningProgress
 	{
 		$user_sessions_attended = array();
 
+		//TODO no foreach here, we have only one userrecording object per appointment.
 		foreach($a_user_recording as $record)
 		{
-			//TODO: USER RECORDINGS ALWAYS HAVE USER START AND USER END  datetime. This if maybe is not needed.
-			//We only calculate the Learning Progress if the user loged out from vitero session.
-			if($record['userend'] > 0)
-			{
-				$user_start = strtotime($record['userstart']);
-				$user_end = strtotime($record['userend']);
+			$user_start = strtotime($record['userstart']);
+			$user_end = strtotime($record['userend']);
 
-				//time in real scheduled session time period.
-				$real_start = $this->getRealStartDateTime($a_session_start, $user_start);
-				$real_end   = $this->getRealEndDateTime($a_session_end, $user_end);
+			//time in real scheduled session time period.
+			$real_start = $this->getRealStartDateTime($a_session_start, $user_start);
+			$real_end   = $this->getRealEndDateTime($a_session_end, $user_end);
 
-				$user_time_spent = $real_end - $real_start;
+			$user_time_spent = $real_end - $real_start;
 
-				$session_duration = $a_session_end - $a_session_start;
+			$session_duration = $a_session_end - $a_session_start;
 
-				$user_percent_attended = floor($user_time_spent * 100 / $session_duration);
+			$user_percent_attended = floor($user_time_spent * 100 / $session_duration);
 
-				$user_id = $this->user_mapping->getIUserId($record["userid"]);
-				$userrecording_id = $record['userrecordingid'];
+			$user_id = $this->user_mapping->getIUserId($record["userid"]);
+			$userrecording_id = $record['userrecordingid'];
 
-				$user_sessions_attended[] = array(
-					"userrecordingid"   => $userrecording_id,
-					"userid"            => $user_id,
-					"percentage"        => $user_percent_attended
-				);
-				//$user_sessions_attended[$user_id][$recording_id] = $user_sessions_attended[$user_id][$recording_id] + $user_time_spent;
-			}
+			$user_sessions_attended[] = array(
+				"userrecordingid"   => $userrecording_id,
+				"userid"            => $user_id,
+				"percentage"        => $user_percent_attended
+			);
+		//$user_sessions_attended[$user_id][$recording_id] = $user_sessions_attended[$user_id][$recording_id] + $user_time_spent;
 		}
 
 		return $user_sessions_attended;
@@ -285,43 +215,15 @@ class ilViteroLearningProgress
 	}
 
 	/**
-	 * @param $a_user_sessions_attended
-	 * @param $a_session_duration
-	 * @param $a_lp_min_percent
-	 * @return array
-	 */
-	public function getCompletedSessions($a_user_sessions_attended, $a_session_duration, $a_lp_min_percent)
-	{
-		$completed_sessions = array();
-
-		foreach($a_user_sessions_attended as $user_id => $attendance)
-		{
-			$attended = 0;
-			foreach($attendance as $session => $seconds)
-			{
-				$user_percent_attended = floor($seconds * 100 / $a_session_duration);
-
-				if($user_percent_attended >= $a_lp_min_percent)
-				{
-					$attended++;
-				}
-			}
-			$completed_sessions[$user_id] = $attended;
-		}
-
-		return $completed_sessions;
-	}
-
-	/**
 	 * @param $a_recording_id
 	 * @param $a_recording_user_id
 	 * @param $user_percent_attended
 	 */
-	public function updateUserRecordingAttendance($a_userrecording_id, $a_recording_user_id, $a_user_percent_attended)
+	public function updateUserRecordingAttendance($a_ilias_object_id, $a_user_id, $a_userrecording_id, $a_user_percent_attended)
 	{
 		if($this->isNotUserRecordingStoredInDB($a_userrecording_id))
 		{
-			$this->insertUserRecording($a_userrecording_id, $a_recording_user_id, $a_user_percent_attended);
+			$this->insertUserRecording($a_ilias_object_id, $a_userrecording_id, $a_user_id, $a_user_percent_attended);
 		}
 
 	}
@@ -355,7 +257,7 @@ class ilViteroLearningProgress
 	 * @param $a_user_id
 	 * @param $a_user_percent_attended
 	 */
-	protected function insertUserRecording($a_userrecording_id, $a_user_id, $a_user_percent_attended)
+	protected function insertUserRecording($a_ilias_object_id, $a_userrecording_id, $a_user_id, $a_user_percent_attended)
 	{
 		global $DIC;
 
@@ -364,12 +266,10 @@ class ilViteroLearningProgress
 		$sql = 'INSERT INTO rep_robj_xvit_recs (user_id,obj_id,recording_id,percentage) ' .
 			'VALUES(' .
 			$db->quote($a_user_id, 'integer') . ', ' .
-			$db->quote($this->vitero_object->getId(), 'integer') . ', ' .
+			$db->quote($a_ilias_object_id, 'integer') . ', ' .
 			$db->quote($a_userrecording_id, 'integer') . ', ' .
 			$db->quote($a_user_percent_attended,'integer') .
 			')';
-
-		ilLoggerFactory::getRootLogger()->debug("INSERT = ".$sql);
 
 		$db->manipulate($sql);
 	}
