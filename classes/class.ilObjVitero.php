@@ -729,12 +729,11 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			" WHERE obj_id = " . $this->getId() .
 			" GROUP BY user_id";
 
-		ilLoggerFactory::getRootLogger()->debug("Query => ".$sql);
-
 		$res = $db->query($sql);
 
 		$users_completed = array();
-		while($row = $db->fetchAll($res))
+
+		while($row = $db->fetchAssoc($res))
 		{
 			if($row['count_passed'] >= $min_sessions_passed)
 			{
@@ -742,7 +741,6 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			}
 		}
 
-		ilLoggerFactory::getRootLogger()->dump($users_completed);
 		return $users_completed;
 	}
 
@@ -787,6 +785,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		global $DIC;
 
 		$db = $DIC->database();
+
 		$this->readLearningProgressSettings();
 
 		$min_percent = $this->getLearningProgressMinPercentage();
@@ -798,25 +797,21 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			" WHERE obj_id = " . $this->getId() .
 			" GROUP BY user_id";
 
-		ilLoggerFactory::getRootLogger()->debug("Query => ".$sql);
-
 		$res = $db->query($sql);
 
-		$users_completed = array();
-		while($row = $db->fetchAll($res))
+		$users_in_progress = array();
+		while($row = $db->fetchAssoc($res))
 		{
-			if($row['count_passed'] < $min_sessions_passed || 1==1)
+			if($row['count_passed'] < $min_sessions_passed)
 			{
-				array_push($users_completed, $row['user_id']);
+				array_push($users_in_progress, $row['user_id']);
 			}
 		}
 
-		ilLoggerFactory::getRootLogger()->dump($users_completed);
-		return $users_completed;
+		return $users_in_progress;
 	}
 
 	/**
-	 * TODO: Is this the best way?
 	 * Get current status for given user
 	 *
 	 * @param int $a_user_id
