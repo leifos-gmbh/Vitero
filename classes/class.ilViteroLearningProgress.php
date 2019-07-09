@@ -73,6 +73,11 @@ class ilViteroLearningProgress
 		{
 			$ilias_object_id = ilObjVitero::lookupObjIdByGroupId($session_user_recording->groupid);
 
+			//Omit this group id if there is not an ILIAS vitero session assigned.
+			if($ilias_object_id == 0) {
+				continue;
+			}
+
 			$this->vitero_object->setId($ilias_object_id);
 
 			$this->vitero_object->readLearningProgressSettings();
@@ -120,12 +125,8 @@ class ilViteroLearningProgress
 
 			}
 
-			//TODO : Is this ok????
 			ilLPStatusWrapper::_refreshStatus($ilias_object_id);
 		}
-
-
-
 	}
 
 	/**
