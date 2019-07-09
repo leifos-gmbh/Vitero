@@ -595,12 +595,13 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 
 	public function saveLearningProgressData()
 	{
-		if($this->is_learning_progress_stored)
-		{
-			return $this->updateLearningProgress();
+		if($this->is_learning_progress_stored) {
+			$this->updateLearningProgress();
+		} else {
+			$this->insertLearningProgress();
 		}
 
-		return $this->insertLearningProgress();
+		ilLPStatusWrapper::_refreshStatus($this->getId());
 	}
 
 	protected function updateLearningProgress()
