@@ -663,9 +663,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	{
 		$this->is_learning_progress_stored = true;
 	}
-
-	//groups here = teams in vitero website
-
+	
 	/**
 	 * @return int total number of appointments.
 	 * @throws ilDateTimeException
@@ -752,15 +750,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPNotAttempted()
 	{
-
-		/*global $DIC;
-
-		$review = $DIC->rbac()->review();
-
-		return $review->assignedUsers($this->getDefaultMemberRole());*/
-
-		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
-
+		//TODO members added but never entered in the vitero session
 		return array();
 	}
 
@@ -771,8 +761,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPFailed()
 	{
-		//TODO: NO CALCULATIONS, NO SOAP request etc.. here. ONLY queries to ILIAS DB
-
+		//nothing to do here.
 		return array();
 	}
 
