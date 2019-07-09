@@ -11,6 +11,7 @@ class ilViteroLearningProgress
 {
 	const PASSED = "passed";
 	const NOT_PASSED = "not passed";
+	const CRON_PLUGIN_ID = "xvitc";
 
 	/**
 	 * @var ilObjVitero
@@ -21,6 +22,7 @@ class ilViteroLearningProgress
 	 * @var ilViteroUserMapping
 	 */
 	protected $user_mapping;
+
 
 	public function __construct()
 	{
@@ -41,14 +43,26 @@ class ilViteroLearningProgress
 		$settings = new ilViteroSettings();
 		$customer_id = $settings->getCustomer();
 
-		//TODO Improve this date stuff
-		$start_range = new ilDateTime(time(),IL_CAL_UNIX);
-		$end_range = clone $start_range;
+		//TODO get last plugin execution and get all the sessions with appointments in the future and from the day before just in case.
+		$cron_data = ilCronManager::getCronJobData(self::CRON_PLUGIN_ID);
+		$last_cron_ejecution_date = $cron_data[0]['running_ts'];
 
-		$start_range->increment(IL_CAL_YEAR,-5);
+		//first cron execution will start dealing with events from 5 years ago. Later executions will start from current date - 1 day
+		if($last_cron_ejecution_date > 0)
+		{
+			$start_range = new ilDateTime($last_cron_ejecution_date,IL_CAL_UNIX);
+			$start_range->increment(IL_CAL_DAY,-1);
+		}
+		else
+		{
+			$start_range = new ilDateTime(time(),IL_CAL_UNIX);
+			$start_range->increment(IL_CAL_YEAR,-5);
+		}
+
 		$start_unix = $start_range->getUnixTime();
 		$start_str = date('YmtHi',$start_unix);
 
+		$end_range = new ilDateTime(time(),IL_CAL_UNIX);
 		$end_range->increment(IL_CAL_YEAR,1);
 		$end_unix = $end_range->getUnixTime();
 		$end_str = date('YmtHi',$end_unix);
