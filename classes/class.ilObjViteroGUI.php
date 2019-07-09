@@ -795,7 +795,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	*/
 	public function updateProperties()
 	{
-		global $tpl, $lng, $ilCtrl;
+		global $tpl, $lng, $ilCtrl, $ilTabs;
 	
 		$this->initPropertiesForm();
 		if ($this->form->checkInput())
@@ -809,13 +809,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$this->object->setLearningProgressMinSessions($this->form->getInput("min_sessions"));
 
 			$this->object->saveLearningProgressData();
-			$this->updateObject();
-			//TODO -> read: with this refresh thing we recalculate everything when update the settings.
-			ilLPStatusWrapper::_refreshStatus($this->object->getId());
+			$this->object->update();
 
 			ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 			$ilCtrl->redirect($this, "editProperties");
 		}
+
+		$ilTabs->activateTab("properties");
 
 		$this->form->setValuesByPost();
 		$tpl->setContent($this->form->getHtml());
