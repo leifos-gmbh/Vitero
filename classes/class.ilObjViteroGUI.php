@@ -847,7 +847,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			);
 
 			//TODO rename this method to avoid if negate
-			if(!$this->canCreateAppointmentsByLearningProgressMode())
+			if($this->canNOTCreateAppointmentsByLearningProgressMode())
 			{
 				$add_app_button = $add_app_button->withUnavailableAction();
 				$ilToolbar->addComponent($add_app_button);
@@ -2033,7 +2033,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 * Returns false if learning progress has mode "one session" and we have an appointment already
 	 * @return bool
 	 */
-	public function canCreateAppointmentsByLearningProgressMode()
+	public function canNotCreateAppointmentsByLearningProgressMode()
 	{
 		if($this->object->getLearningProgress()) {
 			$total_appointments = $this->object->getNumberOfAppointmentsForSession();
