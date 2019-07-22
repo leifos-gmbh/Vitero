@@ -700,8 +700,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	public function initPropertiesForm()
 	{
 		global $ilCtrl;
-
-		$vitero_plugin = ilViteroPlugin::getInstance();
 	
 		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
 		$this->form = new ilPropertyFormGUI();
@@ -714,65 +712,73 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-
-		//TODO extract this conditional to a method.
 		if(ilLearningProgressAccess::checkAccess($this->object->getRefId())
 			&& ilViteroSettings::getInstance()->isLearningProgressEnabled()
 			&& ilViteroUtils::hasCustomerMonitoringMode())
 		{
-			$pres = new ilFormSectionHeaderGUI();
-			$pres->setTitle($vitero_plugin->txt('edit_learning_progress_properties'));
-			$this->form->addItem($pres);
-
-			$num_appointments = $this->object->getNumberOfAppointmentsForSession();
-
-			$learning_progress = new ilCheckboxInputGUI($vitero_plugin->txt('activate_learning_progress'), 'learning_progress');
-			$learning_progress->setInfo($vitero_plugin->txt('activate_learning_progress_info'));
-
-			$minimum_percentage = new ilNumberInputGUI($vitero_plugin->txt("min_percentage"),"min_percentage");
-			$minimum_percentage->setInfo($vitero_plugin->txt("min_sessions_info"));
-			$minimum_percentage->setMaxValue(100);
-			$minimum_percentage->setMinValue(0);
-			$minimum_percentage->setMaxLength(3);
-			$minimum_percentage->setSize(3);
-			$minimum_percentage->setSuffix("%");
-			$minimum_percentage->setRequired(true);
-
-			$learning_progress->addSubItem($minimum_percentage);
-
-			$mode = new ilRadioGroupInputGUI($vitero_plugin->txt("mode"),"mode");
-			$mode->setRequired(true);
-
-			$one_session = new ilRadioOption($vitero_plugin->txt("one_session"),ilObjVitero::LP_MODE_ONE);
-			if($num_appointments > 1) {
-				$one_session->setDisabled(true);
-				$one_session->setInfo($vitero_plugin->txt("currently_multi_appointments"));
-			}
-			$mode->addOption($one_session);
-
-			$multi_session = new ilRadioOption($vitero_plugin->txt("multi_session"), ilObjVitero::LP_MODE_MULTI);
-			$minimum_sessions = new ilNumberInputGUI($vitero_plugin->txt("min_sessions"), "min_sessions");
-			$minimum_sessions->setInfo($vitero_plugin->txt("min_sessions_info"));
-			$minimum_sessions->setMinValue(1);
-			$minimum_sessions->setMaxLength(3);
-			$minimum_sessions->setSize(3);
-			$minimum_sessions->setRequired(true);
-			$multi_session->addSubItem($minimum_sessions);
-			if($num_appointments === 1){
-				$multi_session->setDisabled(true);
-				$multi_session->setInfo($vitero_plugin->txt("currently_one_appointment"));
-			}
-			$mode->addOption($multi_session);
-
-			$learning_progress->addSubItem($mode);
-
-			$this->form->addItem($learning_progress);
+			$this->addLearningProgressSettingsSection();
 		}
 
 		$this->form->addCommandButton("updateProperties", $this->txt("save"));
 
 		$this->form->setTitle($this->txt("edit_properties"));
 		$this->form->setFormAction($ilCtrl->getFormAction($this));
+	}
+
+	protected function addLearningProgressSettingsSection()
+	{
+		$vitero_plugin = ilViteroPlugin::getInstance();
+
+		$pres = new ilFormSectionHeaderGUI();
+		$pres->setTitle($vitero_plugin->txt('edit_learning_progress_properties'));
+		$this->form->addItem($pres);
+
+		$num_appointments = $this->object->getNumberOfAppointmentsForSession();
+
+		$learning_progress = new ilCheckboxInputGUI($vitero_plugin->txt('activate_learning_progress'), 'learning_progress');
+		$learning_progress->setInfo($vitero_plugin->txt('activate_learning_progress_info'));
+
+		$minimum_percentage = new ilNumberInputGUI($vitero_plugin->txt("min_percentage"),"min_percentage");
+		$minimum_percentage->setInfo($vitero_plugin->txt("min_sessions_info"));
+		$minimum_percentage->setMaxValue(100);
+		$minimum_percentage->setMinValue(0);
+		$minimum_percentage->setMaxLength(3);
+		$minimum_percentage->setSize(3);
+		$minimum_percentage->setSuffix("%");
+		$minimum_percentage->setRequired(true);
+
+		$learning_progress->addSubItem($minimum_percentage);
+
+		$mode = new ilRadioGroupInputGUI($vitero_plugin->txt("mode"),"mode");
+		$mode->setRequired(true);
+
+		$one_session = new ilRadioOption($vitero_plugin->txt("one_session"),ilObjVitero::LP_MODE_ONE);
+		if($num_appointments > 1) {
+			$one_session->setDisabled(true);
+			$one_session->setInfo($vitero_plugin->txt("currently_multi_appointments"));
+		}
+		$mode->addOption($one_session);
+
+		$multi_session = new ilRadioOption($vitero_plugin->txt("multi_session"), ilObjVitero::LP_MODE_MULTI);
+		$minimum_sessions = new ilNumberInputGUI($vitero_plugin->txt("min_sessions"), "min_sessions");
+		$minimum_sessions->setInfo($vitero_plugin->txt("min_sessions_info"));
+		$minimum_sessions->setMinValue(1);
+		$minimum_sessions->setMaxLength(3);
+		$minimum_sessions->setSize(3);
+		$minimum_sessions->setRequired(true);
+		$multi_session->addSubItem($minimum_sessions);
+
+		if($num_appointments === 1){
+			$multi_session->setDisabled(true);
+			$multi_session->setInfo($vitero_plugin->txt("currently_one_appointment"));
+		}
+
+		$mode->addOption($multi_session);
+
+		$learning_progress->addSubItem($mode);
+
+		$this->form->addItem($learning_progress);
+
 	}
 	
 	/**
