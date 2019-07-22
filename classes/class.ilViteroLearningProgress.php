@@ -133,45 +133,6 @@ class ilViteroLearningProgress
 	}
 
 	/**
-	 * @param $a_user_recording
-	 * @param $a_session_start
-	 * @param $a_session_end
-	 * @return array
-	 */
-	public function getUserSessionsAttended($a_user_recording, $a_session_start, $a_session_end)
-	{
-		$user_sessions_attended = array();
-
-		//TODO no foreach here, we have only one userrecording object per appointment.
-		foreach($a_user_recording as $record)
-		{
-			$user_start = strtotime($record['userstart']);
-			$user_end = strtotime($record['userend']);
-
-			//time in real scheduled session time period.
-			$real_start = $this->getRealStartDateTime($a_session_start, $user_start);
-			$real_end   = $this->getRealEndDateTime($a_session_end, $user_end);
-
-			$user_time_spent = $real_end - $real_start;
-
-			$session_duration = $a_session_end - $a_session_start;
-
-			$user_percent_attended = floor($user_time_spent * 100 / $session_duration);
-
-			$user_id = $this->user_mapping->getIUserId($record["userid"]);
-			$userrecording_id = $record['userrecordingid'];
-
-			$user_sessions_attended[] = array(
-				"userrecordingid"   => $userrecording_id,
-				"userid"            => $user_id,
-				"percentage"        => $user_percent_attended
-			);
-		}
-
-		return $user_sessions_attended;
-	}
-
-	/**
 	 * @param $a_completed_sessions
 	 * @return array
 	 */
