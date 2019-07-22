@@ -43,34 +43,9 @@ class ilViteroLearningProgress
 		$settings = new ilViteroSettings();
 		$customer_id = $settings->getCustomer();
 
-		//TODO get last plugin execution and get all the sessions with appointments in the future and from the day before just in case.
-		$cron_data = ilCronManager::getCronJobData(self::CRON_PLUGIN_ID);
-		$last_cron_ejecution_date = $cron_data[0]['running_ts'];
+		$time_slot = $this->getTimeSlotToGetViteroRecordings();
 
-		//first cron execution will start dealing with events from 5 years ago. Later executions will start from current date - 1 day
-		if($last_cron_ejecution_date > 0)
-		{
-			$start_range = new ilDateTime($last_cron_ejecution_date,IL_CAL_UNIX);
-			$start_range->increment(IL_CAL_DAY,-1);
-		}
-		else
-		{
-			$start_range = new ilDateTime(time(),IL_CAL_UNIX);
-			$start_range->increment(IL_CAL_YEAR,-5);
-		}
-
-		$start_unix = $start_range->getUnixTime();
-		$start_str = date('YmtHi',$start_unix);
-
-		$end_range = new ilDateTime(time(),IL_CAL_UNIX);
-		$end_range->increment(IL_CAL_YEAR,1);
-		$end_unix = $end_range->getUnixTime();
-		$end_str = date('YmtHi',$end_unix);
-
-		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($start_str, $end_str, $customer_id);
-
-		//Todo parse recordings (only with future events etc.)
-		//$session_and_user_recordings = $this->parseRecordingsByInitialCriteria($session_and_user_recordings);
+		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($time_slot['start'], $time_slot['end'], $customer_id);
 
 		if(is_object($session_and_user_recordings->sessionrecording))
 		{
@@ -136,11 +111,13 @@ class ilViteroLearningProgress
 						$this->updateUserRecordingAttendance($ilias_object_id, $user_id, $user_recording_id, $user_percent_attended);
 					}
 				}
-
 			}
 
 			ilLPStatusWrapper::_refreshStatus($ilias_object_id);
 		}
+
+		ilViteroUtils::updateLastSyncDate();
+
 	}
 
 	/**
@@ -287,5 +264,36 @@ class ilViteroLearningProgress
 			')';
 
 		$db->manipulate($sql);
+	}
+
+
+	public function getTimeSlotToGetViteroRecordings()
+	{
+		$last_cron_ejecution_date = ilViteroUtils::getLastSyncDate();
+
+		//first cron execution will start dealing with events from 5 years ago. Later executions will start from current date - 1 day
+		if($last_cron_ejecution_date > 0)
+		{
+			$start_range = new ilDateTime($last_cron_ejecution_date,IL_CAL_UNIX);
+			$start_range->increment(IL_CAL_DAY,-1);
+		}
+		else
+		{
+			$start_range = new ilDateTime(time(),IL_CAL_UNIX);
+			$start_range->increment(IL_CAL_YEAR,-5);
+		}
+
+		$start_unix = $start_range->getUnixTime();
+		$start_str = date('YmtHi',$start_unix);
+
+		$end_range = new ilDateTime(time(),IL_CAL_UNIX);
+		$end_range->increment(IL_CAL_YEAR,1);
+		$end_unix = $end_range->getUnixTime();
+		$end_str = date('YmtHi',$end_unix);
+
+		return array(
+			"start" => $start_str,
+			"end" => $end_str
+		);
 	}
 }
