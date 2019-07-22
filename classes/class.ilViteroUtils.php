@@ -137,8 +137,6 @@ class ilViteroUtils
 						$next_booking['open']->increment(ilDateTime::MINUTE, $buffer_start * -1);
 
 						$next_booking['end'] = clone $next_booking['start'];
-						//Fix to Call to a member function get() on array TODO: remove this comments
-						//$next_booking['end']->setDate($next_booking->get(IL_CAL_UNIX) + $duration,IL_CAL_UNIX);
 						$next_booking['end']->setDate($next_booking['end']->get(IL_CAL_UNIX) + $duration,IL_CAL_UNIX);
 
 						$next_booking['closed'] = clone $next_booking['end'];

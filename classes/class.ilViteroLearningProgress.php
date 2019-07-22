@@ -32,7 +32,6 @@ class ilViteroLearningProgress
 
 	/**
 	 * Booking in vitero = Appointment in ILIAS
-	 * TODO pending real sessions in vitero platform to test this.
 	 * @throws ilDateTimeException
 	 */
 	public function updateLearningProgress()
@@ -56,8 +55,8 @@ class ilViteroLearningProgress
 			$session_and_user_recordings = $session_and_user_recordings->sessionrecording;
 		}
 
-		//TODO: The booking id here is not a real booking id because vitero needs this to keep backward compatibility.
-		//TODO: The booking id is a bookingTimeId and we can get a booking obj. via getBookingTimeId(bookingTimeId)
+		// Notice: The booking id here is not a real booking id because vitero needs this to keep backward compatibility.
+		// Notice: The booking id is a bookingTimeId and we can get a booking obj. via getBookingTimeId(bookingTimeId)
 		foreach ($session_and_user_recordings as $session_user_recording)
 		{
 			$ilias_object_id = ilObjVitero::lookupObjIdByGroupId($session_user_recording->groupid);
@@ -167,7 +166,6 @@ class ilViteroLearningProgress
 				"userid"            => $user_id,
 				"percentage"        => $user_percent_attended
 			);
-		//$user_sessions_attended[$user_id][$recording_id] = $user_sessions_attended[$user_id][$recording_id] + $user_time_spent;
 		}
 
 		return $user_sessions_attended;
@@ -266,7 +264,12 @@ class ilViteroLearningProgress
 		$db->manipulate($sql);
 	}
 
-
+	/**
+	 * Gets an array with starting date and ending date
+	 * @return array
+	 * @throws ilDatabaseException
+	 * @throws ilDateTimeException
+	 */
 	public function getTimeSlotToGetViteroRecordings()
 	{
 		$last_cron_ejecution_date = ilViteroUtils::getLastSyncDate();

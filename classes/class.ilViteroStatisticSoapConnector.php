@@ -29,20 +29,7 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
-	public function getUserRecordingById()
-	{
-
-	}
-
-	public function getSessionAndUserRecordingsBySessionId()
-	{
-
-	}
-
 	/**
-	 * REQUEST required: timeslotstart, timeslotend
-	 * REQUEST optional for admins: custmoerid
-	 * REQUEST optional: groupid, bookingid, bookinngtimeid, userid, sessionsortorder, timezone
 	 * Gets information about session recordings in a specific time slot.
 	 * @param $a_time_slot_start
 	 * @param $a_time_slot_end
@@ -94,21 +81,31 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
-	public function getCapacityRecordingByDate()
-	{
-
-	}
-
-	public function getCapacityRecordingsByTimeSlot()
-	{
-
-	}
-
 	protected function getWsdlName()
 	{
 		return self::WSDL_NAME;
 	}
 
+
+	public function getUserRecordingById()
+	{
+		//Not necessary to implement so far.
+	}
+
+	public function getSessionAndUserRecordingsBySessionId()
+	{
+		//Not necessary to implement so far.
+	}
+
+	public function getCapacityRecordingByDate()
+	{
+		//Not necessary to implement so far.
+	}
+
+	public function getCapacityRecordingsByTimeSlot()
+	{
+		//Not necessary to implement so far.
+	}
 
 }
 ?>

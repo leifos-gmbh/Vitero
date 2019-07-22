@@ -76,6 +76,12 @@ class ilViteroUserMapping
 		return 0;
 	}
 
+	/**
+	 * Get ILIAS user id from db mapping using a vitero user id
+	 * @param $a_user_id
+	 * @return int
+	 * @throws ilDatabaseException
+	 */
 	public function getIUserId($a_user_id)
 	{
 		global $ilDB;
