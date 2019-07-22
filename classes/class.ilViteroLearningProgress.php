@@ -120,19 +120,6 @@ class ilViteroLearningProgress
 	}
 
 	/**
-	 * Filter for sessions
-	 * @param $recordings
-	 * @return mixed
-	 */
-	public function parseRecordings($recordings)
-	{
-		// Return only recordings if LP is active +
-		// user finished the session(userrecording->userend) +
-		// session is finished(getSessionAndUserRecordingsByTimeSlotRequest->timeslotend)
-		return $recordings;
-	}
-
-	/**
 	 * @param $a_completed_sessions
 	 * @return array
 	 */
