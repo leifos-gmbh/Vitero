@@ -551,6 +551,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		return 0;
 	}
 
+	//LEARNING PROGRESS SETTINGS
 	public function setLearningProgress($learning_progress)
 	{
 		$this->learning_progress = (bool)$learning_progress;
@@ -751,6 +752,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	public function getLPNotAttempted()
 	{
 		//TODO members added but never entered in the vitero session
+		// compare members list with lp list (getUsersAttempted)
 		return array();
 	}
 
@@ -809,12 +811,43 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPStatusForUser($a_user_id)
 	{
-		if(ilLPStatus::_hasUserCompleted($this->getId(), $a_user_id))
+		if(in_array($a_user_id, $this->getUsersAttempted()))
 		{
-			return ilLPStatus::LP_STATUS_COMPLETED_NUM;
+			if(ilLPStatus::_hasUserCompleted($this->getId(), $a_user_id))
+			{
+				return ilLPStatus::LP_STATUS_COMPLETED_NUM;
+			}
+
+			return ilLPStatus::LP_STATUS_IN_PROGRESS_NUM;
 		}
 
-		return ilLPStatus::LP_STATUS_IN_PROGRESS_NUM;
+		return ilLPStatus::LP_STATUS_NOT_ATTEMPTED_NUM;
+	}
+
+	/**
+	 * Get users ids of the current vitero object.
+	 * @return array
+	 */
+	protected function getUsersAttempted()
+	{
+		global $DIC;
+
+		$db = $DIC->database();
+
+		$sql = "SELECT user_id" .
+			" FROM rep_robj_xvit_recs" .
+			" WHERE obj_id = " . $this->getId() .
+			" GROUP BY user_id";
+
+		$res = $db->query($sql);
+
+		$users_attempted = array();
+		while($row = $db->fetchAssoc($res))
+		{
+			array_push($users_attempted, $row['user_id']);
+		}
+
+		return $users_attempted;
 	}
 
 }
