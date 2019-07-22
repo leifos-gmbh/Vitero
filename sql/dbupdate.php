@@ -362,5 +362,18 @@ if($ilDB->tableExists('rep_robj_xvit_recs'))
 	}
 }
 ?>
+<#16>
+<?php
+if(!$ilDB->tableExists("rep_robj_xvit_date"))
+{
+	$ilDB->createTable('rep_robj_xvit_date', array(
+		'last_sync'	=> array(
+			'type'	=> 'integer',
+			'length'=> 4,
+			'notnull' => TRUE
+		)
+	));
+}
+?>
 
 
