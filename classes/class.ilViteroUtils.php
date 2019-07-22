@@ -270,5 +270,51 @@ class ilViteroUtils
 
 		return false;
 	}
+
+	/**
+	 * Get the date of the last vitero synchronization.
+	 * @return int
+	 * @throws ilDatabaseException
+	 */
+	public static function getLastSyncDate()
+	{
+		global $DIC;
+
+		$db = $DIC->database();
+
+		$query = 'SELECT last_sync FROM rep_robj_xvit_date';
+
+		$res = $db->query($query);
+
+		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		{
+			return $row->last_sync;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Insert/Update the last vitero synchronization.
+	 * @return int|void
+	 * @throws ilDatabaseException
+	 */
+	public static function updateLastSyncDate()
+	{
+		global $DIC;
+
+		$db = $DIC->database();
+
+		if(self::getLastSyncDate() > 0)
+		{
+			$query = "UPDATE rep_robj_xvit_date SET last_sync = " . $db->quote(time(),"integer");
+
+			return $db->manipulate($query);
+		}
+
+		$query = "INSERT INTO rep_robj_xvit_date (last_sync) VALUES(" . $db->quote(time(), "integer") . ")";
+
+		return $db->manipulate($query);
+	}
 }
 ?>
