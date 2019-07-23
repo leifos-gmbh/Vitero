@@ -850,5 +850,17 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		return $users_attempted;
 	}
 
+	public function isLearningProgressAvailable()
+	{
+		if(ilLearningProgressAccess::checkAccess($this->getRefId())
+			&& ilViteroSettings::getInstance()->isLearningProgressEnabled()
+			&& ilViteroUtils::hasCustomerMonitoringMode())
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 }
 ?>
