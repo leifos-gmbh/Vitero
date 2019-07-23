@@ -51,6 +51,25 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	private $vitero_logger = null;
 
+	//TODO: test this override
+	/*function executeCommand()
+	{
+		if($this->ctrl->getNextClass($this) == 'illearningprogressgui')
+		{
+			$ilTabs->setTabActive("learning_progress");
+				$new_gui = new ilLearningProgressGUI(ilLearningProgressGUI::LP_CONTEXT_REPOSITORY,
+													$this->object->getRefId(),
+													$_GET['user_id'] ? $_GET['user_id'] : $GLOBALS['ilUser']->getId());
+				$new_gui->addRefreshLPStatusButton();
+				}
+
+				$this->ctrl->setParameterByClass("illearningprogressgui",'ref_lp_btn', 1);
+				$this->ctrl->forwardCommand($new_gui);
+		}
+
+		parent::executeCommand();
+	}*/
+
 	/**
 	* Initialisation
 	*/
@@ -122,6 +141,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			case 'lockUsers':
 			case 'materials':
 			case 'startAdminSession':
+			case 'syncLearningProgress':
 			//case "...":
 				$this->checkPermission("write");
 				$this->$cmd();
@@ -686,10 +706,37 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	{
 		global $tpl, $ilTabs;
 
+		// TODO: I keep the individual session sync button here while finding a solution via executeCommand
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->getLearningProgress())
+		{
+			$this->addSyncLearningProgressButton();
+		}
+
 		$ilTabs->activateTab("properties");
 		$this->initPropertiesForm();
 		$this->getPropertiesValues();
 		$tpl->setContent($this->form->getHTML());
+	}
+
+	//TODO: Nice to have: sync only the current vitero session.
+	protected function syncLearningProgress()
+	{
+		$this->plugin->updateLearningProgress();
+	}
+
+	protected function addSyncLearningProgressButton()
+	{
+		global $DIC;
+
+		$ui_factory = $DIC->ui()->factory();
+		$toolbar = $DIC->toolbar();
+
+		$btn_refresh_lp = $ui_factory->button()->standard(
+			ilViteroPlugin::getInstance()->txt('btn_sync_lp'),
+			$this->ctrl->getLinkTarget($this,'syncLearningProgress')
+		);
+		$toolbar->addComponent($btn_refresh_lp);
+		$toolbar->addText(ilViteroPlugin::getInstance()->txt("btn_sync_lp_info"));
 	}
 	
 	/**
@@ -712,9 +759,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-		if(ilLearningProgressAccess::checkAccess($this->object->getRefId())
-			&& ilViteroSettings::getInstance()->isLearningProgressEnabled()
-			&& ilViteroUtils::hasCustomerMonitoringMode())
+		if($this->object->isLearningProgressAvailable())
 		{
 			$this->addLearningProgressSettingsSection();
 		}
