@@ -58,6 +58,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	public function __construct($a_ref_id = 0)
 	{
 		parent::__construct($a_ref_id);
+		$this->readLearningProgressSettings();
 	}
 
 	public function initDefaultRoles()
@@ -718,7 +719,11 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		global $DIC;
 
 		$db = $DIC->database();
-		$this->readLearningProgressSettings();
+
+		if( ! $this->isLearningProgressActive())
+		{
+			return array();
+		}
 
 		$min_percent = $this->getLearningProgressMinPercentage();
 		$min_sessions_passed = $this->getLearningProgressMinSessions();
@@ -751,6 +756,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	 */
 	public function getLPNotAttempted()
 	{
+
 		//TODO members added but never entered in the vitero session
 		// compare members list with lp list (getUsersAttempted)
 		return array();
@@ -778,7 +784,10 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 
 		$db = $DIC->database();
 
-		$this->readLearningProgressSettings();
+		if( ! $this->isLearningProgressActive())
+		{
+			return array();
+		}
 
 		$min_percent = $this->getLearningProgressMinPercentage();
 		$min_sessions_passed = $this->getLearningProgressMinSessions();
