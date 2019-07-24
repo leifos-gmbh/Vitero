@@ -69,7 +69,7 @@ class ilViteroUserMapping
 		$query = 'SELECT * FROM rep_robj_xvit_umap '.
 			'WHERE iuid = '.$ilDB->quote($a_user_id,'integer');
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			return $row->vuid;
 		}
@@ -89,7 +89,7 @@ class ilViteroUserMapping
 		$query = 'SELECT * FROM rep_robj_xvit_umap '.
 			'WHERE vuid = '.$ilDB->quote($a_user_id,'integer');
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			return $row->iuid;
 		}

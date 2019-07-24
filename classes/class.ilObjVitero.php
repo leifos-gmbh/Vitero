@@ -397,7 +397,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			'GROUP BY vuid ';
 
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			try {
 				$user_service = new ilViteroUserSoapConnector();
@@ -431,7 +431,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			'WHERE type = '.$ilDB->quote('xvit','text').' '.
 			'AND tree < '.$ilDB->quote(0,'integer');
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			if(!ilObject::_hasUntrashedReference($row->obj_id))
 			{
@@ -530,7 +530,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$query = 'SELECT * FROM rep_robj_xvit_data WHERE '.
 			'obj_id = '.$ilDB->quote($a_obj_id,'integer').' ';
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			return $row->vgroup_id;
 		}
@@ -544,7 +544,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$query = 'SELECT obj_id FROM rep_robj_xvit_data '.
 			'WHERE vgroup_id = '.$ilDB->quote($a_group_id,'integer').' ';
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			return $row->obj_id;
 		}

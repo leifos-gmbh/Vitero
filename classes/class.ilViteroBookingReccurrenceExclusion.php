@@ -143,7 +143,7 @@ class ilViteroBookingReccurrenceExclusion
 		
 		$query = "SELECT * FROM rep_robj_xvit_excl WHERE excl_id = ".$ilDB->quote($this->getId(),'integer');
 		$res = $ilDB->query($query);
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			$this->book_id = $row->book_id;
 			$this->setDate(new ilDate($row->excl_date,IL_CAL_DATE,'UTC'));	
@@ -164,7 +164,7 @@ class ilViteroBookingReccurrenceExclusion
 
 		$res = $ilDB->query($query);
 		$exclusions = array();
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			$exclusions[] = new ilViteroBookingReccurrenceExclusion($row->excl_id);
 		}

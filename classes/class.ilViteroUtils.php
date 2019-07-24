@@ -284,7 +284,7 @@ class ilViteroUtils
 
 		$res = $db->query($query);
 
-		while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+		while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 		{
 			return $row->last_sync;
 		}
