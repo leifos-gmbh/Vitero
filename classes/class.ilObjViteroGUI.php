@@ -687,7 +687,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		}
 
 		include_once './Services/Tracking/classes/class.ilLearningProgressAccess.php';
-		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->getLearningProgress())
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->isLearningProgressActive())
 		{
 			$ilTabs->addTab(
 				'learning_progress',
@@ -707,7 +707,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		global $tpl, $ilTabs;
 
 		// TODO: I keep the individual session sync button here while finding a solution via executeCommand
-		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->getLearningProgress())
+		if(ilLearningProgressAccess::checkAccess($this->object->getRefId()) && $this->object->isLearningProgressActive())
 		{
 			$this->addSyncLearningProgressButton();
 		}
@@ -833,7 +833,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	{
 		$values["title"] = $this->object->getTitle();
 		$values["desc"] = $this->object->getDescription();
-		$values['learning_progress'] = $this->object->getLearningProgress();
+		$values['learning_progress'] = $this->object->isLearningProgressActive();
 		$values['min_percentage'] = $this->object->getLearningProgressMinPercentage();
 		$values['mode'] = $this->object->getLearningProgressModeMulti();
 		$values['min_sessions'] = $this->object->getLearningProgressMinSessions();
@@ -1595,7 +1595,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	protected function controlDeletionByLearningModuleMode($book)
 	{
-		if($this->object->getLearningProgress())
+		if($this->object->isLearningProgressActive())
 		{
 			$total_appointments = $this->object->getNumberOfAppointmentsForSession();
 			$start = new ilDateTime(time(),IL_CAL_UNIX);

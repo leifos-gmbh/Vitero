@@ -558,7 +558,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	}
 
 	//TODO isLearningProgressActive will be better when consume this class
-	public function getLearningProgress()
+	public function isLearningProgressActive()
 	{
 		return $this->learning_progress;
 	}
@@ -610,7 +610,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		global $ilDB;
 
 		$query = "UPDATE rep_robj_xvit_lp SET" .
-			" active = " . $ilDB->quote($this->getLearningProgress(), "integer") . ", " .
+			" active = " . $ilDB->quote($this->isLearningProgressActive(), "integer") . ", " .
 			" min_percent = " . $ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
 			" mode_multi = " . $ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
 			" min_sessions = " . $ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
@@ -626,7 +626,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$query = "INSERT INTO rep_robj_xvit_lp (obj_id,active,min_percent,mode_multi,min_sessions)" .
 			" VALUES(" .
 			$ilDB->quote($this->getId(), "integer") . ", " .
-			$ilDB->quote($this->getLearningProgress(), "integer") . ", " .
+			$ilDB->quote($this->isLearningProgressActive(), "integer") . ", " .
 			$ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
 			$ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
 			$ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
