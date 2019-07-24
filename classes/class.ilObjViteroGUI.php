@@ -897,8 +897,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 				$this->ctrl->getLinkTarget($this,'showAppointmentCreation')
 			);
 
-			//TODO rename this method to avoid if negate
-			if($this->canNOTCreateAppointmentsByLearningProgressMode())
+			if($this->canNotCreateAppointmentsByLearningProgressMode())
 			{
 				$add_app_button = $add_app_button->withUnavailableAction();
 				$ilToolbar->addComponent($add_app_button);
@@ -2086,15 +2085,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function canNotCreateAppointmentsByLearningProgressMode()
 	{
-		if($this->object->getLearningProgress()) {
-			$total_appointments = $this->object->getNumberOfAppointmentsForSession();
-
+		if($this->object->isLearningProgressActive()) {
 			if (!$this->object->getLearningProgressModeMulti() && ($this->object->getNumberOfAppointmentsForSession() >= 1)) {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }
 ?>
