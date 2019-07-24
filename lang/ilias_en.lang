@@ -173,3 +173,5 @@ learning_progress#:#Learning Progress
 delete_info_minimum_app#:#Minimum 2 appointments are required due to Learning Progress configuration.
 delete_info_disable_lp#:#Minimum 1 appointment is required due to Learning Progress configuration.
 add_appointment_disabled_info#:#No more appointments can be created due to Learning Progress configuration.
+btn_sync_lp_info#:#Synchronize all vitero sessions
+btn_sync_lp#:#Synchronize
