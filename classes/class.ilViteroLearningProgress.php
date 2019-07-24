@@ -70,7 +70,7 @@ class ilViteroLearningProgress
 
 			$this->vitero_object->readLearningProgressSettings();
 
-			if($this->vitero_object->getLearningProgress())
+			if($this->vitero_object->isLearningProgressActive())
 			{
 				$booking = $booking_connector->getBookingByBookingTimeId($session_user_recording->bookingid);
 
