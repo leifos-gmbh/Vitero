@@ -4,10 +4,10 @@ Vitero  is a commercial conferencing tool. This plugin gives the possibility to
 integrate and administrate virtual team rooms in ILIAS.
 
 **Minimum ILIAS Version:**
-5.3.0
+5.4.0
 
 **Maximum ILIAS Version:**
-5.3.999
+5.4.999
 
 **Responsible Developer:**
 Stefan Meyer - meyer AT leifos.com
@@ -16,7 +16,7 @@ Stefan Meyer - meyer AT leifos.com
 German, English
 
 **Related Plugins:**
-ViteroSingleLogout
+ViteroSingleLogout, ViteroLPCron
 
 **Bug Tracker:**
 [ILIAS MantisBT](http://www.ilias.de/mantis/search.php?project_id=3&category=Vitero)
