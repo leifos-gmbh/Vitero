@@ -68,7 +68,7 @@
 		);
 	$res = $ilDB->query($query);
 	$ops = array();
-	while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+	while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 	{
 		$ops[$row->ops_id] = $operation;
 	}
@@ -79,7 +79,7 @@
 	$roleObj->setDescription('Administrator template for vitero groups');
 	$roleObj->create();
 
-	$GLOBALS['rbacadmin']->assignRoleToFolder($roleObj->getId(),ROLE_FOLDER_ID,'n');
+$GLOBALS['rbacadmin']->assignRoleToFolder($roleObj->getId(),ROLE_FOLDER_ID,'n');
 
 	$GLOBALS['rbacadmin']->setRolePermission(
 		$roleObj->getId(),
@@ -91,6 +91,7 @@
 ?>
 <#6>
 <?php
+
 	$query = 'SELECT ops_id FROM rbac_operations '.
 		'WHERE '.$ilDB->in(
 			'operation',
@@ -103,7 +104,7 @@
 		);
 	$res = $ilDB->query($query);
 	$ops = array();
-	while($row = $res->fetchRow(DB_FETCHMODE_OBJECT))
+	while($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT))
 	{
 		$ops[$row->ops_id] = $operation;
 	}
