@@ -414,7 +414,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 
 	/**
 	 * TODO: MISSING THE STATISTIC MODULE!
-	 * TODO: This method should be in a non GUI class
 	 */
 	private function hasAccessToLearningProgress()
 	{
