@@ -2085,11 +2085,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	public function canNotCreateAppointmentsByLearningProgressMode()
 	{
-		if($this->object->isLearningProgressActive() ) {
-
+		if($this->object->isLearningProgressActive()) {
 			if (!$this->object->getLearningProgressModeMulti() && ($this->object->getNumberOfAppointmentsForSession() >= 1)) {
-
-
 				return true;
 			}
 		}
