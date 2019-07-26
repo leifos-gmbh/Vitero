@@ -29,9 +29,10 @@ class ilViteroLearningProgress
 
 	/**
 	 * Booking in vitero = Appointment in ILIAS
+	 * @param int vitero group id $a_vitero_group_id
 	 * @throws ilDateTimeException
 	 */
-	public function updateLearningProgress()
+	public function updateLearningProgress(int $a_vgroup_id = 0)
 	{
 		$statistic_connector = new ilViteroStatisticSoapConnector();
 		$booking_connector = new ilViteroBookingSoapConnector();
@@ -41,7 +42,7 @@ class ilViteroLearningProgress
 
 		$time_slot = $this->getTimeSlotToGetViteroRecordings();
 
-		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($time_slot['start'], $time_slot['end'], $customer_id);
+		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($time_slot['start'], $time_slot['end'], $customer_id, $a_vgroup_id);
 
 		if(is_object($session_and_user_recordings->sessionrecording))
 		{
