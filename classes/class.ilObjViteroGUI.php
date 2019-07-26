@@ -835,7 +835,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$values["desc"] = $this->object->getDescription();
 		$values['learning_progress'] = $this->object->isLearningProgressActive();
 		$values['min_percentage'] = $this->object->getLearningProgressMinPercentage();
-		$values['mode'] = $this->object->getLearningProgressModeMulti();
+		$values['mode'] = $this->object->isLearningProgressModeMultiActive();
 		$values['min_sessions'] = $this->object->getLearningProgressMinSessions();
 
 		$this->form->setValuesByArray($values);
@@ -1612,12 +1612,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$appointments_after_deletion = $total_appointments - $number_app_to_delete;
 
 			//todo extract this to a method.
-			if ($this->object->getLearningProgressModeMulti() && $appointments_after_deletion < 2) {
+			if ($this->object->isLearningProgressModeMultiActive() && $appointments_after_deletion < 2) {
 				ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('delete_info_minimum_app'), true);
 				$GLOBALS['ilCtrl']->redirect($this, 'showContent');
 			}
 
-			if (!$this->object->getLearningProgressModeMulti() && $appointments_after_deletion < 1) {
+			if (!$this->object->isLearningProgressModeMultiActive() && $appointments_after_deletion < 1) {
 				ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('delete_info_disable_lp'), true);
 				$GLOBALS['ilCtrl']->redirect($this, 'showContent');
 			}
@@ -2086,7 +2086,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	public function canNotCreateAppointmentsByLearningProgressMode()
 	{
 		if($this->object->isLearningProgressActive()) {
-			if (!$this->object->getLearningProgressModeMulti() && ($this->object->getNumberOfAppointmentsForSession() >= 1)) {
+			if (!$this->object->isLearningProgressModeMultiActive() && ($this->object->getNumberOfAppointmentsForSession() >= 1)) {
 				return true;
 			}
 		}
