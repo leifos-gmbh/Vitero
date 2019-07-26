@@ -1589,7 +1589,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	}
 
 	/**
-	 * TODO -> shoud we move this method to another place?
 	 * @param $book ViteroBookingResponse
 	 * return void
 	 */
@@ -1603,7 +1602,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$start->increment(IL_CAL_YEAR,-5);
 			$end->increment(IL_CAL_YEAR,1);
 
-			//todo extract the logic of start, end and calculate booking appointments to a method.
 			$number_app_to_delete = 0;
 			foreach (ilViteroUtils::calculateBookingAppointments($start, $end, $book->booking) as $dl) {
 				$number_app_to_delete++;
@@ -1611,7 +1609,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 			$appointments_after_deletion = $total_appointments - $number_app_to_delete;
 
-			//todo extract this to a method.
 			if ($this->object->isLearningProgressModeMultiActive() && $appointments_after_deletion < 2) {
 				ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('delete_info_minimum_app'), true);
 				$GLOBALS['ilCtrl']->redirect($this, 'showContent');

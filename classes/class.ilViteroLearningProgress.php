@@ -1,8 +1,5 @@
 <?php
 /**
- * TODO remove dummy array data
- * TODO type hints
- * TODO constants should be = as ilLPStatus::LP_STATUS_COMPLETED_NUM etc.
  * Copyright (c) 1998-2010 ILIAS open source, Extended GPL, see docs/LICENSE
  *
  * @author Jesús López Reyes <lopez@leifos.com>
