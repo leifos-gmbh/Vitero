@@ -721,6 +721,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	//TODO: Nice to have: sync only the current vitero session.
 	protected function syncLearningProgress()
 	{
+		$vitero_group_id = (int)$this->object->getVGroupId();
+
+		$vitero_learning_progress = new ilViteroLearningProgress();
+		$vitero_learning_progress->updateLearningProgress($vitero_group_id);
+
 		$this->plugin->updateLearningProgress();
 	}
 
