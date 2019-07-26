@@ -16,7 +16,7 @@ Stefan Meyer - meyer AT leifos.com
 German, English
 
 **Related Plugins:**
-ViteroSingleLogout
+ViteroSingleLogout, ViteroLPCron 
 
 **Bug Tracker:**
 [ILIAS MantisBT](http://www.ilias.de/mantis/search.php?project_id=3&category=Vitero)
