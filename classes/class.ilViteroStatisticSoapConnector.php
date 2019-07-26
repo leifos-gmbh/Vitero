@@ -57,7 +57,7 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 
 	}
 
-	public function getSessionAndUserRecordingsByTimeSlot($a_time_slot_start, $a_time_slot_end, $a_customer_id = 0)
+	public function getSessionAndUserRecordingsByTimeSlot($a_time_slot_start, $a_time_slot_end, $a_customer_id = 0, $a_vgroup_id= 0)
 	{
 		try {
 			$this->initClient();
@@ -67,6 +67,7 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 			$request->timeslotstart = $a_time_slot_start;
 			$request->timeslotend = $a_time_slot_end;
 			$request->customerid = $a_customer_id;
+			$request->groupid = $a_vgroup_id;
 
 			$recording_data = $this->getClient()->getSessionAndUserRecordingsByTimeSlot($request);
 
