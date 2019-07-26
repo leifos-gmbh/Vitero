@@ -24,8 +24,7 @@
 include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 
 /**
- * TODO centralize the load of lp settings readLearningProgressSettings
- * TODO DRY for the Query getLPInProgress getLTCompleted etc... 99% duplicated
+ * TODO(Next patch will fix this) DRY for the Query getLPInProgress getLTCompleted etc... 99% duplicated
 * Application class for vitero repository object.
 *
 * @author Stefan Meyer <smeyer.ilias@gmx.de>
@@ -557,7 +556,6 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$this->learning_progress = (bool)$learning_progress;
 	}
 
-	//TODO isLearningProgressActive will be better when consume this class
 	public function isLearningProgressActive()
 	{
 		return $this->learning_progress;
@@ -578,8 +576,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$this->learning_progress_mode_multi = (bool)$is_multi;
 	}
 
-	//TODO isLearningProgressModeMulti will be better when consume this class
-	public function getLearningProgressModeMulti()
+	public function isLearningProgressModeMultiActive()
 	{
 		return $this->learning_progress_mode_multi;
 	}
@@ -612,7 +609,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$query = "UPDATE rep_robj_xvit_lp SET" .
 			" active = " . $ilDB->quote($this->isLearningProgressActive(), "integer") . ", " .
 			" min_percent = " . $ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
-			" mode_multi = " . $ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
+			" mode_multi = " . $ilDB->quote($this->isLearningProgressModeMultiActive(), "integer") . ", " .
 			" min_sessions = " . $ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
 			" WHERE obj_id = ".$ilDB->quote($this->getId(), "integer");
 
@@ -628,7 +625,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			$ilDB->quote($this->getId(), "integer") . ", " .
 			$ilDB->quote($this->isLearningProgressActive(), "integer") . ", " .
 			$ilDB->quote($this->getLearningProgressMinPercentage(), "integer") . ", " .
-			$ilDB->quote($this->getLearningProgressModeMulti(), "integer") . ", " .
+			$ilDB->quote($this->isLearningProgressModeMultiActive(), "integer") . ", " .
 			$ilDB->quote($this->getLearningProgressMinSessions(), "integer") .
 			")";
 

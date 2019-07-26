@@ -65,7 +65,7 @@ class ilViteroLearningProgress
 
 			$this->vitero_object->setId($ilias_object_id);
 
-			$this->vitero_object->readLearningProgressSettings();
+			$this->vitero_object->isLearningProgressModeMultiActive();
 
 			if($this->vitero_object->isLearningProgressActive())
 			{
@@ -127,7 +127,7 @@ class ilViteroLearningProgress
 		foreach ($a_completed_sessions as $user_id => $total_passed)
 		{
 			$status = self::NOT_PASSED;
-			if($this->vitero_object->getLearningProgressModeMulti())
+			if($this->vitero_object->isLearningProgressModeMultiActive())
 			{
 				if($total_passed >= $this->vitero_object->getLearningProgressMinSessions())
 				{
