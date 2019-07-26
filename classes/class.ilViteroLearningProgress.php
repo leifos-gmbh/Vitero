@@ -65,7 +65,7 @@ class ilViteroLearningProgress
 
 			$this->vitero_object->setId($ilias_object_id);
 
-			$this->vitero_object->isLearningProgressModeMultiActive();
+			$this->vitero_object->readLearningProgressSettings();
 
 			if($this->vitero_object->isLearningProgressActive())
 			{
