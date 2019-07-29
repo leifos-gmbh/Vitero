@@ -76,7 +76,6 @@ class ilViteroLearningProgress
 
 				if($session_user_recording->sessionend >= $booking->booking->start)
 				{
-					$user_time_attended = 0;
 					$user_percent_attended = 0;
 
 					//parse vitero string dates to ilDateTime
