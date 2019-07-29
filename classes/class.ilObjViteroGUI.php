@@ -718,15 +718,21 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$tpl->setContent($this->form->getHTML());
 	}
 
-	//TODO: Nice to have: sync only the current vitero session.
+	/**
+	 * Sync only 1 vitero group / ilias vitero session.
+	 * @throws ilDateTimeException
+	 */
 	protected function syncLearningProgress()
 	{
+		global $ilTabs, $tpl;
 		$vitero_group_id = (int)$this->object->getVGroupId();
 
 		$vitero_learning_progress = new ilViteroLearningProgress();
 		$vitero_learning_progress->updateLearningProgress($vitero_group_id);
 
-		$this->plugin->updateLearningProgress();
+		ilUtil::sendInfo(ilViteroPlugin::getInstance()->txt('info_msg_session_sinc_success'),true);
+
+		$this->editProperties();
 	}
 
 	protected function addSyncLearningProgressButton()
@@ -740,8 +746,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			ilViteroPlugin::getInstance()->txt('btn_sync_lp'),
 			$this->ctrl->getLinkTarget($this,'syncLearningProgress')
 		);
-		$toolbar->addComponent($btn_refresh_lp);
+
 		$toolbar->addText(ilViteroPlugin::getInstance()->txt("btn_sync_lp_info"));
+
+		$toolbar->addComponent($btn_refresh_lp);
 	}
 	
 	/**
