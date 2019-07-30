@@ -727,9 +727,9 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$min_sessions_passed = $this->getLearningProgressMinSessions();
 
 		$sql = "SELECT user_id," .
-			" COUNT( CASE WHEN percentage >= " .$min_percent. " THEN 1 END) count_passed" .
+			" COUNT( CASE WHEN percentage >= " .$this->db->quote($min_percent, "integer"). " THEN 1 END) count_passed" .
 			" FROM rep_robj_xvit_recs" .
-			" WHERE obj_id = " . $this->getId() .
+			" WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
 			" GROUP BY user_id";
 
 		$res = $db->query($sql);
@@ -793,9 +793,9 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 		$min_sessions_passed = $this->getLearningProgressMinSessions();
 
 		$sql = "SELECT user_id," .
-			" COUNT( CASE WHEN percentage > " .$min_percent. " THEN 1 END) count_passed" .
+			" COUNT( CASE WHEN percentage > " .$this->db->quote($min_percent, "integer"). " THEN 1 END) count_passed" .
 			" FROM rep_robj_xvit_recs" .
-			" WHERE obj_id = " . $this->getId() .
+			" WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
 			" GROUP BY user_id";
 
 		$res = $db->query($sql);
@@ -845,7 +845,7 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 
 		$sql = "SELECT user_id" .
 			" FROM rep_robj_xvit_recs" .
-			" WHERE obj_id = " . $this->getId() .
+			" WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
 			" GROUP BY user_id";
 
 		$res = $db->query($sql);
