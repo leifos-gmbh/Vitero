@@ -51,25 +51,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	private $vitero_logger = null;
 
-	//TODO: test this override
-	/*function executeCommand()
-	{
-		if($this->ctrl->getNextClass($this) == 'illearningprogressgui')
-		{
-			$ilTabs->setTabActive("learning_progress");
-				$new_gui = new ilLearningProgressGUI(ilLearningProgressGUI::LP_CONTEXT_REPOSITORY,
-													$this->object->getRefId(),
-													$_GET['user_id'] ? $_GET['user_id'] : $GLOBALS['ilUser']->getId());
-				$new_gui->addRefreshLPStatusButton();
-				}
-
-				$this->ctrl->setParameterByClass("illearningprogressgui",'ref_lp_btn', 1);
-				$this->ctrl->forwardCommand($new_gui);
-		}
-
-		parent::executeCommand();
-	}*/
-
 	/**
 	* Initialisation
 	*/
@@ -724,7 +705,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 	 */
 	protected function syncLearningProgress()
 	{
-		global $ilTabs, $tpl;
 		$vitero_group_id = (int)$this->object->getVGroupId();
 
 		$vitero_learning_progress = new ilViteroLearningProgress();
