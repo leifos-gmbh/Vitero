@@ -20,9 +20,18 @@ class ilViteroLearningProgress
 	 */
 	protected $user_mapping;
 
+	/**
+	 * @var null | \ilLogger
+	 */
+	private $logger = null;
+
 
 	public function __construct()
 	{
+		global $DIC;
+
+		$this->logger = $DIC->logger()->xvit();
+
 		$this->vitero_object = new ilObjVitero();
 		$this->user_mapping = new ilViteroUserMapping();
 	}
@@ -42,7 +51,17 @@ class ilViteroLearningProgress
 
 		$time_slot = $this->getTimeSlotToGetViteroRecordings();
 
-		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot($time_slot['start'], $time_slot['end'], $customer_id, $a_vgroup_id);
+		$session_and_user_recordings = $statistic_connector->getSessionAndUserRecordingsByTimeSlot(
+			$time_slot['start'],
+			$time_slot['end'],
+			$customer_id,
+			$a_vgroup_id
+		);
+
+		$this->logger->dump($time_slot);
+		$this->logger->dump($customer_id);
+		$this->logger->dump($a_vgroup_id);
+		$this->logger->dump($session_and_user_recordings);
 
 		if(is_object($session_and_user_recordings->sessionrecording))
 		{
@@ -84,6 +103,8 @@ class ilViteroLearningProgress
 
 					$booking_duration_seconds = $booking_end - $booking_start;
 
+					$this->logger->debug('Booking duration: ' . $booking_duration_seconds);
+
 					$user_start = ilViteroUtils::parseSoapDate($session_user_recording->sessionstart)->getUnixTime();
 					$user_end = ilViteroUtils::parseSoapDate($session_user_recording->sessionend)->getUnixTime();
 
@@ -94,10 +115,14 @@ class ilViteroLearningProgress
 					//get the effective time spent by the user in the booking session
 					$user_time_attended = $real_end - $real_start;
 
+					$this->logger->debug('Spent time is: ' . $user_time_attended);
+
 					//get percentage of the effective time spent rounded always down only if user has effective time.
 					if($user_time_attended > 0){
 						$user_percent_attended = floor($user_time_attended * 100 / $booking_duration_seconds);
 					}
+
+					$this->logger->debug('Percent attended: ' . $user_percent_attended);
 
 					$user_id = $this->user_mapping->getIUserId($session_user_recording->userrecording->userid);
 
@@ -109,9 +134,8 @@ class ilViteroLearningProgress
 				}
 			}
 
-			ilLPStatusWrapper::_refreshStatus($ilias_object_id);
 		}
-
+		ilLPStatusWrapper::_refreshStatus($ilias_object_id);
 		ilViteroUtils::updateLastSyncDate();
 
 	}
@@ -218,6 +242,8 @@ class ilViteroLearningProgress
 	public function getTimeSlotToGetViteroRecordings()
 	{
 		$last_cron_ejecution_date = ilViteroUtils::getLastSyncDate();
+		// @fixme
+		$last_cron_ejecution_date = 0;
 
 		//first cron execution will start dealing with events from 5 years ago. Later executions will start from current date - 1 day
 		if($last_cron_ejecution_date > 0)

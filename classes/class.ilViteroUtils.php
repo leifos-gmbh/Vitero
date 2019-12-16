@@ -274,7 +274,6 @@ class ilViteroUtils
 				return true;
 			}
 		}
-
 		return false;
 	}
 

@@ -50,13 +50,21 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 	protected $is_learning_progress_stored = false; //TODO maybe this var and setters/getters should be renamed to something using the word settings.
 
 	/**
+	 * @var null | \ilLogger
+	 */
+	private $logger = null;
+
+	/**
 	* Constructor
 	*
 	* @access	public
 	*/
 	public function __construct($a_ref_id = 0)
 	{
+		global $DIC;
+
 		parent::__construct($a_ref_id);
+		$this->logger = $DIC->logger()->xvit();
 	}
 
 	public function initDefaultRoles()
@@ -732,13 +740,17 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 			" WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
 			" GROUP BY user_id";
 
+		$this->logger->debug($sql);
+
 		$res = $db->query($sql);
 
 		$users_completed = array();
 
 		while($row = $db->fetchAssoc($res))
 		{
-			if($row['count_passed'] >= $min_sessions_passed)
+			if(
+				$row['count_passed'] &&
+				$row['count_passed'] >= $min_sessions_passed)
 			{
 				array_push($users_completed, $row['user_id']);
 			}
@@ -791,6 +803,9 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 
 		$min_percent = $this->getLearningProgressMinPercentage();
 		$min_sessions_passed = $this->getLearningProgressMinSessions();
+
+		$this->logger->debug('Minimum percentage required: ' . $min_percent);
+		$this->logger->debug('Minimum sessions required: ' . $min_sessions_passed);
 
 		$sql = "SELECT user_id," .
 			" COUNT( CASE WHEN percentage > " .$this->db->quote($min_percent, "integer"). " THEN 1 END) count_passed" .

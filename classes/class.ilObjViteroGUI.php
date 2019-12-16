@@ -777,7 +777,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$learning_progress->setInfo($vitero_plugin->txt('activate_learning_progress_info'));
 
 		$minimum_percentage = new ilNumberInputGUI($vitero_plugin->txt("min_percentage"),"min_percentage");
-		$minimum_percentage->setInfo($vitero_plugin->txt("min_sessions_info"));
+		$minimum_percentage->setInfo($vitero_plugin->txt("min_percentage_info"));
 		$minimum_percentage->setMaxValue(100);
 		$minimum_percentage->setMinValue(0);
 		$minimum_percentage->setMaxLength(3);
@@ -949,6 +949,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			ilUtil::sendFailure(ilViteroPlugin::getInstance()->txt('user_locked_info'));
 			$access = false;
 		}
+
+		\ilChangeEvent::_recordReadEvent(
+			$this->object->getType(),
+			$this->object->getRefId(),
+			$this->object->getId(),
+			$user->getId()
+		);
+
 		
 		// find next booking
 		$booking_id = ilViteroUtils::getOpenRoomBooking($this->object->getVGroupId());
