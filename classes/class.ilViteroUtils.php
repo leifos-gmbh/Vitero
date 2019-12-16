@@ -255,9 +255,18 @@ class ilViteroUtils
 	/** Checks if the customer has Monitor Mode */
 	public static function hasCustomerMonitoringMode()
 	{
-		$licence_connector = new ilViteroLicenceSoapConnector();
+		global $DIC;
 
-		$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+		$logger = $DIC->logger()->xvit();
+
+		try {
+			$licence_connector = new ilViteroLicenceSoapConnector();
+			$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+		}
+		catch(\ilViteroConnectorException $e) {
+			$logger->warning('Reading active modules failed with message: ' . $e->getMessage());
+			return false;
+		}
 
 		foreach($modules->modules->module as $module)
 		{
