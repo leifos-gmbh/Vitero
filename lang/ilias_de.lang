@@ -156,3 +156,22 @@ settings_phone_dial_out#:#Dial Out
 settings_phone_dial_out_info#:#Wenn aktiviert, können sich Teilnehmer auch anrufen lassen.
 settings_phone_dial_out_part#:#Teilnehmer per Telefon dazuschalten
 settings_phone_dial_out_part_info#:#Wenn aktiviert, können Teilnehmer per Telefon dazugeschaltet werden.
+edit_learning_progress_properties#:#Einstellungen zum Lernfortschritt
+activate_learning_progress#:#Lernfortschritt aktivieren
+activate_learning_progress_info#:#Vitero-Objekte können Lernfortschritt-Funktionalitäten verwenden.
+min_percentage#:#Minimale Prozentzahl
+min_percentage_info#:#Minimale Anwesenheitszeit, die notwendig ist, um den Status "Bestanden" zu erhalten.
+mode#:#Modus
+one_session#:#"Ein Sitzungstermin"
+multi_session#:#"Mehrere Sitzungstermine"
+min_sessions#:#Anzahl Sitzungen
+min_sessions_info#:#Die minimale Anzahl von Sitzungen, an denen die Benutzer teilgenommen haben müssen.
+currently_multi_appointments#:#Dieses vitero-Objekt besitzt mehrere Sitzungstermine.
+currently_one_appointment#:#Dieses vitero-Objekt besitzt maximal einen Sitzungstermin.
+learning_progress#:#Lernfortschritt
+delete_info_minimum_app#:#Für die aktuellen Lernfortschritt-Einstellungen müssen mindestens zwei Sitzungstermine vorhanden sein.
+delete_info_disable_lp#:#Für die aktuellen Lernfortschritt-Einstellungen muss mindestens ein Sitzungstermin vorhanden sein.
+add_appointment_disabled_info#:#Die Lernfortschritteinstellungen läßt das Erstellen von weiteren Situngsterminen nicht zu.
+btn_sync_lp_info#:#Alle vitero-Sitzungstermine synchronisieren.
+btn_sync_lp#:#Synchronisieren
+info_msg_session_sinc_success#:#Die vitero-Sitzungen wurden synchronisiert.
