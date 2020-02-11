@@ -175,3 +175,4 @@ add_appointment_disabled_info#:#Die Lernfortschritteinstellungen läßt das Erst
 btn_sync_lp_info#:#Alle vitero-Sitzungstermine synchronisieren.
 btn_sync_lp#:#Synchronisieren
 info_msg_session_sinc_success#:#Die vitero-Sitzungen wurden synchronisiert.
+edit_learning_progress#:#Lernfortschritt bearbeiten

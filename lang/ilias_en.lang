@@ -176,3 +176,4 @@ add_appointment_disabled_info#:#No more appointments can be created due to Learn
 btn_sync_lp_info#:#Synchronize all vitero sessions
 btn_sync_lp#:#Synchronize
 info_msg_session_sinc_success#:#Vitero session synchronized successfully
+edit_learning_progress#:#Edit Learning Progress
