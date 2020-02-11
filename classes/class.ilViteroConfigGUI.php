@@ -412,9 +412,9 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$tpl->setContent($table->getHTML());
 	}
 
-	/**
-	 * TODO: MISSING THE STATISTIC MODULE!
-	 */
+    /**
+     * @return bool
+     */
 	private function hasAccessToLearningProgress()
 	{
 		if(ilObjUserTracking::_enabledLearningProgress() && ilViteroUtils::hasCustomerMonitoringMode())

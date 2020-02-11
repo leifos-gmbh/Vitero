@@ -252,7 +252,9 @@ class ilViteroUtils
 		return $available_rooms;
 	}
 
-	/** Checks if the customer has Monitor Mode */
+	/**
+	 * @return bool
+	 */
 	public static function hasCustomerMonitoringMode()
 	{
 		global $DIC;
@@ -264,6 +266,7 @@ class ilViteroUtils
 
 			$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
 
+			$logger->dump($modules, \ilLogLevel::DEBUG);
 			foreach($modules->modules->module as $module)
 			{
 				if($module->type == "MONITORING") {
