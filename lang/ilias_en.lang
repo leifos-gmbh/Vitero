@@ -177,3 +177,5 @@ btn_sync_lp_info#:#Synchronize all vitero sessions
 btn_sync_lp#:#Synchronize
 info_msg_session_sinc_success#:#Vitero session synchronized successfully
 edit_learning_progress#:#Edit Learning Progress
+activate_inspire#:#"Essentials" Selection
+activate_inspire_info#:#If enabled, it is possible to choose between the "essentials" and "inspire" types during the creation of new appointments.

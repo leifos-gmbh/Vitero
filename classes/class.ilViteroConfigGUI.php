@@ -314,9 +314,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$gpa->setValue($settings->getStandardGracePeriodAfter());
 		$form->addItem($gpa);
 
-		//TODO FINISH THIS CHECKBOX HERE
-		//Step 1 check if lp enabled in administration globaly
-		//Step 2 check Statistik-Modul
 		if($this->hasAccessToLearningProgress())
 		{
 			$learning_progress = new ilCheckboxInputGUI($this->getPluginObject()->txt('activate_learning_progress'), 'learning_progress');
@@ -326,6 +323,13 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$form->addItem($learning_progress);
 		}
 
+		$inspire = new \ilCheckboxInputGUI(
+		    $this->getPluginObject()->txt('activate_inspire'),
+            'inspire'
+        );
+		$inspire->setChecked($settings->isInspireSelectable());
+		$inspire->setInfo($this->getPluginObject()->txt('activate_inspire_info'));
+		$form->addItem($inspire);
 		return $form;
 	}
 
@@ -369,6 +373,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 			$settings->enableMobileAccess($form->getInput('mobile'));
 			$settings->enableSessionRecorder($form->getInput('recorder'));
 			$settings->enableLearningProgress($form->getInput('learning_progress'));
+			$settings->setInspireSelectable($form->getInput('inspire'));
 			$settings->save();
 
 			ilUtil::sendSuccess($lng->txt('settings_saved'), true);
