@@ -260,6 +260,15 @@ class ilViteroSettings
 	}
 
 	/**
+	 * Check if vitero connection is configured
+	 * @return bool
+	 */
+	public function isConfigured()
+	{
+		return $this->getCustomer() && $this->getAdminPass();
+	}
+
+	/**
 	 * Read settings
 	 */
 	protected function read()

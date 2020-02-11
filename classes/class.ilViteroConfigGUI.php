@@ -414,10 +414,15 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 
     /**
      * @return bool
+	 * Check if learning progress should be available
      */
 	private function hasAccessToLearningProgress()
 	{
-		if(ilObjUserTracking::_enabledLearningProgress() && ilViteroUtils::hasCustomerMonitoringMode())
+		if(
+			ilObjUserTracking::_enabledLearningProgress() &&
+			\ilViteroSettings::getInstance()->isConfigured() &&
+			ilViteroUtils::hasCustomerMonitoringMode()
+		)
 		{
 			return true;
 		}

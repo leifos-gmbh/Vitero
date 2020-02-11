@@ -258,12 +258,10 @@ class ilViteroUtils
 	public static function hasCustomerMonitoringMode()
 	{
 		global $DIC;
-
 		$logger = $DIC->logger()->xvit();
 
 		try {
 			$licence_connector = new ilViteroLicenceSoapConnector();
-
 			$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
 
 			$logger->dump($modules, \ilLogLevel::DEBUG);
@@ -275,9 +273,8 @@ class ilViteroUtils
 			}
 		}
 		catch(\ilViteroConnectorException $e) {
-			$logger->error($e->getMessage());
-		}
-
+		    $logger->warning('Reading active modules failed with message: ' . $e->getMessage());
+        }
 		return false;
 	}
 
