@@ -262,17 +262,16 @@ class ilViteroUtils
 		try {
 			$licence_connector = new ilViteroLicenceSoapConnector();
 			$modules = $licence_connector->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+			foreach($modules->modules->module as $module)
+			{
+				if($module->type == "MONITORING") {
+					return true;
+				}
+			}
 		}
 		catch(\ilViteroConnectorException $e) {
 			$logger->warning('Reading active modules failed with message: ' . $e->getMessage());
 			return false;
-		}
-
-		foreach($modules->modules->module as $module)
-		{
-			if($module->type == "MONITORING"){
-				return true;
-			}
 		}
 		return false;
 	}

@@ -57,6 +57,14 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 
 	}
 
+	/**
+	 * @param $a_time_slot_start
+	 * @param $a_time_slot_end
+	 * @param int $a_customer_id
+	 * @param int $a_vgroup_id
+	 * @return mixed
+	 * @throws \ilViteroConnectorException
+	 */
 	public function getSessionAndUserRecordingsByTimeSlot($a_time_slot_start, $a_time_slot_end, $a_customer_id = 0, $a_vgroup_id= 0)
 	{
 		try {
@@ -82,6 +90,9 @@ class ilViteroStatisticSoapConnector extends ilViteroSoapConnector
 		}
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function getWsdlName()
 	{
 		return self::WSDL_NAME;
