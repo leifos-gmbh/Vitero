@@ -20,7 +20,7 @@ abstract class ilViteroSoapConnector
 
 	private $client = null;
 
-	private $logger = null;
+	protected $logger = null;
 
 	/**
 	 * Get instance
