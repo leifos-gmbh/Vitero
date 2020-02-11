@@ -412,9 +412,9 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
 		$tpl->setContent($table->getHTML());
 	}
 
-	/**
-	 * Check if learning progress should be available
-	 */
+    /**
+     * @return bool
+     */
 	private function hasAccessToLearningProgress()
 	{
 		if(
