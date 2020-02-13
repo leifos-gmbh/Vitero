@@ -17,7 +17,27 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 	private $editable = false;
 	private $admin_table = false;
 
-	/**
+    /**
+     * @var null | \ilLogger
+     */
+	private $logger = null;
+
+    /**
+     * ilViteroBookingTableGUI constructor.
+     * @param        $a_parent_obj
+     * @param string $a_parent_cmd
+     * @param string $a_template_context
+     */
+	public function __construct($a_parent_obj, string $a_parent_cmd = "", string $a_template_context = "")
+    {
+        global $DIC;
+
+        parent::__construct($a_parent_obj, $a_parent_cmd, $a_template_context);
+
+        $this->logger = $DIC->logger()->xvit();
+    }
+
+    /**
 	 * Set vgroup id
 	 * @param int $a_id
 	 */
@@ -53,6 +73,9 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 			$this->setRowTemplate('tpl.booking_list_row.html', substr(ilViteroPlugin::getInstance()->getDirectory(),2));
 			$this->setTitle(ilViteroPlugin::getInstance()->txt('app_table'));
 			$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_time'),'startt');
+			if (\ilViteroSettings::getInstance()->isInspireSelectable()) {
+			    $this->addColumn(\ilViteroPlugin::getInstance()->txt('app_tbl_col_inspire'),'inspire');
+            }
 			if(ilViteroSettings::getInstance()->arePhoneOptionsEnabled()) {
 				$this->addColumn(ilViteroPlugin::getInstance()->txt('app_tbl_col_phone'),'phone');
 			}
@@ -132,6 +155,20 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 		if($this->isEditable())
 		{
 			$settings = ilViteroSettings::getInstance();
+
+			if ($settings->isInspireSelectable()) {
+			    $this->tpl->setCurrentBlock('inspire');
+			    if (is_null($a_set['inspire'])) {
+			        $this->tpl->setVariable('CLIENT_TYPE', \ilViteroPlugin::getInstance()->txt('client_type_default'));
+                }
+			    elseif ($a_set['inspire']) {
+                    $this->tpl->setVariable('CLIENT_TYPE', \ilViteroPlugin::getInstance()->txt('client_type_inspire'));
+                }
+			    else {
+                    $this->tpl->setVariable('CLIENT_TYPE', \ilViteroPlugin::getInstance()->txt('client_type_essentials'));
+                }
+			    $this->tpl->parseCurrentBlock();
+            }
 
 			if($settings->arePhoneOptionsEnabled())
 			{
@@ -414,6 +451,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
 				$booking_list[$counter]['id'] = $booking->bookingid;
 				$booking_list[$counter]['start'] = $dl;
 				$booking_list[$counter]['startt'] = $dl->get(IL_CAL_UNIX);
+				$booking_list[$counter]['inspire'] = $booking->inspire;
 
 				$bend = clone $dl;
 				$bend->setDate($dl->get(IL_CAL_UNIX) + $duration,IL_CAL_UNIX);

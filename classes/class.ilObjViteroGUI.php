@@ -176,6 +176,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$form = parent::initCreateForm($a_new_type);
 		$settings = ilViteroSettings::getInstance();
 
+		$this->initEssentialsSelection($form);
+
 		// show selection
 		if($settings->isCafeEnabled() and $settings->isStandardRoomEnabled())
 		{
@@ -555,11 +557,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$form = $this->initCreateForm('xvit');
 		$form->checkInput();
 
-		//$phone_enabled = $form->getInput('')
 
 		$room = new ilViteroRoom();
 		$room->setRoomSize($form->getInput('room_size'));
 		$room->enableRecorder($form->getInput('recorder'));
+
+		if ($settings->isInspireSelectable()) {
+		    $room->setClientType($form->getInput('essentials_selection'));
+        }
 
 		$phone = new ilViteroPhone();
 		$phone->initFromForm($form);
@@ -1797,6 +1802,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$this->initFormStandardRoom($form,$a_create);
 		}
 
+		$this->initEssentialsSelection($form);
+
 		$this->initFormTimeBuffer($form);
 
 		$this->initFormPhone($form);
@@ -1807,6 +1814,38 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 		return $form;
 	}
+
+	/**
+     * Show essential | inspire selection
+     */
+	protected function initEssentialsSelection(\ilPropertyFormGUI $form)
+    {
+        $settings = \ilViteroSettings::getInstance();
+        if (!$settings->isInspireSelectable()) {
+            return;
+        }
+        $essentials = new \ilRadioGroupInputGUI(
+            $this->getPlugin()->txt('form_essential_selection'),
+            'essentials_selection'
+        );
+        $essentials->setInfo($this->getPlugin()->txt('form_essentials_selection_info'));
+        $essentials->setValue(\ilViteroRoom::CLIENT_INSPIRE);
+
+        $essentials->addOption(
+            new \ilRadioOption(
+                $this->getPlugin()->txt('form_inspire_option'),
+                \ilViteroRoom::CLIENT_INSPIRE
+            )
+        );
+        $essentials->addOption(
+            new \ilRadioOption(
+                $this->getPlugin()->txt('form_essentials_option'),
+                \ilViteroRoom::CLIENT_ESSENTIALS
+            )
+        );
+        $form->addItem($essentials);
+        return;
+    }
 
 	protected function showAppointmentCreation()
 	{
@@ -1848,6 +1887,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		$phone->initFromForm($form);
 		$room->setPhone($phone);
 		$room->setRoomSize($form->getInput('room_size'));
+
+		if ($settings->isInspireSelectable()) {
+		    $room->setClientType($form->getInput('essentials_selection'));
+        }
 
 		if($settings->isCafeEnabled() and $settings->isStandardRoomEnabled())
 		{

@@ -49,6 +49,7 @@ err_soap_51#:#Internal failure: A user with this name already exists.
 err_soap_101#:#Invalid customer Id given
 err_soap_152#:#The name of the group already exists for this customer
 err_soap_303#:#No groupname given
+err_soap_312#:#The vitero service does not support the creation of "Inspire clients". Please contact the ILIAS administrator.
 err_soap_501#:#Could not create apointment since the group is already booked at this time.
 err_soap_505#:#It is not possible to create appointments in the past.
 app_type#:#Appointment Type
@@ -179,3 +180,11 @@ info_msg_session_sinc_success#:#Vitero session synchronized successfully
 edit_learning_progress#:#Edit Learning Progress
 activate_inspire#:#"Essentials" Selection
 activate_inspire_info#:#If enabled, it is possible to choose between the "essentials" and "inspire" types during the creation of new appointments.
+form_essential_selection#:#Type
+form_inspire_option#:#Use Inspire-Client
+form_essentials_option#:#Use Essentials-Client
+form_essentials_selection_info#:#Please choose the client type for this appointment.
+client_type_default#:#Default
+client_type_essentials#:#Essentials
+client_type_inspire#:#Inspire
+app_tbl_col_inspire#:#Type
