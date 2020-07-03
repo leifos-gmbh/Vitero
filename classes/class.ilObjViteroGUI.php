@@ -121,6 +121,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			case 'unlockUsers':
 			case 'lockUsers':
 			case 'materials':
+            case 'showMaterials':
 			case 'startAdminSession':
 			case 'syncLearningProgress':
 			//case "...":
@@ -1047,6 +1048,31 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
 	public function materials()
 	{
+        global $DIC;
+
+        $tabs = $DIC->tabs();
+        $tabs->activateTab('materials');
+
+        $ui_factory = $DIC->ui()->factory();
+
+        $toolbar = $DIC->toolbar();
+        $toolbar->setFormAction($this->ctrl->getFormAction($this));
+
+        $link_button = \ilLinkButton::getInstance();
+        $link_button->setCaption($this->getPlugin()->txt('filemanager_start'),false);
+        $link_button->setTarget('_blank');
+        $link_button->setUrl($this->ctrl->getLinkTarget($this,'showMaterials'));
+
+
+        $toolbar->addButtonInstance(
+            $link_button
+        );
+    }
+
+
+
+	public function showMaterials()
+	{
 		global $ilUser, $ilTabs, $ilAccess, $ilCtrl;
 
 		$ilTabs->activateTab('materials');
@@ -1102,15 +1128,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 			$ilCtrl->redirect($this,'infoScreen');
 		}
 
-		$tpl = ilViteroPlugin::getInstance()->getTemplate('tpl.materials.html');
-
-		$tpl->setVariable(
-			'FRAME_SRC',
-			ilViteroSettings::getInstance()->getGroupFolderLink().
+		$this->ctrl->redirectToURL(
+		    $url = \ilViteroSettings::getInstance()->getGroupFolderLink() .
 				'?fl=1&action=reload&topmargin=10&group_id='.$this->object->getVGroupId().'&'.
 				'code='.$code_vms
 		);
-		$GLOBALS['tpl']->setContent($tpl->get());
+        return;
 	}
 	
 	public function startAdminSession()
