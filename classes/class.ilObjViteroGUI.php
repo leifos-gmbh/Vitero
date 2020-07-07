@@ -988,7 +988,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 				$this->ctrl->setParameter($this,'bid',$booking_id);
 				$info->setFormAction($ilCtrl->getFormAction($this),'_blank');
 				$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
-					'<input type="submit" class="submit" name="cmd[startSession]" value="'.ilViteroPlugin::getInstance()->txt('start_session').
+					'<input type="submit" formtarget="_blank" class="submit" name="cmd[startSession]" value="'.ilViteroPlugin::getInstance()->txt('start_session').
 					'" style="padding:10px;" /></div>';
 				$info->addSection("");
 				$info->addProperty("", $big_button);
@@ -1002,7 +1002,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 		{
 			$info->setFormAction($ilCtrl->getFormAction($this),'_blank');
 			$big_button = '<div class="il_ButtonGroup" style="margin:25px; text-align:center; font-size:25px;">'.
-				'<input type="submit" class="submit" name="cmd[startAdminSession]" value="'.ilViteroPlugin::getInstance()->txt('start_admin_session').
+				'<input type="submit" formtarget="_blank" class="submit" name="cmd[startAdminSession]" value="'.ilViteroPlugin::getInstance()->txt('start_admin_session').
 				'" style="padding:10px;" /></div>';
 			if(!$info_added_section) {
 				$info->addSection("");
