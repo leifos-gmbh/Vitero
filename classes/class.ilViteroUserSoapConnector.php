@@ -2,203 +2,186 @@
 /* Copyright (c) 1998-2009 ILIAS open source, Extended GPL, see docs/LICENSE */
 
 /**
- * 
- * 
  * @author Stefan Meyer <smeyer.ilias@gmx.de>
  * $Id: class.ilViteroUserSoapConnector.php 56608 2014-12-19 10:11:57Z fwolf $
  */
 class ilViteroUserSoapConnector extends ilViteroSoapConnector
 {
-	const WSDL_NAME = 'user.wsdl';
+    const WSDL_NAME = 'user.wsdl';
 
-	protected $available_locales = array("en", "de");
+    protected $available_locales = array("en", "de");
 
-	public function getUser($a_user_id)
-	{
-		try {
+    protected function getWsdlName()
+    {
+        return self::WSDL_NAME;
+    }
 
-			$this->initClient();
+    public function getUser($a_user_id)
+    {
+        try {
 
-			// Wrap into single group object
-			$us = new stdClass();
-			$us->userid = $a_user_id;
-			$user = $this->getClient()->getUser($us);
+            $this->initClient();
 
-			return $user;
-		}
-		catch(Exception $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Get user failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
+            // Wrap into single group object
+            $us         = new stdClass();
+            $us->userid = $a_user_id;
+            $user       = $this->getClient()->getUser($us);
 
-	/**
-	 * Vreate new vitero user
-	 * @param ilObjUser $iu
-	 * @return <type>
-	 */
-	public function createUser(ilObjUser $iu)
-	{
-		try {
+            return $user;
+        } catch (Exception $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Get user failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
-			$this->initClient();
+    /**
+     * Vreate new vitero user
+     * @param ilObjUser $iu
+     * @return <type>
+     */
+    public function createUser(ilObjUser $iu)
+    {
+        try {
 
-			$user = new stdClass();
-			$user->user = new stdClass();
-			$user->user->password = ilViteroUtils::randPassword();
-			$user->user->customeridlist = ilViteroSettings::getInstance()->getCustomer();
+            $this->initClient();
 
-			$this->loadFromUser($user->user,$iu);
+            $user                       = new stdClass();
+            $user->user                 = new stdClass();
+            $user->user->password       = ilViteroUtils::randPassword();
+            $user->user->customeridlist = ilViteroSettings::getInstance()->getCustomer();
 
-			$nuser = $this->getClient()->createUser($user);
-			return $nuser->userid;
+            $this->loadFromUser($user->user, $iu);
 
-		}
-		catch(SoapFault $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Create user failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
+            $nuser = $this->getClient()->createUser($user);
+            return $nuser->userid;
 
-	public function updateUser($a_vuserid, ilObjUser $iu)
-	{
-		try {
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Create user failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
-			$this->initClient();
+    /**
+     * Load user data from ilias user object
+     * @param stdclass  $user
+     * @param ilObjUser $iu
+     */
+    private function loadFromUser($user, ilObjUser $iu)
+    {
+        $prefix          = ilViteroSettings::getInstance()->getUserPrefix();
+        $user->username  = $prefix . $iu->getLogin();
+        $user->surname   = $iu->getLastname();
+        $user->firstname = $iu->getFirstname();
+        $user->email     = strlen(trim($iu->getEmail())) ? $iu->getEmail() : '-';
+        $user->company   = $iu->getInstitution();
 
-			$user = new stdClass();
-			$user->user = new stdClass();
-			$user->user->id = (int) $a_vuserid;
-			
-			$this->loadFromUser($user->user, $iu);
+        $user->locale = in_array($iu->getLanguage(), $this->available_locales)
+            ? $iu->getLanguage()
+            : "en";
 
-			$this->getClient()->updateUser($user);
+        #$user->timezone = trim($iu->getTimeZone());
+        $GLOBALS['ilLog']->write(__METHOD__ . ': Time zone is ' . $iu->getTimeZone());
 
-		}
-		catch(SoapFault $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Update user failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
+        $user->phone   = $iu->getPhoneOffice();
+        $user->fax     = $iu->getFax();
+        $user->mobile  = $iu->getPhoneMobile();
+        $user->country = $iu->getCountry();
+        $user->zip     = $iu->getZipcode();
+        $user->city    = $iu->getCity();
+        $user->street  = $iu->getStreet();
+    }
 
-	public function deleteUser($a_vuserid)
-	{
-		try {
-			$this->initClient();
+    public function updateUser($a_vuserid, ilObjUser $iu)
+    {
+        try {
 
-			$user = new stdClass();
-			$user->userid = $a_vuserid;
+            $this->initClient();
 
-			$this->getClient()->deleteUser($user);
-		}
-		catch(SoapFault $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Delete user failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
+            $user           = new stdClass();
+            $user->user     = new stdClass();
+            $user->user->id = (int) $a_vuserid;
 
-	/**
-	 * load avatar
-	 * @param <type> $a_vuserid
-	 */
-	public function loadAvatar($a_vuserid)
-	{
-		try {
+            $this->loadFromUser($user->user, $iu);
 
-			$this->initClient();
+            $this->getClient()->updateUser($user);
 
-			$user = new stdClass();
-			$user->userid = $a_vuserid;
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Update user failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
-			$ret = $this->getClient()->loadAvatar($user);
+    public function deleteUser($a_vuserid)
+    {
+        try {
+            $this->initClient();
 
-		}
-		catch(SoapFault $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Loading avatar failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
-	
-	/**
-	 * Store avatar
-	 * @param type $a_vuser_id
-	 */
-	public function storeAvatarUsingBase64($a_vuser_id, $a_file_info = array())
-	{
-		try {
-			$GLOBALS['ilLog']->write(__METHOD__.': Starting update of avatar image...');
-			$this->initClient();
-			
-			$avatar = new stdClass();
-			$avatar->userid = $a_vuser_id;
-			$avatar->filename = $a_file_info['name'];
-			$avatar->type = $a_file_info['type'];
-			$avatar->file = base64_encode(file_get_contents($a_file_info['file']));
-			
-			return $this->getClient()->storeAvatarUsingBase64String($avatar);
-		}
-		catch(SoapFault $e)
-		{
-			$code = $this->parseErrorCode($e);
-			$GLOBALS['ilLog']->write(__METHOD__.': Store avatar failed with message code: '.$code);
-			$GLOBALS['ilLog']->write(__METHOD__.': Last request: '.$this->getClient()->__getLastRequest());
-			throw new ilViteroConnectorException($e->getMessage(),$code);
-		}
-	}
+            $user         = new stdClass();
+            $user->userid = $a_vuserid;
 
+            $this->getClient()->deleteUser($user);
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Delete user failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
-	/**
-	 * Load user data from ilias user object
-	 * @param stdclass $user
-	 * @param ilObjUser $iu
-	 */
-	private function loadFromUser($user, ilObjUser $iu)
-	{
-		$prefix = ilViteroSettings::getInstance()->getUserPrefix();
-		$user->username = $prefix.$iu->getLogin();
-		$user->surname = $iu->getLastname();
-		$user->firstname = $iu->getFirstname();
-		$user->email = strlen(trim($iu->getEmail())) ? $iu->getEmail() : '-';
-		$user->company = $iu->getInstitution();
+    /**
+     * load avatar
+     * @param <type> $a_vuserid
+     */
+    public function loadAvatar($a_vuserid)
+    {
+        try {
 
-		$user->locale = in_array($iu->getLanguage(), $this->available_locales)
-			? $iu->getLanguage()
-			: "en";
+            $this->initClient();
 
-		#$user->timezone = trim($iu->getTimeZone());
-		$GLOBALS['ilLog']->write(__METHOD__.': Time zone is '. $iu->getTimeZone());
+            $user         = new stdClass();
+            $user->userid = $a_vuserid;
 
+            $ret = $this->getClient()->loadAvatar($user);
 
-		$user->phone = $iu->getPhoneOffice();
-		$user->fax = $iu->getFax();
-		$user->mobile = $iu->getPhoneMobile();
-		$user->country = $iu->getCountry();
-		$user->zip = $iu->getZipcode();
-		$user->city = $iu->getCity();
-		$user->street = $iu->getStreet();
-	}
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Loading avatar failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
+    /**
+     * Store avatar
+     * @param type $a_vuser_id
+     */
+    public function storeAvatarUsingBase64($a_vuser_id, $a_file_info = array())
+    {
+        try {
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Starting update of avatar image...');
+            $this->initClient();
 
-	protected function getWsdlName()
-	{
-		return self::WSDL_NAME;
-	}
+            $avatar           = new stdClass();
+            $avatar->userid   = $a_vuser_id;
+            $avatar->filename = $a_file_info['name'];
+            $avatar->type     = $a_file_info['type'];
+            $avatar->file     = base64_encode(file_get_contents($a_file_info['file']));
 
+            return $this->getClient()->storeAvatarUsingBase64String($avatar);
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Store avatar failed with message code: ' . $code);
+            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+    }
 
 }
+
 ?>

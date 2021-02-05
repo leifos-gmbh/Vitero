@@ -3,121 +3,118 @@
 
 /**
  * Abstract vitero soap connector
- * 
  * @author Stefan Meyer <smeyer.ilias@gmx.de>
  * $Id: class.ilViteroSoapConnector.php 33586 2012-03-07 13:12:56Z smeyer $
  */
 abstract class ilViteroSoapConnector
 {
-	const ERR_WSDL = 2001;
+    const ERR_WSDL = 2001;
 
-	const WS_TIMEZONE = 'Africa/Ceuta';
-	const CONVERT_TIMZONE = 'Africa/Ceuta';
-	const CONVERT_TIMEZONE_FIX = 'Africa/Ceuta';
+    const WS_TIMEZONE = 'Africa/Ceuta';
+    const CONVERT_TIMZONE = 'Africa/Ceuta';
+    const CONVERT_TIMEZONE_FIX = 'Africa/Ceuta';
 
-	private $settings;
-	private $plugin;
+    private $settings;
+    private $plugin;
 
-	private $client = null;
+    private $client = null;
 
-	protected $logger = null;
+    protected $logger = null;
 
-	/**
-	 * Get instance
-	 */
-	public function __construct()
-	{
-		global $DIC;
+    /**
+     * Get instance
+     */
+    public function __construct()
+    {
+        global $DIC;
 
-		$this->logger = $DIC->logger()->xvit();
+        $this->logger = $DIC->logger()->xvit();
 
-		$this->plugin = ilViteroPlugin::getInstance();
-		$this->settings = ilViteroSettings::getInstance();
-	}
+        $this->plugin   = ilViteroPlugin::getInstance();
+        $this->settings = ilViteroSettings::getInstance();
+    }
 
-	/**
-	 * @return ilLogger $logger
-	 */
-	protected function getLogger()
-	{
-		return $this->logger;
-	}
+    /**
+     * @return ilLogger $logger
+     */
+    protected function getLogger()
+    {
+        return $this->logger;
+    }
 
-	/**
-	 * Get wsdl name
-	 * @return string
-	 */
-	abstract protected function getWsdlName();
+    /**
+     * init soap client
+     * @return void
+     * @throws ilViteroConnectorException
+     */
+    protected function initClient()
+    {
 
-	/**
-	 *
-	 * @return <type>
-	 */
-	public function getPluginObject()
-	{
-		return $this->plugin;
-	}
+        try {
+            $this->client = new SoapClient(
+                $this->getSettings()->getServerUrl() . '/' . $this->getWsdlName(),
+                array(
+                    'cache_wsdl' => 0,
+                    'trace'      => 1,
+                    'exceptions' => true,
+                    'classmap'   => [
+                        'phonetype' => 'ilViteroPhone'
+                    ]
+                )
+            );
+            $this->client->__setSoapHeaders(
+                $head = new ilViteroSoapWsseAuthHeader(
+                    $this->getSettings()->getAdminUser(),
+                    $this->getSettings()->getAdminPass()
+                )
+            );
 
-	/**
-	 * Get vitero settings
-	 * @return ilViteroSettings
-	 */
-	public function getSettings()
-	{
-		return $this->settings;
-	}
+            #$GLOBALS['ilLog']->write(__METHOD__. ': HEADER TO STRING : '. $head);
+            return;
+        } catch (SoapFault $e) {
 
-	/**
-	 * Get soap client
-	 * @return SoapClient
-	 */
-	public function getClient()
-	{
-		return $this->client;
-	}
+            $GLOBALS['ilLog']->write('VITERO: ' . $e->getMessage());
+            $GLOBALS['ilLog']->write($this->getSettings()->getServerUrl() . '/' . $this->getWsdlName());
+            throw new ilViteroConnectorException('', self::ERR_WSDL);
+        }
+    }
 
-	/**
-	 * init soap client
-	 * @return void
-	 * @throws ilViteroConnectorException
-	 */
-	protected function initClient()
-	{
+    /**
+     * Get vitero settings
+     * @return ilViteroSettings
+     */
+    public function getSettings()
+    {
+        return $this->settings;
+    }
 
-		try {
-			$this->client = new SoapClient(
-				$this->getSettings()->getServerUrl().'/'.$this->getWsdlName(),
-				array(
-					'cache_wsdl' => 0,
-					'trace' => 1,
-					'exceptions' => true,
-					'classmap' => [
-						'phonetype' => 'ilViteroPhone'
-					]
-				)
-			);
-			$this->client->__setSoapHeaders(
-				$head = new ilViteroSoapWsseAuthHeader(
-					$this->getSettings()->getAdminUser(),
-					$this->getSettings()->getAdminPass()
-				)
-			);
+    /**
+     * Get wsdl name
+     * @return string
+     */
+    abstract protected function getWsdlName();
 
-			#$GLOBALS['ilLog']->write(__METHOD__. ': HEADER TO STRING : '. $head);
-			return;
-		}
-		catch(SoapFault $e) {
+    protected function parseErrorCode(Exception $e)
+    {
+        return (int) $e->detail->error->errorCode;
+    }
 
-			$GLOBALS['ilLog']->write('VITERO: '. $e->getMessage());
-			$GLOBALS['ilLog']->write($this->getSettings()->getServerUrl().'/'.$this->getWsdlName());
-			throw new ilViteroConnectorException('',self::ERR_WSDL);
-		}
-	}
+    /**
+     * @return <type>
+     */
+    public function getPluginObject()
+    {
+        return $this->plugin;
+    }
 
-	protected function parseErrorCode(Exception $e)
-	{
-		return (int) $e->detail->error->errorCode;
-	}
+    /**
+     * Get soap client
+     * @return SoapClient
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
 
 }
 

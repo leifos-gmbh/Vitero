@@ -21,172 +21,158 @@
         +-----------------------------------------------------------------------------+
 */
 
-
 include_once('./Services/Calendar/classes/class.ilCalendarUserSettings.php');
 include_once './Services/Calendar/classes/class.ilCalendarRecurrence.php';
 
 /**
-* This class represents an input GUI for recurring events/appointments (course events or calendar appointments) 
-*
-* @author Stefan Meyer <smeyer.ilias@gmx.de>
-* @version $Id$
-*
-* @ingroup ServicesCalendar
-*/
-
+ * This class represents an input GUI for recurring events/appointments (course events or calendar appointments)
+ * @author  Stefan Meyer <smeyer.ilias@gmx.de>
+ * @version $Id$
+ * @ingroup ServicesCalendar
+ */
 class ilViteroRecurrenceInputGUI extends ilCustomInputGUI
 {
-	private $freq_type = 0;
-	private $freq_end = null;
+    private $freq_type = 0;
+    private $freq_end = null;
 
-	private $rec = 0;
+    private $rec = 0;
 
-	public function  __construct($a_title, $a_postvar)
-	{
-		global $lng,$tpl,$ilUser;
+    public function __construct($a_title, $a_postvar)
+    {
+        global $lng, $tpl, $ilUser;
 
-		$this->lng = $lng;
-		$this->lng->loadLanguageModule('dateplaner');
+        $this->lng = $lng;
+        $this->lng->loadLanguageModule('dateplaner');
 
-		$this->user_settings = ilCalendarUserSettings::_getInstanceByUserId($ilUser->getId());
-		$tpl->addJavascript("./Services/Calendar/js/recurrence_input.js");
+        $this->user_settings = ilCalendarUserSettings::_getInstanceByUserId($ilUser->getId());
+        $tpl->addJavascript("./Services/Calendar/js/recurrence_input.js");
 
-		parent::__construct($a_title,$a_postvar);
-	}
+        parent::__construct($a_title, $a_postvar);
+    }
 
-	public function getFrequenceType()
-	{
-		return $this->freq_type;
-	}
+    public function getFrequenceType()
+    {
+        return $this->freq_type;
+    }
 
-	public function getFrequenceUntilDate()
-	{
-		return $this->freq_end;
-	}
+    public function getFrequenceUntilDate()
+    {
+        return $this->freq_end;
+    }
 
-	public function setFrequenceUntilDate(ilDate $dt)
-	{
-		$this->freq_end = $dt;
-	}
+    public function setReccurrence($a_rec)
+    {
+        $this->rec = $a_rec;
+    }
 
-	public function setReccurrence($a_rec)
-	{
-		$this->rec = $a_rec;
-	}
+    /**
+     * check input
+     * @access public
+     * @param
+     * @return
+     */
+    public function checkInput()
+    {
+        global $lng;
 
-	public function getReccurrence()
-	{
-		return $this->rec;
-	}
+        $this->loadRecurrence();
+        return true;
+    }
 
-	/**
-	 * check input
-	 *
-	 * @access public
-	 * @param
-	 * @return
-	 */
-	public function checkInput()
-	{
-		global $lng;
+    protected function loadRecurrence()
+    {
+        $this->freq_type = (int) $_POST['frequence'];
 
-		$this->loadRecurrence();
-		return true;
-	}
+        switch ($_POST['until_type']) {
+            case 0:
+                break;
 
-	protected function loadRecurrence()
-	{
-		$this->freq_type = (int) $_POST['frequence'];
+            case 3:
+                $dtig = new ilDateTimeInputGUI('', 'until_end');
+                $dtig->setRequired(true);
+                if ($dtig->checkInput()) {
+                    $this->setFrequenceUntilDate($dtig->getDate());
+                }
+                break;
+        }
+    }
 
-		switch($_POST['until_type'])
-		{
-			case 0:
-				break;
+    public function setFrequenceUntilDate(ilDate $dt)
+    {
+        $this->freq_end = $dt;
+    }
 
-			case 3:
-				$dtig = new ilDateTimeInputGUI('','until_end');
-				$dtig->setRequired(true);
-				if($dtig->checkInput())
-				{
-					$this->setFrequenceUntilDate($dtig->getDate());
-				}
-				break;
-		}
-	}
+    /**
+     * insert
+     * @access public
+     * @param
+     * @return
+     */
+    public function insert($a_tpl)
+    {
+        $tpl = ilViteroPlugin::getInstance()->getTemplate('tpl.recurrence_input.html', true, true);
 
+        $options = array(
+            ilViteroUtils::REC_ONCE     => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_ONCE),
+            ilViteroUtils::REC_DAILY    => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_DAILY),
+            ilViteroUtils::REC_WEEKLY   => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKLY),
+            ilViteroUtils::REC_WEEKDAYS => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKDAYS),
+            ilViteroUtils::REC_WEEKENDS => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKENDS)
+        );
 
+        $tpl->setVariable('FREQUENCE', ilUtil::formSelect(
+            $this->getReccurrence(),
+            'frequence',
+            $options,
+            false,
+            true,
+            '',
+            '',
+            array('onchange' => 'ilHideFrequencies();', 'id' => 'il_recurrence_1')));
 
-	/**
-	 * insert
-	 *
-	 * @access public
-	 * @param
-	 * @return
-	 */
-	public function insert($a_tpl)
-	{
-		$tpl = ilViteroPlugin::getInstance()->getTemplate('tpl.recurrence_input.html',true,true);
+        $tpl->setVariable('TXT_EVERY', $this->lng->txt('cal_every'));
 
-		$options = array(
-			ilViteroUtils::REC_ONCE => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_ONCE),
-			ilViteroUtils::REC_DAILY => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_DAILY),
-			ilViteroUtils::REC_WEEKLY => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKLY),
-			ilViteroUtils::REC_WEEKDAYS => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKDAYS),
-			ilViteroUtils::REC_WEEKENDS => ilViteroUtils::recurrenceToString(ilViteroUtils::REC_WEEKENDS)
-		);
+        // UNTIL
+        $this->buildUntilSelection($tpl);
 
-		$tpl->setVariable('FREQUENCE',ilUtil::formSelect(
-			$this->getReccurrence(),
-			'frequence',
-			$options,
-			false,
-			true,
-			'',
-			'',
-			array('onchange' => 'ilHideFrequencies();','id' => 'il_recurrence_1')));
+        $a_tpl->setCurrentBlock("prop_custom");
+        $a_tpl->setVariable("CUSTOM_CONTENT", $tpl->get());
+        $a_tpl->parseCurrentBlock();
+    }
 
-		$tpl->setVariable('TXT_EVERY',$this->lng->txt('cal_every'));
+    public function getReccurrence()
+    {
+        return $this->rec;
+    }
 
-		// UNTIL
-		$this->buildUntilSelection($tpl);
+    /**
+     * build selection for ending date
+     * @access protected
+     * @param object tpl
+     * @return
+     */
+    protected function buildUntilSelection($tpl)
+    {
 
-		$a_tpl->setCurrentBlock("prop_custom");
-		$a_tpl->setVariable("CUSTOM_CONTENT", $tpl->get());
-		$a_tpl->parseCurrentBlock();
-	}
+        $tpl->setVariable('TXT_NO_ENDING', $this->lng->txt('cal_no_ending'));
 
-	/**
-	 * build selection for ending date
-	 *
-	 * @access protected
-	 * @param object tpl
-	 * @return
-	 */
-	protected function buildUntilSelection($tpl)
-	{
+        $tpl->setVariable('TXT_UNTIL_CREATE', $this->lng->txt('cal_create'));
+        $tpl->setVariable('TXT_APPOINTMENTS', $this->lng->txt('cal_appointments'));
 
-		$tpl->setVariable('TXT_NO_ENDING',$this->lng->txt('cal_no_ending'));
+        if ($this->freq_end instanceof ilDate) {
+            $tpl->setVariable('UNTIL_END_CHECKED', 'checked="checked"');
+        } else {
+            $tpl->setVariable('UNTIL_NO_CHECKED', 'checked="checked"');
+        }
 
-		$tpl->setVariable('TXT_UNTIL_CREATE',$this->lng->txt('cal_create'));
-		$tpl->setVariable('TXT_APPOINTMENTS',$this->lng->txt('cal_appointments'));
-
-		if($this->freq_end instanceof ilDate)
-		{
-			$tpl->setVariable('UNTIL_END_CHECKED','checked="checked"');
-		}
-		else
-		{
-			$tpl->setVariable('UNTIL_NO_CHECKED','checked="checked"');
-		}
-
-		$tpl->setVariable('TXT_UNTIL_END',$this->lng->txt('cal_repeat_until'));
-		$dt = new ilDateTimeInputGUI('','until_end');
-		$dt->setDate(
-			$this->freq_end instanceof ilDate ? $this->freq_end : new ilDate(time(),IL_CAL_UNIX)
-		);
-		$tpl->setVariable('UNTIL_END_DATE',$dt->getTableFilterHTML());
-	}
-
+        $tpl->setVariable('TXT_UNTIL_END', $this->lng->txt('cal_repeat_until'));
+        $dt = new ilDateTimeInputGUI('', 'until_end');
+        $dt->setDate(
+            $this->freq_end instanceof ilDate ? $this->freq_end : new ilDate(time(), IL_CAL_UNIX)
+        );
+        $tpl->setVariable('UNTIL_END_DATE', $dt->getTableFilterHTML());
+    }
 
 }
+
 ?>

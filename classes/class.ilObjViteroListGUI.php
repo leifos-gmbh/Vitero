@@ -24,76 +24,75 @@
 include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
 
 /**
-* ListGUI implementation for Example object plugin. This one
-* handles the presentation in container items (categories, courses, ...)
-* together with the corresponfing ...Access class.
-*
-* PLEASE do not create instances of larger classes here. Use the
-* ...Access class to get DB data and keep it small.
-*
-* @author Stefan Meyer <smeyer.ilias@gmx.de>
-*/
+ * ListGUI implementation for Example object plugin. This one
+ * handles the presentation in container items (categories, courses, ...)
+ * together with the corresponfing ...Access class.
+ * PLEASE do not create instances of larger classes here. Use the
+ * ...Access class to get DB data and keep it small.
+ * @author Stefan Meyer <smeyer.ilias@gmx.de>
+ */
 class ilObjViteroListGUI extends ilObjectPluginListGUI
 {
-	
-	/**
-	* Init type
-	*/
-	public function initType()
-	{
-		$this->setType("xvit");
-	}
-	
-	/**
-	* Get name of gui class handling the commands
-	*/
-	public function getGuiClass()
-	{
-		return "ilObjViteroGUI";
-	}
-	
-	/**
-	* Get commands
-	*/
-	public function initCommands()
-	{
-		return array
-		(
-			array(
-				"permission" => "read",
-				"cmd" => "infoScreen",
-				"default" => true),
-			array(
-				"permission" => "write",
-				"cmd" => "editProperties",
-				"txt" => $this->txt("edit"),
-				"default" => false),
-		);
-	}
 
-	/**
-	* Get item properties
-	*
-	* @return	array		array of property arrays:
-	*						"alert" (boolean) => display as an alert property (usually in red)
-	*						"property" (string) => property name
-	*						"value" (string) => property value
-	*/
-	public function getProperties()
-	{
-		global $lng, $ilUser;
+    /**
+     * Init type
+     */
+    public function initType()
+    {
+        $this->setType("xvit");
+    }
 
-		$props = array();
+    /**
+     * Get name of gui class handling the commands
+     */
+    public function getGuiClass()
+    {
+        return "ilObjViteroGUI";
+    }
 
+    /**
+     * Get commands
+     */
+    public function initCommands()
+    {
+        return array
+        (
+            array(
+                "permission" => "read",
+                "cmd"        => "infoScreen",
+                "default"    => true
+            ),
+            array(
+                "permission" => "write",
+                "cmd"        => "editProperties",
+                "txt"        => $this->txt("edit"),
+                "default"    => false
+            ),
+        );
+    }
 
-		$props[] = array(
-			'alert'	=> false,
-			'property' => '',
-			'propertyNameVisible' => false,
-			'value' => ilViteroPlugin::getInstance()->txt('virtual_team_room')
-		);
+    /**
+     * Get item properties
+     * @return    array        array of property arrays:
+     *                        "alert" (boolean) => display as an alert property (usually in red)
+     *                        "property" (string) => property name
+     *                        "value" (string) => property value
+     */
+    public function getProperties()
+    {
+        global $lng, $ilUser;
 
-		return $props;
-	}
+        $props = array();
+
+        $props[] = array(
+            'alert'               => false,
+            'property'            => '',
+            'propertyNameVisible' => false,
+            'value'               => ilViteroPlugin::getInstance()->txt('virtual_team_room')
+        );
+
+        return $props;
+    }
 }
+
 ?>
