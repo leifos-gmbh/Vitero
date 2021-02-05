@@ -49,6 +49,7 @@ err_soap_51#:#Internal failure: A user with this name already exists.
 err_soap_101#:#Invalid customer Id given
 err_soap_152#:#The name of the group already exists for this customer
 err_soap_303#:#No groupname given
+err_soap_312#:#The vitero service does not support the creation of "Inspire clients". Please contact the ILIAS administrator.
 err_soap_501#:#Could not create apointment since the group is already booked at this time.
 err_soap_505#:#It is not possible to create appointments in the past.
 app_type#:#Appointment Type
@@ -188,3 +189,4 @@ client_type_essentials#:#Essentials
 client_type_inspire#:#Inspire
 app_tbl_col_inspire#:#Type
 filemanager_start#:#Open vitero file manager
+app_tbl_col_inspire#:#Type

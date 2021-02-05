@@ -258,7 +258,6 @@ class ilViteroUtils
 	public static function hasCustomerMonitoringMode()
 	{
 		global $DIC;
-
 		$logger = $DIC->logger()->xvit();
 
 		try {

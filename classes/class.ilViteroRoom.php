@@ -8,6 +8,9 @@
  */
 class ilViteroRoom
 {
+    const CLIENT_ESSENTIALS = 1;
+    const CLIENT_INSPIRE = 2;
+
     const TYPE_CAFE = 1;
 	const TYPE_STD = 2;
 
@@ -31,6 +34,8 @@ class ilViteroRoom
 	private $rep_date = null;
 
 	private $roomsize = 20;
+
+	private $inspire = null;
 
 	/**
 	 * @var ilViteroPhone
@@ -101,6 +106,27 @@ class ilViteroRoom
 	{
 		return $this->rep;
 	}
+
+    /**
+     * @param null $a_status
+     */
+	public function setClientType($a_status = null)
+    {
+        if($a_status  == self::CLIENT_ESSENTIALS) {
+            $this->inspire = false;
+        }
+        if($a_status == self::CLIENT_INSPIRE) {
+            $this->inspire = true;
+        }
+    }
+
+    /**
+     * @return null | bool
+     */
+    public function getClientType()
+    {
+        return $this->inspire;
+    }
 
 	public function getRepetitionString()
 	{

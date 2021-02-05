@@ -33,6 +33,7 @@ class ilViteroSettings
 	private $mobile_access_enabled = false;
 	private $session_recorder = false;
 	private $enable_learning_progress = false;
+	private $inspire = false;
 
 	private $grace_period_before = 15;
 	private $grace_period_after = 15;
@@ -256,6 +257,7 @@ class ilViteroSettings
 		$this->getStorage()->set('mobile', (int) $this->isMobileAccessEnabled());
 		$this->getStorage()->set('recorder', (int) $this->isSessionRecorderEnabled());
 		$this->getStorage()->set('learning_progress', $this->isLearningProgressEnabled());
+		$this->getStorage()->set('inspire', $this->isInspireSelectable());
 
 	}
 
@@ -293,6 +295,7 @@ class ilViteroSettings
 		$this->enableMobileAccess($this->getStorage()->get('mobile',$this->isMobileAccessEnabled()));
 		$this->enableSessionRecorder($this->getStorage()->get('recorder',$this->isSessionRecorderEnabled()));
 		$this->enableLearningProgress($this->getStorage()->get('learning_progress', $this->isLearningProgressEnabled()));
+		$this->setInspireSelectable($this->getStorage()->get('inspire', $this->isInspireSelectable()));
 	}
 
 	/**
@@ -392,6 +395,22 @@ class ilViteroSettings
 	public function enablePhoneDialOutParticipants($a_stat)
 	{
 		$this->phone_dial_out_part = $a_stat;
+	}
+
+	/**
+	 * Check if inspire is selectable
+	 */
+	public function isInspireSelectable()
+	{
+		return $this->inspire;
+	}
+
+	/**
+	 * @param bool
+	 */
+	public function setInspireSelectable($a_status)
+	{
+		$this->inspire = $a_status;
 	}
 
 }
