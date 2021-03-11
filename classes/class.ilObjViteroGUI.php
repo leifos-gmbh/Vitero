@@ -72,16 +72,29 @@ class ilObjViteroGUI extends ilObjectPluginGUI
      * Init creation froms
      * this will create the default creation forms: new
      * @param string $a_new_type
-     * @return    array
+     * @return void|array
      */
-    protected function initCreationForms($a_new_type)
+    protected function initCreationForms($a_new_type) : ?array
     {
-        $forms = array(
-            self::CFORM_NEW   => $this->initCreateForm($a_new_type),
-            self::CFORM_CLONE => $this->fillCloneTemplate(null, $a_new_type)
-        );
+        global $DIC;
 
-        return $forms;
+        $user = $DIC->user();
+        $ilCtrl = $DIC->ctrl();
+        $pl = $this->getPlugin();
+        $settings = new ilViteroAccessSettings();
+
+        if (!$settings->isAdvancedAccessRulesEnabled() || ($settings->isAdvancedAccessRulesEnabled() && $settings->isUserWhitelisted($user->getId())))
+        {
+            $forms = array(
+                self::CFORM_NEW   => $this->initCreateForm($a_new_type),
+                self::CFORM_CLONE => $this->fillCloneTemplate(null, $a_new_type)
+            );
+
+            return $forms;
+        } else {
+            ilUtil::sendFailure($pl->txt("missing_create_rights"), true);
+            $ilCtrl->redirectByClass("ilobjrootfoldergui");
+        }
     }
 
     /**
@@ -1481,16 +1494,35 @@ class ilObjViteroGUI extends ilObjectPluginGUI
      */
     public function showContent()
     {
-        global $tpl, $ilTabs, $ilAccess, $ilToolbar, $DIC;
+        global $DIC;
+
+        $tpl = $DIC['tpl'];
+        $ilTabs = $DIC->tabs();
+        $ilAccess = $DIC->rbac()->system();
+        $ilToolbar = $DIC->toolbar();
+        $user = $DIC->user();
+
 
         $ui_factory = $DIC->ui()->factory();
 
         $ilTabs->activateTab("content");
 
+        $settings = ilViteroAccessSettings::getInstance();
+
         $user_has_write_access = $ilAccess->checkAccess('write', '', $this->object->getRefId());
+        $user_is_whitelisted = $settings->isUserWhitelisted($user->getId());
+        $advanced_access_rules = $settings->isAdvancedAccessRulesEnabled();
+
+        if ($advanced_access_rules) {
+            $user_can_create = $user_has_write_access && $user_is_whitelisted;
+            $user_can_edit = $user_has_write_access && $user_is_whitelisted && $settings->getAppointmentRight() === ilViteroAccessSettings::APPOINTMENT_EDIT_CREATE;
+        } else {
+            $user_can_create = $user_has_write_access;
+            $user_can_edit = $user_has_write_access;
+        }
 
         // Show add appointment
-        if ($user_has_write_access) {
+        if ($user_can_create) {
             $add_app_button = $ui_factory->button()->standard(
                 ilViteroPlugin::getInstance()->txt('tbbtn_add_appointment'),
                 $this->ctrl->getLinkTarget($this, 'showAppointmentCreation')
@@ -1510,7 +1542,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $table = new ilViteroBookingTableGUI($this, 'showContent');
         $table->setVGroupId($this->object->getVGroupId());
-        $table->setEditable((bool) $ilAccess->checkAccess('write', '', $this->object->getRefId()));
+        if ($user_can_edit)
+        {
+            $table->setEditable(true);
+        }
         $table->init();
 
         $start = new ilDateTime(time(), IL_CAL_UNIX);
