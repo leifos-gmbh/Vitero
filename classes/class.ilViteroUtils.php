@@ -294,6 +294,23 @@ class ilViteroUtils
 
         return 0;
     }
+
+    public static function getContainerList() : array
+    {
+        global $DIC;
+
+        /**
+         * @var ilObjectDefinition $object_definition
+         */
+        $object_definition = $DIC['objDefinition'];
+        $container_list = [];
+        foreach ($object_definition->getAllRepositoryTypes() as $type) {
+            if ($object_definition->isContainer($type)) {
+                $container_list[] = $type;
+            }
+        }
+        return $container_list;
+    }
 }
 
 ?>

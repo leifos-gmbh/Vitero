@@ -52,6 +52,7 @@ err_soap_303#:#No groupname given
 err_soap_312#:#The vitero service does not support the creation of "Inspire clients". Please contact the ILIAS administrator.
 err_soap_501#:#Could not create apointment since the group is already booked at this time.
 err_soap_505#:#It is not possible to create appointments in the past.
+err_soap_2001#:#Cannot connect to vitero webservice.
 app_type#:#Appointment Type
 app_type_cafe#:#Café
 app_type_standard#:#Standard Appointment
@@ -188,5 +189,35 @@ client_type_default#:#Default
 client_type_essentials#:#Essentials
 client_type_inspire#:#Inspire
 app_tbl_col_inspire#:#Type
-filemanager_start#:#Open vitero file manager
+filemanager_start#:#Open vitero File Manager
 app_tbl_col_inspire#:#Type
+settings_file_handling#:#File Management in ILIAS
+settings_file_handling_info#:#Files to be used in vitero sessions are manageable in ILIAS.
+settings_file_handling_vitero#:#File Management in vitero
+settings_file_handling_vitero_info#:#Files to be used vitero session are managed via direct link to the vitero file management tool.
+filemanager_add_file_button#:#Assign new File
+filemanager_sync_status_0#:#Undefined
+filemanager_sync_status_1#:#Pending
+filemanager_sync_status_2#:#Synchronised
+filemanager_assignment_table_referenced#:#Link in Repository
+filemanager_assignment_table_sync_status#:#Status of Synchronisation
+filemanager_assignment_table_deleted#:#Deleted
+filemanager_add_file#:#Assign File
+filemanager_assignment_table#:#Assigned Files
+filemanager_add_file_tbl#:#New File Assignment
+filemanager_add_file_tbl_info#:#Assigned files will be automatically synchronised and are available during vitero sessions.
+filemanager_add_file_ref_type#:#Kind of Assignment
+filemanager_ref_type#:#Repository Link
+filemanager_exiting_file#:#File Selection
+filemanager_upload#:#File Selection
+filemanger_direct_type#:#Direct Upload
+confirm_delete_assignments#:#Do you really want to delete the following assignments?
+filemanager_deleted_assignments#:#The assignments have been deleted.
+filemanager_deleted#:#**Link deleted**
+filemanager_availability#:#Availability
+filemanager_folder_media#:#Media
+filemanager_folder_agenda#:#Agenda
+filemanager_folder_welcome#:#Welcome
+filemanager_folder_media_info#:#Files can be opened with the "Media" button.
+filemanager_folder_agenda_info#:#Files can be opened with the "Agenda" button.
+filemanager_folder_welcome_info#:#Files are automatically displayed on the meeting table when entering the virtual team room.

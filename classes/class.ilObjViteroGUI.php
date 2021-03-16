@@ -28,7 +28,6 @@ include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
  * User interface classes process GET and POST parameter and call
  * application classes to fulfill certain tasks.
  * @author            Stefan Meyer <smeyer.ilias@gmx.de>
- * $Id: class.ilObjViteroGUI.php 56608 2014-12-19 10:11:57Z fwolf $
  * Integration into control structure:
  * - The GUI class is called by ilRepositoryGUI
  * - GUI classes used by this class are ilPermissionGUI (provides the rbac
@@ -36,13 +35,22 @@ include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
  * @ilCtrl_isCalledBy ilObjViteroGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
  * @ilCtrl_Calls      ilObjViteroGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilRepositorySearchGUI
  * @ilCtrl_Calls      ilObjViteroGUI: ilCommonActionDispatcherGUI, ilLearningProgressGUI
+ * @ilCtrl_Calls      ilObjViteroGUI: ilPropertyFormGUI
  */
 class ilObjViteroGUI extends ilObjectPluginGUI
 {
+    public const SUB_TAB_FH_ILIAS = 'subtab_fh_ilias';
+    public const SUB_TAB_FH_VITERO = 'subtab_fh_vitero';
+
     /**
      * @var ilLogger
      */
     private $vitero_logger = null;
+
+    /**
+     * @var ilViteroSettings
+     */
+    private $vitero_settings;
 
     /**
      * Initialisation
@@ -50,6 +58,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
     protected function afterConstructor()
     {
         $this->vitero_logger = $GLOBALS['DIC']->logger()->xvit();
+        $this->vitero_settings = ilViteroSettings::getInstance();
 
         if ($this->object) {
             $this->object->readLearningProgressSettings();
@@ -58,6 +67,17 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         // anything needed after object has been constructed
         // - example: append my_id GET parameter to each request
         //   $ilCtrl->saveParameter($this, array("my_id"));
+    }
+
+    public function executeCommand()
+    {
+        $next_class = $this->ctrl->getNextClass($this);
+        switch ($next_class) {
+            case strtolower(ilPropertyFormGUI::class):
+                $form = $this->initFormAddFile();
+                return $this->ctrl->forwardCommand($form);
+        }
+        return parent::executeCommand();
     }
 
     /**
@@ -1273,9 +1293,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             case 'unlockUsers':
             case 'lockUsers':
             case 'materials':
-            case 'showMaterials':
+            case 'materialsDeleteConfirmation':
+            case 'materialsDelete':
+            case 'redirectToViteroFileManagement':
             case 'startAdminSession':
             case 'syncLearningProgress':
+            case 'createFile':
+            case 'addFile':
                 //case "...":
                 $this->checkPermission("write");
                 $this->$cmd();
@@ -1650,29 +1674,270 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         }
     }
 
-    public function materials()
+    protected function showViteroFileManagementButton() : void
     {
         global $DIC;
 
-        $tabs = $DIC->tabs();
-        $tabs->activateTab('materials');
-
-        $ui_factory = $DIC->ui()->factory();
-
+        if (!$this->vitero_settings->isFileHandlingViteroEnabled()) {
+            return;
+        }
         $toolbar = $DIC->toolbar();
         $toolbar->setFormAction($this->ctrl->getFormAction($this));
 
         $link_button = \ilLinkButton::getInstance();
         $link_button->setCaption($this->getPlugin()->txt('filemanager_start'), false);
         $link_button->setTarget('_blank');
-        $link_button->setUrl($this->ctrl->getLinkTarget($this, 'showMaterials'));
+        $link_button->setUrl($this->ctrl->getLinkTarget($this, 'redirectToViteroFileManagement'));
 
         $toolbar->addButtonInstance(
             $link_button
         );
     }
 
-    public function showMaterials()
+    /**
+     * @throws ilPluginException
+     */
+    protected function showIliasFileManagementButton() : void
+    {
+        global $DIC;
+
+        if (!$this->vitero_settings->isFileHandlingIliasEnabled()) {
+            return;
+        }
+        $toolbar = $DIC->toolbar();
+        $toolbar->setFormAction($this->ctrl->getFormAction($this));
+
+        $link_button = ilLinkButton::getInstance();
+        $link_button->setCaption($this->plugin->txt('filemanager_add_file'), false);
+        $link_button->setUrl($this->ctrl->getLinkTarget($this, 'addFile'));
+
+        $toolbar->addButtonInstance(
+            $link_button
+        );
+    }
+
+
+    protected function addFile(?ilPropertyFormGUI $form = null)
+    {
+        global $DIC;
+
+        $tabs = $DIC->tabs();
+        $tabs->activateTab('materials');
+
+        if (!$form instanceof ilPropertyFormGUI) {
+            $form = $this->initFormAddFile();
+        }
+        $tpl = $DIC->ui()->mainTemplate();
+        $tpl->setContent($form->getHTML());
+    }
+
+    protected function initFormAddFile() : ilPropertyFormGUI
+    {
+        $form = new ilPropertyFormGUI();
+        $form->setFormAction($this->ctrl->getFormAction($this, 'createFile'));
+        $form->setTitle($this->getPlugin()->txt('filemanager_add_file_tbl'));
+        $form->setDescription($this->getPlugin()->txt('filemanager_add_file_tbl_info'));
+
+        $ref_type = new ilRadioGroupInputGUI(
+            $this->getPlugin()->txt('filemanager_add_file_ref_type'),
+            'reference_type'
+        );
+        $ref_type->setValue(ilViteroMaterialAssignment::TYPE_DEFAULT);
+
+        // reference
+        $reference = new ilRadioOption(
+            $this->getPlugin()->txt('filemanager_ref_type'),
+            ilViteroMaterialAssignment::TYPE_REFERENCE
+        );
+        $ref_type->addOption($reference);
+
+        // reference handling
+        $selector = new ilRepositorySelector2InputGUI(
+            $this->getPlugin()->txt('filemanager_exiting_file'),
+            'existing',
+            true
+        );
+        $selector->setRequired(true);
+        $explorer = new ilViteroRepositorySelectorExplorerGUI(
+            [
+                ilPropertyFormGUI::class,
+                ilFormPropertyDispatchGUI::class,
+                ilRepositorySelector2InputGUI::class
+            ],
+            $selector->getExplHandleCmd(),
+            $selector,
+            "selectRepositoryItem",
+            "root_id",
+            "rep_exp_sel_" . 'existing'
+        );
+        $explorer->setAssignments(ilViteroMaterialAssignments::getInstanceByObjId($this->object->getId()));
+        $explorer->setSelectMode('existing' . "_sel", true);
+        $explorer->setSelectableTypes(['file']);
+        $explorer->setRootId(ROOT_FOLDER_ID);
+        $explorer->setTypeWhiteList(ilViteroUtils::getContainerList()[] = 'file');
+        $selector->setExplorerGUI($explorer);
+
+        #$selector->getExplorerGUI()->setSelectableTypes(['file']);
+        #$selector->getExplorerGUI()->setRootId(ROOT_FOLDER_ID);
+        #$selector->getExplorerGUI()->setTypeWhiteList(ilViteroUtils::getContainerList()[] = 'file');
+        $reference->addSubItem($selector);
+
+        // direct assignment
+        $direct = new ilRadioOption(
+            $this->getPlugin()->txt('filemanger_direct_type'),
+            ilViteroMaterialAssignment::TYPE_DIRECT_ASSIGNMENT
+        );
+        $ref_type->addOption($direct);
+
+        // direct upload
+        $direct_file = new ilFileInputGUI($this->plugin->txt('filemanager_upload'), 'upload');
+        $direct_file->setRequired(true);
+        $direct->addSubItem($direct_file);
+
+        $form->addItem($ref_type);
+
+        // folder type
+        $availability = new ilRadioGroupInputGUI(
+            $this->getPlugin()->txt('filemanager_availability'),
+            'availability'
+        );
+        $availability->setRequired(true);
+
+        $media = new ilRadioOption(
+            $this->getPlugin()->txt('filemanager_folder_media'),
+            ilViteroCmsSoapConnector::FOLDER_MEDIA_ID,
+            $this->getPlugin()->txt('filemanager_folder_media_info')
+        );
+        $availability->addOption($media);
+        $welcome = new ilRadioOption(
+            $this->getPlugin()->txt('filemanager_folder_welcome'),
+            ilViteroCmsSoapConnector::FOLDER_WELCOME_ID,
+            $this->getPlugin()->txt('filemanager_folder_welcome_info')
+        );
+        $availability->addOption($welcome);
+        $form->addItem($availability);
+
+        $form->addCommandButton('createFile', $this->lng->txt('save'));
+        $form->addCommandButton('materials', $this->lng->txt('cancel'));
+        return $form;
+    }
+
+    protected function createFile() : void
+    {
+        global $DIC;
+
+        $form = $this->initFormAddFile();
+        if (!$form->checkInput()) {
+            $form->setValuesByPost();
+            ilUtil::sendFailure($this->lng->txt('err_check_input'),true);
+            $this->addFile($form);
+            return;
+        }
+
+        $folder_handler = new ilViteroGroupFolderHandler($this->object);
+        $folder_handler->initFolderType($form->getInput('availability'));
+
+        if ($form->getInput('reference_type') == ilViteroMaterialAssignment::TYPE_REFERENCE) {
+            foreach ($form->getInput('existing') as $idx => $target_ref_id) {
+                $assignment = new ilViteroMaterialAssignment();
+                $assignment->setObjId($this->object->getId());
+                $assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_PENDING);
+                $assignment->setRefId($target_ref_id);
+                $assignment->save();
+            }
+        }
+
+        if ($form->getInput('reference_type') == ilViteroMaterialAssignment::TYPE_DIRECT_ASSIGNMENT) {
+            $assignment = new ilViteroMaterialAssignment();
+            $assignment->setObjId($this->object->getId());
+            $assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_PENDING);
+            $assignment->setRefId(null);
+            $assignment->setTitle($_FILES['upload']['name']);
+            $assignment->save();
+
+            $storage = new ilViteroFileStorage($this->object->getId());
+            $storage->handleUpload($DIC->upload(), $_FILES['upload']['tmp_name'], $assignment->getAssignmentId());
+        }
+
+        ilUtil::sendSuccess($this->lng->txt('settings_saved'));
+        $this->ctrl->redirect($this, 'materials');
+    }
+
+    public function materials() : void
+    {
+        global $DIC;
+
+        // @todo clear targets set back
+        $tabs = $DIC->tabs();
+        $tabs->activateTab('materials');
+
+        $tpl = $DIC->ui()->mainTemplate();
+
+        $this->showViteroFileManagementButton();
+        $this->showIliasFileManagementButton();
+
+        $table = new ilViteroMaterialAssignmentTableGUI(
+            $this,
+            $this->object,
+            'materials'
+        );
+        $table->init();
+        $table->parse(ilViteroMaterialAssignments::getInstanceByObjId($this->object->getId()));
+        $this->tpl->setContent($table->getHTML());
+    }
+
+    protected function materialsDeleteConfirmation() : void
+    {
+        global $DIC;
+
+        $request = $DIC->http()->request();
+        $file_ids = $request->getParsedBody()['files'] ?? [];
+
+        if (!count($file_ids)) {
+            ilUtil::sendFailure($this->lng->txt('select_one'), true);
+            $this->ctrl->redirect($this, 'materials');
+        }
+        ilUtil::sendQuestion($this->getPlugin()->txt('confirm_delete_assignments'));
+        $confirm = new ilConfirmationGUI();
+        $confirm->setFormAction($this->ctrl->getFormAction($this));
+        $confirm->setCancel($this->lng->txt('cancel'), 'materials');
+        $confirm->setConfirm($this->lng->txt('delete'), 'materialsDelete');
+
+        foreach ($file_ids as $assignment_id) {
+            $assignment = new ilViteroMaterialAssignment($assignment_id);
+            if ($assignment->isReference()) {
+                // @fixme might be deleted
+                $title = ilObject::_lookupTitle(ilObject::_lookupObjId($assignment->getRefId()));
+            } else {
+                $title = $assignment->getTitle();
+            }
+            $confirm->addItem('files[]', $assignment_id, $title);
+        }
+
+        $tpl = $DIC->ui()->mainTemplate();
+        $tpl->setContent($confirm->getHTML());
+    }
+
+    protected function materialsDelete() : void
+    {
+        global $DIC;
+
+        $request = $DIC->http()->request();
+        $file_ids = $request->getParsedBody()['files'] ?? [];
+
+        if (!count($file_ids)) {
+            ilUtil::sendFailure($this->lng->txt('select_one'), true);
+            $this->ctrl->redirect($this, 'materials');
+        }
+        foreach ($file_ids as $assignment_id) {
+            $assignment = new ilViteroMaterialAssignment($assignment_id);
+            $assignment->delete();
+        }
+        ilUtil::sendSuccess($this->getPlugin()->txt('filemanager_deleted_assignments'), true);
+        $this->ctrl->redirect($this, 'materials');
+    }
+
+    public function redirectToViteroFileManagement()
     {
         global $ilUser, $ilTabs, $ilAccess, $ilCtrl;
 

@@ -73,8 +73,10 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             return $ret;
         } catch (Exception $e) {
             $code = $this->parseErrorCode($e);
-            $GLOBALS['ilLog']->write(__METHOD__ . ': Get booking list failed with message code: ' . $code);
-            $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            $this->getLogger()->warning('Get booking list failed wih message: ' . $code);
+            if ($this->getClient() instanceof ilSoapClient) {
+                $this->getLogger()->warning('Last request: ' . $this->getClient()->__getLastRequest());
+            }
             throw new ilViteroConnectorException($e->getMessage(), $code);
         }
     }

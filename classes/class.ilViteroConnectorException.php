@@ -13,7 +13,10 @@ class ilViteroConnectorException extends ilException
 
     public function getViteroMessage()
     {
-        return ilViteroPlugin::getInstance()->txt('err_soap_' . (int) $this->getCode());
+        if ((int) $this->getCode() > 0) {
+            return ilViteroPlugin::getInstance()->txt('err_soap_' . (int) $this->getCode());
+        }
+        return $this->getMessage();
     }
 }
 

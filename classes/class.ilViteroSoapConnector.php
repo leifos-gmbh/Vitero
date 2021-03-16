@@ -22,6 +22,11 @@ abstract class ilViteroSoapConnector
     protected $logger = null;
 
     /**
+     * @var ilProxySettings
+     */
+    protected $proxy;
+
+    /**
      * Get instance
      */
     public function __construct()
@@ -49,7 +54,6 @@ abstract class ilViteroSoapConnector
      */
     protected function initClient()
     {
-
         try {
             $this->client = new SoapClient(
                 $this->getSettings()->getServerUrl() . '/' . $this->getWsdlName(),
@@ -57,9 +61,7 @@ abstract class ilViteroSoapConnector
                     'cache_wsdl' => 0,
                     'trace'      => 1,
                     'exceptions' => true,
-                    'classmap'   => [
-                        'phonetype' => 'ilViteroPhone'
-                    ]
+                    'classmap'   => ['phonetype' => 'ilViteroPhone']
                 )
             );
             $this->client->__setSoapHeaders(
@@ -72,10 +74,9 @@ abstract class ilViteroSoapConnector
             #$GLOBALS['ilLog']->write(__METHOD__. ': HEADER TO STRING : '. $head);
             return;
         } catch (SoapFault $e) {
-
-            $GLOBALS['ilLog']->write('VITERO: ' . $e->getMessage());
-            $GLOBALS['ilLog']->write($this->getSettings()->getServerUrl() . '/' . $this->getWsdlName());
-            throw new ilViteroConnectorException('', self::ERR_WSDL);
+            $this->getLogger()->error($e->getMessage());
+            $this->getLogger()->error('Using wsdl: ' . $this->getSettings()->getServerUrl() . '/' . $this->getWsdlName());
+            throw new ilViteroConnectorException($e->getMessage(), self::ERR_WSDL);
         }
     }
 
@@ -94,13 +95,26 @@ abstract class ilViteroSoapConnector
      */
     abstract protected function getWsdlName();
 
-    protected function parseErrorCode(Exception $e)
+    /**
+     * @param Exception $e
+     * @return int
+     */
+    protected function parseErrorCode(Exception $e) : int
     {
-        return (int) $e->detail->error->errorCode;
+        if (is_object($e->detail->error)) {
+            $this->getLogger()->debug('Found error code: ' . $e->detail->error->errorCode);
+            return (int) $e->detail->error->errorCode;
+        }
+        // try error code
+        if ($e->getCode() > 0) {
+            return (int) $e->getCode();
+        }
+        return 0;
+
     }
 
     /**
-     * @return <type>
+     * @return ilViteroPlugin
      */
     public function getPluginObject()
     {

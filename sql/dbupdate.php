@@ -376,5 +376,92 @@ if(!$ilDB->tableExists("rep_robj_xvit_date"))
 	));
 }
 ?>
+<#17>
+<?php
+if (!$ilDB->tableExists('rep_robj_xvit_mat')) {
+	$ilDB->createTable(
+		'rep_robj_xvit_mat',
+		[
+            'assignment_id' => [
+                'type' => ilDBConstants::T_INTEGER,
+                'length' => 4,
+                'notnull' => true
+            ],
+			'obj_id' => [
+				'type' => ilDBConstants::T_INTEGER,
+				'length' => 4,
+				'notnull' => true
+			],
+            'ref_id' => [
+                'type' => ilDBConstants::T_INTEGER,
+                'length' => 4,
+                'notnull' => false,
+				'default' => 0
+            ],
+            'title' => [
+                'type' => ilDBConstants::T_TEXT,
+                'length' => 200,
+                'notnull' => false,
+                'default' => ""
+            ],
+			'sync_status' => [
+				'type' => ilDBConstants::T_INTEGER,
+				'length' => 1,
+				'notnull' => true,
+				'default' => 0
+			],
+			'deleted_status' => [
+				'type' => ilDBConstants::T_INTEGER,
+				'length' => 1,
+				'notnull' => true,
+				'default' => 0
+			],
+		]
+	);
+	$ilDB->addPrimaryKey('rep_robj_xvit_mat', ['assignment_id', 'obj_id']);
+    $ilDB->createSequence('rep_robj_xvit_mat');
+}
+?>
+<#18>
+<?php
+if (!$ilDB->tableColumnExists('rep_robj_xvit_data', 'media')) {
+    $ilDB->addTableColumn('rep_robj_xvit_data', 'media',
+        [
+            'type'    => ilDBConstants::T_INTEGER,
+            'length'  => 4,
+            'notnull' => false,
+            'default' => 0
+
+        ]
+    );
+}
+?>
+<#19>
+<?php
+if (!$ilDB->tableColumnExists('rep_robj_xvit_data', 'agenda')) {
+    $ilDB->addTableColumn('rep_robj_xvit_data', 'agenda',
+        [
+            'type'    => ilDBConstants::T_INTEGER,
+            'length'  => 4,
+            'notnull' => false,
+            'default' => 0
+        ]
+    );
+}
+?>
+<#20>
+<?php
+if (!$ilDB->tableColumnExists('rep_robj_xvit_data', 'welcome')) {
+    $ilDB->addTableColumn('rep_robj_xvit_data', 'welcome',
+        [
+            'type'    => ilDBConstants::T_INTEGER,
+            'length'  => 4,
+            'notnull' => false,
+            'default' => 0
+
+        ]
+    );
+}
+?>
 
 

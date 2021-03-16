@@ -9,6 +9,19 @@ include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
  */
 class ilViteroConfigGUI extends ilPluginConfigGUI
 {
+    /**
+     * @var ilLanguage
+     */
+    private $lng;
+
+
+    public function __construct()
+    {
+        global $DIC;
+
+        $this->lng = $DIC->language();
+    }
+
     protected function listAppointments()
     {
         global $ilTabs, $tpl;
@@ -248,16 +261,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $recorder->setChecked($settings->isSessionRecorderEnabled());
         $form->addItem($recorder);
 
-        // content
-        $content = new ilCheckboxInputGUI(
-            $this->getPluginObject()->txt('content_admin'),
-            'content'
-        );
-        $content->setInfo($this->getPluginObject()->txt('content_admin_info'));
-        $content->setValue(1);
-        $content->setChecked($settings->isContentAdministrationEnabled());
-        $form->addItem($content);
-
         // ldap
         $ldap = new ilCheckboxInputGUI(
             $this->getPluginObject()->txt('ldap_setting'),
@@ -333,6 +336,19 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $gpa->setValue($settings->getStandardGracePeriodAfter());
         $form->addItem($gpa);
 
+        $inspire = new \ilCheckboxInputGUI(
+            $this->getPluginObject()->txt('activate_inspire'),
+            'inspire'
+        );
+        $inspire->setChecked($settings->isInspireSelectable());
+        $inspire->setInfo($this->getPluginObject()->txt('activate_inspire_info'));
+        $form->addItem($inspire);
+
+        $this->lng->loadLanguageModule('obj');
+        $additional_features = new ilFormSectionHeaderGUI();
+        $additional_features->setTitle($this->lng->txt('obj_features'));
+        $form->addItem($additional_features);
+
         if ($this->hasAccessToLearningProgress()) {
             $learning_progress = new ilCheckboxInputGUI($this->getPluginObject()->txt('activate_learning_progress'), 'learning_progress');
             $learning_progress->setChecked($settings->isLearningProgressEnabled());
@@ -341,13 +357,18 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             $form->addItem($learning_progress);
         }
 
-        $inspire = new \ilCheckboxInputGUI(
-            $this->getPluginObject()->txt('activate_inspire'),
-            'inspire'
-        );
-        $inspire->setChecked($settings->isInspireSelectable());
-        $inspire->setInfo($this->getPluginObject()->txt('activate_inspire_info'));
-        $form->addItem($inspire);
+        $files = new ilCheckboxInputGUI($this->getPluginObject()->txt('settings_file_handling'),'file_handling_ilias');
+        $files->setInfo($this->getPluginObject()->txt('settings_file_handling_info'));
+        $files->setValue(1);
+        $files->setChecked($settings->isFileHandlingIliasEnabled());
+        $form->addItem($files);
+
+        $file_vitero = new ilCheckboxInputGUI($this->getPluginObject()->txt('settings_file_handling_vitero'),'file_handling_vitero');
+        $file_vitero->setInfo($this->getPluginObject()->txt('settings_file_handling_vitero_info'));
+        $file_vitero->setValue(1);
+        $file_vitero->setChecked($settings->isFileHandlingViteroEnabled());
+        $form->addItem($file_vitero);
+
         return $form;
     }
 
@@ -391,7 +412,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             $settings->setCustomer($form->getInput('customer'));
             $settings->useLdap($form->getInput('ldap'));
             $settings->enableCafe($form->getInput('cafe'));
-            $settings->enableContentAdministration($form->getInput('content'));
             $settings->enableStandardRoom($form->getInput('std_room'));
             $settings->setWebstartUrl($form->getInput('webstart'));
             $settings->setUserPrefix($form->getInput('uprefix'));
@@ -406,6 +426,8 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             $settings->enableSessionRecorder($form->getInput('recorder'));
             $settings->enableLearningProgress($form->getInput('learning_progress'));
             $settings->setInspireSelectable($form->getInput('inspire'));
+            $settings->setFileHandlingViteroEnabled($form->getInput('file_handling_vitero'));
+            $settings->setFileHandlingIliasEnabled($form->getInput('file_handling_ilias'));
             $settings->save();
 
             ilUtil::sendSuccess($lng->txt('settings_saved'), true);

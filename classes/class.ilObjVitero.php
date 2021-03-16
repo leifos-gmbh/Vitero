@@ -27,7 +27,6 @@ include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
  * TODO(Next patch will fix this) DRY for the Query getLPInProgress getLTCompleted etc... 99% duplicated
  * Application class for vitero repository object.
  * @author Stefan Meyer <smeyer.ilias@gmx.de>
- * $Id: class.ilObjVitero.php 56608 2014-12-19 10:11:57Z fwolf $
  */
 class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 {
@@ -49,6 +48,22 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
     protected $learning_progress_mode_multi = false;
     protected $learning_progress_min_sessions; //TODO maybe this var and setters/getters should be renamed to something using the word settings.
     protected $is_learning_progress_stored = false;
+
+    /**
+     * @var int
+     */
+    private $folder_media_id = 0;
+
+
+    /**
+     * @var int
+     */
+    private $folder_agenda_id = 0;
+
+    /**
+     * @var int
+     */
+    private $folder_welcome_id = 0;
 
     /**
      * Constructor
@@ -251,6 +266,55 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
     }
 
     /**
+     * @return int
+     */
+    public function getFolderMediaId() : int
+    {
+        return $this->folder_media_id;
+    }
+
+    /**
+     * @param int $folder_media_id
+     */
+    public function setFolderMediaId(int $folder_media_id) : void
+    {
+        $this->folder_media_id = $folder_media_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFolderAgendaId() : int
+    {
+        return $this->folder_agenda_id;
+    }
+
+    /**
+     * @param int $folder_agenda_id
+     */
+    public function setFolderAgendaId(int $folder_agenda_id) : void
+    {
+        $this->folder_agenda_id = $folder_agenda_id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFolderWelcomeId() : int
+    {
+        return $this->folder_welcome_id;
+    }
+
+    /**
+     * @param int $folder_welcome_id
+     */
+    public function setFolderWelcomeId(int $folder_welcome_id) : void
+    {
+        $this->folder_welcome_id = $folder_welcome_id;
+    }
+
+
+    /**
      * Read data from db
      */
     public function doRead()
@@ -262,6 +326,9 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
         );
         while ($rec = $ilDB->fetchAssoc($set)) {
             $this->setVGroupId($rec['vgroup_id']);
+            $this->setFolderAgendaId($rec['agenda']);
+            $this->setFolderMediaId($rec['media']);
+            $this->setFolderWelcomeId($rec['welcome']);
         }
     }
 
@@ -487,7 +554,10 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
 
         $ilDB->manipulate(
             "UPDATE rep_robj_xvit_data SET " .
-            " vgroup_id = " . $ilDB->quote($this->getVGroupId(), "integer") . " " .
+            " vgroup_id = " . $ilDB->quote($this->getVGroupId(), "integer") . ", " .
+            'media = ' . $ilDB->quote($this->getFolderMediaId(), ilDBConstants::T_INTEGER) . ', ' .
+            'agenda = ' . $ilDB->quote($this->getFolderAgendaId(), ilDBConstants::T_INTEGER) . ', ' .
+            'welcome = ' . $ilDB->quote($this->getFolderWelcomeId(), ilDBConstants::T_INTEGER) . ' ' .
             " WHERE obj_id = " . $ilDB->quote($this->getId(), "integer")
         );
         try {

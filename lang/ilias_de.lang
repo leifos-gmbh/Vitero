@@ -50,6 +50,7 @@ err_soap_303#:#Es wurde kein Sitzungsname angegeben.
 err_soap_312#:#Der vitero-Service unterstützt nicht das Anlegen von Sitzungen des Typs "Inspire". Bitte kontaktieren Sie den ILIAS-Administrator.
 err_soap_501#:#Der Termin konnte wegen einer Überschneidung mit anderen Terminen nicht angelegt werden.
 err_soap_505#:#Es dürfen keine Termine in der Vergangenheit angelegt werden.
+err_soap_2001#:#Kann keine Verbindung zum vitero-Webservice aufbauen.
 app_type#:#Art des Termins
 app_type_cafe#:#Café
 app_type_standard#:#Standardraum
@@ -187,3 +188,35 @@ client_type_essentials#:#Essentials
 client_type_inspire#:#Inspire
 app_tbl_col_inspire#:#Typ
 filemanager_start#:#vitero-Dateiverwaltung öffnen
+settings_file_handling#:#Dateiverwaltung in ILIAS
+settings_file_handling_info#:#Wenn aktiviert, können Dateien, die in vitero-Sitzungen verwendet werden sollen, direkt in ILIAS verwaltet werden.
+settings_file_handling_vitero#:#Dateiverwaltung in vitero
+settings_file_handling_info#:#Wenn aktiviert, können Dateien, die in vitero-Sitzungen verwendet werden sollen, über einen vitero-Link verwaltet.
+filemanager_add_file_button#:#Neue Datei zuordnen
+filemanager_add_file_tbl#:#Neue zuordnen
+filemanager_add_file_tbl_info#:#Neu erstellte bzw. referenzierte ILIAS-Dateiobjekte werden automatisch mit vitero synchronisiert und stehen in vitero-Sitzungen zur Verfügung.
+filemanager_sync_status_0#:#Undefiniert
+filemanager_sync_status_1#:#Ausstehend
+filemanager_sync_status_2#:#Synchronisiert
+filemanager_assignment_table_referenced#:#Verküpfung im Magazin
+filemanager_assignment_table_sync_status#:#Status der Synchronisierung
+filemanager_assignment_table_deleted#:#Gelöscht
+filemanager_add_file#:#Dateien zuordnen
+filemanager_assignment_table#:#Zugeordnete Dateien
+filemanager_add_file_tbl#:#Neue Dateizuordnung
+filemanager_add_file_tbl_info#:#Zugeorndete Dateien werden automatisch synchronisiert und sind anschließend in vitero-Sitzungen verfügbar.
+filemanager_add_file_ref_type#:#Art der Zuordnung
+filemanager_ref_type#:#Verknüpfung im Magazin
+filemanager_exiting_file#:#Dateiauswahl
+filemanager_upload#:#Dateiauswahl
+filemanger_direct_type#:#Direkter Upload
+confirm_delete_assignments#:#Sind Sie sicher, dass die folgenden Zuordnungen gelöscht werden sollen?
+filemanager_deleted_assignments#:#Die ausgwählten Zuordnungen wurden entfernt.
+filemanager_deleted#:#**Verknüpfung wurde gelöscht**
+filemanager_availability#:#Verfügbarkeit
+filemanager_folder_media#:#Medien
+filemanager_folder_agenda#:#Agenda
+filemanager_folder_welcome#:#Welcome
+filemanager_folder_media_info#:#Dateien können über den "Medien" Button geöffnet werden.
+filemanager_folder_agenda_info#:#Dateien können über den "Agenda" Button geöffnet werden.
+filemanager_folder_welcome_info#:#Dateien werden beim Betreten des virtual team room automatisch auf dem Besprechungstisch angezeigt.

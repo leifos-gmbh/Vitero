@@ -40,6 +40,18 @@ class ilViteroSettings
     private $grace_period_after = 15;
 
     /**
+     * @var bool
+     */
+    private $file_handling_ilias_enabled = false;
+
+
+
+    /**
+     * @var bool
+     */
+    private $file_handling_vitero_enabled = true;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -74,6 +86,8 @@ class ilViteroSettings
         $this->enableSessionRecorder($this->getStorage()->get('recorder', $this->isSessionRecorderEnabled()));
         $this->enableLearningProgress($this->getStorage()->get('learning_progress', $this->isLearningProgressEnabled()));
         $this->setInspireSelectable($this->getStorage()->get('inspire', $this->isInspireSelectable()));
+        $this->setFileHandlingIliasEnabled($this->getStorage()->get('file_handling_ilias',$this->isFileHandlingIliasEnabled()));
+        $this->setFileHandlingViteroEnabled($this->getStorage()->get('file_handling_vitero', $this->isFileHandlingViteroEnabled()));
     }
 
     public function setServerUrl($a_url)
@@ -299,6 +313,8 @@ class ilViteroSettings
         $this->getStorage()->set('recorder', (int) $this->isSessionRecorderEnabled());
         $this->getStorage()->set('learning_progress', $this->isLearningProgressEnabled());
         $this->getStorage()->set('inspire', $this->isInspireSelectable());
+        $this->getStorage()->set('file_handling_ilias', (int) $this->isFileHandlingIliasEnabled());
+        $this->getStorage()->set('file_handling_vitero', (int) $this->isFileHandlingViteroEnabled());
 
     }
 
@@ -332,9 +348,12 @@ class ilViteroSettings
         return $this->enable_cafe;
     }
 
+    /**
+     * @return bool
+     */
     public function isContentAdministrationEnabled()
     {
-        return $this->enable_content;
+        return $this->isFileHandlingViteroEnabled() || $this->isFileHandlingIliasEnabled();
     }
 
     public function isStandardRoomEnabled()
@@ -398,6 +417,39 @@ class ilViteroSettings
     {
         $this->phone_enabled = $a_phone_enabled;
     }
+
+    /**
+     * @return bool
+     */
+    public function isFileHandlingIliasEnabled() : bool
+    {
+        return $this->file_handling_ilias_enabled;
+    }
+
+    /**
+     * @param bool $file_handling_ilias_enabled
+     */
+    public function setFileHandlingIliasEnabled(bool $file_handling_ilias_enabled) : void
+    {
+        $this->file_handling_ilias_enabled = $file_handling_ilias_enabled;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFileHandlingViteroEnabled() : bool
+    {
+        return $this->file_handling_vitero_enabled;
+    }
+
+    /**
+     * @param bool $file_handling_vitero_enabled
+     */
+    public function setFileHandlingViteroEnabled(bool $file_handling_vitero_enabled) : void
+    {
+        $this->file_handling_vitero_enabled = $file_handling_vitero_enabled;
+    }
+
 
     /**
      * @return bool
