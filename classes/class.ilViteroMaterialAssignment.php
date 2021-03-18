@@ -39,6 +39,11 @@ class ilViteroMaterialAssignment
     private $ref_id;
 
     /**
+     * @var ?int
+     */
+    private $vitero_id;
+
+    /**
      * @var ?string
      */
     private $title;
@@ -94,6 +99,23 @@ class ilViteroMaterialAssignment
     {
         $this->obj_id = $obj_id;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getViteroId() : ?int
+    {
+        return $this->vitero_id;
+    }
+
+    /**
+     * @param int|null $vitero_id
+     */
+    public function setViteroId(?int $vitero_id) : void
+    {
+        $this->vitero_id = $vitero_id;
+    }
+
 
     /**
      * @return int
@@ -208,6 +230,7 @@ class ilViteroMaterialAssignment
         while ($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
             $this->exists = true;
             $this->setObjId($row->obj_id);
+            $this->setViteroId($row->vit_id);
             $this->setRefId($row->ref_id);
             $this->setTitle($row->title);
             $this->setSyncStatus($row->sync_status);
@@ -228,16 +251,18 @@ class ilViteroMaterialAssignment
     {
         $this->setAssignmentId($this->db->nextId(self::TABLE_NAME));
         $query = 'insert into ' . self::TABLE_NAME . ' ' .
-            '(assignment_id, obj_id, ref_id, title,sync_status, deleted_status) ' .
+            '(assignment_id, obj_id, ref_id, vit_id, title,sync_status, deleted_status) ' .
             'values ( ' .
             $this->db->quote($this->getAssignmentId(), ilDBConstants::T_INTEGER) . ',  ' .
             $this->db->quote($this->getObjId(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->getRefId(), ilDBConstants::T_INTEGER) . ', ' .
+            $this->db->quote($this->getViteroId(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->getTitle(), ilDBConstants::T_TEXT) . ', ' .
             $this->db->quote($this->getSyncStatus(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->isDeletedStatus(), ilDBConstants::T_INTEGER) . ' ' .
             ')';
         $this->db->query($query);
+        $this->exists = true;
     }
 
     protected function update()
@@ -246,6 +271,7 @@ class ilViteroMaterialAssignment
             'set ' .
             'obj_id = ' . $this->db->quote($this->getObjId(), ilDBConstants::T_INTEGER) . ', ' .
             'ref_id = ' . $this->db->quote($this->getRefId(), ilDBConstants::T_INTEGER) . ', ' .
+            'vit_id = ' . $this->db->quote($this->getViteroId(), ilDBConstants::T_INTEGER) . ', ' .
             'title = ' . $this->db->quote($this->getTitle(), ilDBConstants::T_TEXT) . ', ' .
             'sync_status = ' . $this->db->quote($this->getSyncStatus(), ilDBConstants::T_INTEGER) . ', ' .
             'deleted_status = ' . $this->db->quote($this->isDeletedStatus(), ilDBConstants::T_INTEGER) . ' ' .

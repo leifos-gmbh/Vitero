@@ -221,3 +221,6 @@ filemanager_folder_welcome#:#Welcome
 filemanager_folder_media_info#:#Files can be opened with the "Media" button.
 filemanager_folder_agenda_info#:#Files can be opened with the "Agenda" button.
 filemanager_folder_welcome_info#:#Files are automatically displayed on the meeting table when entering the virtual team room.
+filemanager_file_name_info#:#An optional filename which overwrites the original filename.
+filemanager_file_name#:#Filename
+

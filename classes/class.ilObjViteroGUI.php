@@ -1794,6 +1794,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $direct_file->setRequired(true);
         $direct->addSubItem($direct_file);
 
+        $direct_file_name = new ilTextInputGUI($this->plugin->txt('filemanager_file_name'), 'direct_file_name');
+        $direct_file_name->setRequired(false);
+        $direct_file_name->setInfo($this->plugin->txt('filemanager_file_name_info'));
+        $direct->addSubItem($direct_file_name);
+
         $form->addItem($ref_type);
 
         // folder type
@@ -1837,6 +1842,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $folder_handler = new ilViteroGroupFolderHandler($this->object);
         $folder_handler->initFolderType($form->getInput('availability'));
 
+        $new_assignments = [];
         if ($form->getInput('reference_type') == ilViteroMaterialAssignment::TYPE_REFERENCE) {
             foreach ($form->getInput('existing') as $idx => $target_ref_id) {
                 $assignment = new ilViteroMaterialAssignment();
@@ -1844,6 +1850,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
                 $assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_PENDING);
                 $assignment->setRefId($target_ref_id);
                 $assignment->save();
+                $new_assignments[] = $assignment;
             }
         }
 
@@ -1853,12 +1860,23 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_PENDING);
             $assignment->setRefId(null);
             $assignment->setTitle($_FILES['upload']['name']);
+            if (strlen($form->getInput('direct_file_name'))) {
+                $assignment->setTitle($form->getInput('direct_file_name'));
+            }
             $assignment->save();
 
             $storage = new ilViteroFileStorage($this->object->getId());
             $storage->handleUpload($DIC->upload(), $_FILES['upload']['tmp_name'], $assignment->getAssignmentId());
+
+            $new_assignments[] = $assignment;
         }
 
+        foreach ($new_assignments as $assignment) {
+            if ($assignment instanceof ilViteroMaterialAssignment) {
+                $sync = new ilViteroFileSync($assignment, $this->object);
+                $sync->syncFileToFolder($form->getInput('availability'));
+            }
+        }
         ilUtil::sendSuccess($this->lng->txt('settings_saved'));
         $this->ctrl->redirect($this, 'materials');
     }
@@ -1931,7 +1949,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         }
         foreach ($file_ids as $assignment_id) {
             $assignment = new ilViteroMaterialAssignment($assignment_id);
-            $assignment->delete();
+            $assignment->setDeletedStatus(true);
+            $sync = new ilViteroFileSync($assignment, $this->object);
+            $sync->sync();
         }
         ilUtil::sendSuccess($this->getPlugin()->txt('filemanager_deleted_assignments'), true);
         $this->ctrl->redirect($this, 'materials');

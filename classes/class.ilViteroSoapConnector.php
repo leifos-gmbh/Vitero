@@ -17,7 +17,7 @@ abstract class ilViteroSoapConnector
     private $settings;
     private $plugin;
 
-    private $client = null;
+    protected $client = null;
 
     protected $logger = null;
 

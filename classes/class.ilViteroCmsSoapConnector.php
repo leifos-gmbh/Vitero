@@ -116,6 +116,25 @@ class ilViteroCmsSoapConnector extends ilViteroSoapConnector
 
     }
 
+    public function deleteNode(int $nodeid)
+    {
+        $this->initClient();
+        $request = new stdClass();
+        $request->nodeid = $nodeid;
+
+        try  {
+            $response = $this->getClient()->deleteNode($request);
+            return (int) $response->nodeid;
+        } catch (SoapFault $e) {
+            $code = $this->parseErrorCode($e);
+            $this->getLogger()->error('delete node failed with message code: ' . $code);
+            $this->getLogger()->error($this->getClient()->__getLastRequest());
+            $this->getLogger()->dump($request, ilLogLevel::ERROR);
+            throw new ilViteroConnectorException($e->getMessage(), $code);
+        }
+
+    }
+
     /**
      * REcursive check for folder_id
      * @param     $folder
