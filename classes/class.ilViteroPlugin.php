@@ -37,6 +37,48 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
     }
 
     /**
+     * @inheritDoc
+     * @param string $a_component
+     * @param string $a_event
+     * @param array  $a_parameter
+     */
+    public function handleEvent($a_component, $a_event, $a_parameter)
+    {
+        switch ($a_component) {
+            case 'Services/Object':
+                switch ($a_event) {
+                    case 'toTrash':
+                        if (isset($a_parameter['ref_id'])
+                        ) {
+                            $self = ilViteroAppEventListener::getInstance();
+                            $self->storeEvent(
+                                (int) $a_parameter['ref_id'],
+                                (string) $a_event
+                            );
+                        }
+                        break;
+
+                    case 'delete':
+                        $a_parameter['obj_type'] = $a_parameter['type'];
+                    case 'update':
+                        if (
+                            isset($a_parameter['ref_id']) &&
+                            isset($a_parameter['obj_type']) &&
+                            strcmp($a_parameter['obj_type'], 'file') === 0
+                        ) {
+                            $self = ilViteroAppEventListener::getInstance();
+                            $self->storeEvent(
+                                (int) $a_parameter['ref_id'],
+                                (string) $a_event
+                            );
+                        }
+                        break;
+                }
+        }
+    }
+
+
+    /**
      * Auto load implementation
      * @param string class name
      */
