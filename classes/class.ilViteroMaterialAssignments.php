@@ -75,6 +75,30 @@ class ilViteroMaterialAssignments
         return $assignments;
     }
 
+    /**
+     * @return ilViteroMaterialAssignment[]
+     * @throws ilDatabaseException
+     */
+    public static function lookupPendingAssignments() : array
+    {
+        global $DIC;
+
+        $db = $DIC->database();
+
+        $query = 'select assignment_id from ' . ilViteroMaterialAssignment::TABLE_NAME . ' ' .
+            'where sync_status = ' . $db->quote(ilViteroMaterialAssignment::SYNC_STATUS_PENDING, ilDBConstants::T_INTEGER);
+        $res = $db->query($query);
+
+        ilLoggerFactory::getLogger('xvit')->info($query);
+
+        $assignments = [];
+        while ($row = $res->fetchRow(ilDBConstants::FETCHMODE_OBJECT)) {
+            $assignments[] = new ilViteroMaterialAssignment($row->assignment_id);
+        }
+        return $assignments;
+
+    }
+
 
     /**
      * @return ilViteroMaterialAssignment[]

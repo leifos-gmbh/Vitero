@@ -33,7 +33,13 @@ class ilViteroFileSync
      */
     private $logger;
 
-    public function __construct(ilViteroMaterialAssignment $assignment, ilObjVitero $vitero)
+    /**
+     * @todo remove vitero from constructor and add vitero parameter to syncFileToFolder
+     * ilViteroFileSync constructor.
+     * @param ilViteroMaterialAssignment $assignment
+     * @param ilObjVitero|null           $vitero
+     */
+    public function __construct(ilViteroMaterialAssignment $assignment, ilObjVitero $vitero = null)
     {
         global $DIC;
 
@@ -48,8 +54,6 @@ class ilViteroFileSync
             return;
         }
         $this->handleFileSync();
-
-        $this->determineAbsolutePath();
     }
 
     public function syncFileToFolder(int $folder_type) : void
@@ -87,7 +91,7 @@ class ilViteroFileSync
     public function determineAbsolutePath() : string
     {
         if ($this->assignment->isReference()) {
-            $file = ilObjectFactory::getInstanceByRefId($this->assignment->getRefId());
+            $file = ilObjectFactory::getInstanceByRefId($this->assignment->getRefId(), false);
             if ($file instanceof ilObjFile) {
                 return $file->getFile();
             }
@@ -101,7 +105,7 @@ class ilViteroFileSync
     public function determineName()
     {
         if ($this->assignment->isReference()) {
-            $file = ilObjectFactory::getInstanceByRefId($this->assignment->getRefId());
+            $file = ilObjectFactory::getInstanceByRefId($this->assignment->getRefId(), false);
             if ($file instanceof ilObjFile) {
                 return $file->getFileName();
             }
@@ -155,7 +159,7 @@ class ilViteroFileSync
      */
     protected function handleFileSync() : bool
     {
-        if ($this->assignment->setSyncStatus() != ilViteroMaterialAssignment::SYNC_STATUS_PENDING) {
+        if ($this->assignment->getSyncStatus() != ilViteroMaterialAssignment::SYNC_STATUS_PENDING) {
             return false;
         }
         return true;

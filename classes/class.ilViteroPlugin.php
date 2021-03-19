@@ -148,7 +148,18 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
     public function updateLearningProgress()
     {
         $vitero_lp = new ilViteroLearningProgress();
-        $vitero_lp->updateLearningProgress();
+        #$vitero_lp->updateLearningProgress();
+    }
+
+    /**
+     *
+     */
+    public function syncFiles()
+    {
+        foreach (ilViteroMaterialAssignments::lookupPendingAssignments() as $assignment) {
+            $sync = new ilViteroFileSync($assignment);
+            $sync->sync();
+        }
     }
 
 }
