@@ -13,6 +13,7 @@ class ilViteroMaterialAssignment
     public const SYNC_STATUS_UNDEFINED = 0;
     public const SYNC_STATUS_PENDING = 1;
     public const SYNC_STATUS_SYNCHRONISED = 2;
+    public const SYNC_STATUS_FAILURE = 3;
 
     /**
      * var int
@@ -42,6 +43,12 @@ class ilViteroMaterialAssignment
      * @var ?int
      */
     private $vitero_id;
+
+    /**
+     * @var int
+     */
+    private $vitero_folder_type = ilViteroCmsSoapConnector::FOLDER_UNDEFINED;
+
 
     /**
      * @var ?string
@@ -115,6 +122,23 @@ class ilViteroMaterialAssignment
     {
         $this->vitero_id = $vitero_id;
     }
+
+    /**
+     * @return int
+     */
+    public function getViteroFolderType() : int
+    {
+        return $this->vitero_folder_type;
+    }
+
+    /**
+     * @param int $vitero_folder_type
+     */
+    public function setViteroFolderType(int $vitero_folder_type) : void
+    {
+        $this->vitero_folder_type = $vitero_folder_type;
+    }
+
 
 
     /**
@@ -231,6 +255,7 @@ class ilViteroMaterialAssignment
             $this->exists = true;
             $this->setObjId($row->obj_id);
             $this->setViteroId($row->vit_id);
+            $this->setViteroFolderType($row->vit_folder_type);
             $this->setRefId($row->ref_id);
             $this->setTitle($row->title);
             $this->setSyncStatus($row->sync_status);
@@ -251,12 +276,13 @@ class ilViteroMaterialAssignment
     {
         $this->setAssignmentId($this->db->nextId(self::TABLE_NAME));
         $query = 'insert into ' . self::TABLE_NAME . ' ' .
-            '(assignment_id, obj_id, ref_id, vit_id, title,sync_status, deleted_status) ' .
+            '(assignment_id, obj_id, ref_id, vit_id, vit_folder_type, title,sync_status, deleted_status) ' .
             'values ( ' .
             $this->db->quote($this->getAssignmentId(), ilDBConstants::T_INTEGER) . ',  ' .
             $this->db->quote($this->getObjId(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->getRefId(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->getViteroId(), ilDBConstants::T_INTEGER) . ', ' .
+            $this->db->quote($this->getViteroFolderType(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->getTitle(), ilDBConstants::T_TEXT) . ', ' .
             $this->db->quote($this->getSyncStatus(), ilDBConstants::T_INTEGER) . ', ' .
             $this->db->quote($this->isDeletedStatus(), ilDBConstants::T_INTEGER) . ' ' .
@@ -272,6 +298,7 @@ class ilViteroMaterialAssignment
             'obj_id = ' . $this->db->quote($this->getObjId(), ilDBConstants::T_INTEGER) . ', ' .
             'ref_id = ' . $this->db->quote($this->getRefId(), ilDBConstants::T_INTEGER) . ', ' .
             'vit_id = ' . $this->db->quote($this->getViteroId(), ilDBConstants::T_INTEGER) . ', ' .
+            'vit_folder_type = ' . $this->db->quote($this->getViteroFolderType(), ilDBConstants::T_INTEGER) . ', ' .
             'title = ' . $this->db->quote($this->getTitle(), ilDBConstants::T_TEXT) . ', ' .
             'sync_status = ' . $this->db->quote($this->getSyncStatus(), ilDBConstants::T_INTEGER) . ', ' .
             'deleted_status = ' . $this->db->quote($this->isDeletedStatus(), ilDBConstants::T_INTEGER) . ' ' .

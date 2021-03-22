@@ -5,6 +5,11 @@ class ilViteroCmsSoapConnector extends ilViteroSoapConnector
     /**
      * @var int
      */
+    public const FOLDER_UNDEFINED = 0;
+
+    /**
+     * @var int
+     */
     public const FOLDER_AGENDA_ID = 1;
 
     /**

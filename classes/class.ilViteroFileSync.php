@@ -56,13 +56,22 @@ class ilViteroFileSync
         $this->handleFileSync();
     }
 
-    public function syncFileToFolder(int $folder_type) : void
+    /**
+     * Sync file to folder
+     */
+    public function syncFileToFolder() : void
     {
         $path = $this->determineAbsolutePath();
+        if (!$path) {
+            $this->handleUpdateFailure();
+            return;
+        }
+
+
         $name = $this->determineName();
 
         $folder_id = 0;
-        switch ($folder_type) {
+        switch ($this->assignment->getViteroFolderType()) {
             case ilViteroCmsSoapConnector::FOLDER_MEDIA_ID:
                 $folder_id = $this->vitero->getFolderMediaId();
                 break;
@@ -82,6 +91,7 @@ class ilViteroFileSync
             $this->assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_SYNCHRONISED);
             $this->assignment->save();
         } catch (ilViteroConnectorException $e) {
+            $this->handleUpdateFailure();
             $this->logger->error('Error syncing file: ' . $e->getMessage());
         }
         return;
@@ -91,12 +101,17 @@ class ilViteroFileSync
     public function determineAbsolutePath() : string
     {
         if ($this->assignment->isReference()) {
+            $this->logger->info('Assignment is reference');
             $file = ilObjectFactory::getInstanceByRefId($this->assignment->getRefId(), false);
             if ($file instanceof ilObjFile) {
                 return $file->getFile();
+            } else {
+                $this->logger->warning('Cannot find file for obj_id: ' . $this->assignment->getObjId() . ' ref_id: ' . $this->assignment->getRefId());
+                return '';
             }
         }
         if (!$this->assignment->isReference()) {
+            $this->logger->info('Assignment is local file');
             $storage = new ilViteroFileStorage($this->assignment->getObjId());
             return $storage->getAbsolutePath() . '/' . $this->assignment->getAssignmentId();
         }
@@ -162,7 +177,14 @@ class ilViteroFileSync
         if ($this->assignment->getSyncStatus() != ilViteroMaterialAssignment::SYNC_STATUS_PENDING) {
             return false;
         }
+        $this->syncFileToFolder();
         return true;
+    }
+
+    protected function handleUpdateFailure()
+    {
+        $this->assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_FAILURE);
+        $this->assignment->save();
     }
 
 }

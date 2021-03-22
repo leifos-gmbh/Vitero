@@ -198,6 +198,7 @@ filemanager_add_file_tbl_info#:#Neu erstellte bzw. referenzierte ILIAS-Dateiobje
 filemanager_sync_status_0#:#Undefiniert
 filemanager_sync_status_1#:#Ausstehend
 filemanager_sync_status_2#:#Synchronisiert
+filemanager_sync_status_2#:#Fehler
 filemanager_assignment_table_referenced#:#Verküpfung im Magazin
 filemanager_assignment_table_sync_status#:#Status der Synchronisierung
 filemanager_assignment_table_deleted#:#Gelöscht

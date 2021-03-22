@@ -156,8 +156,27 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
      */
     public function syncFiles()
     {
+        global $DIC;
+
+        $tree = $DIC->repositoryTree();
+        $logger = $DIC->logger()->xvit();
+
         foreach (ilViteroMaterialAssignments::lookupPendingAssignments() as $assignment) {
-            $sync = new ilViteroFileSync($assignment);
+
+            $obj_id = $assignment->getObjId();
+            $ref_ids = ilObject::_getAllReferences($obj_id);
+            $ref_id = end($ref_ids);
+
+            if ($tree->isDeleted($ref_id)) {
+                $logger->info('Ignoring update of deleted vitero object.');
+                continue;
+            }
+            $vitero = ilObjectFactory::getInstanceByRefId($ref_id, false);
+            if (!$vitero instanceof ilObjVitero) {
+                $logger->warning('Cannot instatiate vitero object for ref_id: ' . $ref_id);
+                continue;
+            }
+            $sync = new ilViteroFileSync($assignment, $vitero);
             $sync->sync();
         }
     }

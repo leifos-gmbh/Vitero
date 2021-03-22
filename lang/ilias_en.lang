@@ -199,6 +199,7 @@ filemanager_add_file_button#:#Assign new File
 filemanager_sync_status_0#:#Undefined
 filemanager_sync_status_1#:#Pending
 filemanager_sync_status_2#:#Synchronised
+filemanager_sync_status_3#:#Failure
 filemanager_assignment_table_referenced#:#Link in Repository
 filemanager_assignment_table_sync_status#:#Status of Synchronisation
 filemanager_assignment_table_deleted#:#Deleted

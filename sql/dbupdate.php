@@ -476,6 +476,19 @@ if (!$ilDB->tableColumnExists('rep_robj_xvit_mat', 'vit_id')) {
     );
 }
 ?>
+<#22>
+<?php
+if (!$ilDB->tableColumnExists('rep_robj_xvit_mat', 'vit_folder_type')) {
+    $ilDB->addTableColumn('rep_robj_xvit_mat', 'vit_folder_type',
+        [
+            'type'    => ilDBConstants::T_INTEGER,
+            'length'  => 2,
+            'notnull' => true,
+            'default' => 0
+        ]
+    );
+}
+?>
 
 
 

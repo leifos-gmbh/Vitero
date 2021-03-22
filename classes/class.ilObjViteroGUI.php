@@ -1849,6 +1849,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
                 $assignment->setObjId($this->object->getId());
                 $assignment->setSyncStatus(ilViteroMaterialAssignment::SYNC_STATUS_PENDING);
                 $assignment->setRefId($target_ref_id);
+                $assignment->setViteroFolderType($form->getInput('availability'));
                 $assignment->save();
                 $new_assignments[] = $assignment;
             }
@@ -1863,6 +1864,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             if (strlen($form->getInput('direct_file_name'))) {
                 $assignment->setTitle($form->getInput('direct_file_name'));
             }
+            $assignment->setViteroFolderType($form->getInput('availability'));
             $assignment->save();
 
             $storage = new ilViteroFileStorage($this->object->getId());
@@ -1874,7 +1876,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         foreach ($new_assignments as $assignment) {
             if ($assignment instanceof ilViteroMaterialAssignment) {
                 $sync = new ilViteroFileSync($assignment, $this->object);
-                $sync->syncFileToFolder($form->getInput('availability'));
+                $sync->syncFileToFolder();
             }
         }
         ilUtil::sendSuccess($this->lng->txt('settings_saved'));
