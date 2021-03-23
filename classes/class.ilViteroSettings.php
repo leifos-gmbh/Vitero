@@ -39,9 +39,9 @@ class ilViteroSettings
     private $enable_learning_progress = false;
     private $inspire = false;
 
-    private bool $enable_adv_access_rules = false;
-    private array $white_list = array();
-    private int $appointment_right = self::APPOINTMENT_CREATE;
+    private $enable_adv_access_rules = false;
+    private $white_list = array();
+    private $appointment_right = self::APPOINTMENT_CREATE;
 
     private $grace_period_before = 15;
     private $grace_period_after = 15;

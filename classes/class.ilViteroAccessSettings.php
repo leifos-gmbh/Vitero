@@ -10,12 +10,12 @@ class ilViteroAccessSettings
     const APPOINTMENT_CREATE = 1;
     const APPOINTMENT_EDIT_CREATE = 2;
 
-    private static ?ilViteroAccessSettings $instance = null;
+    private static $instance = null;
 
-    private ?ilSetting $storage = null;
-    private bool $enable_adv_access_rules = false;
-    private array $white_list = array();
-    private int $appointment_right = self::APPOINTMENT_CREATE;
+    private $storage = null;
+    private $enable_adv_access_rules = false;
+    private $white_list = array();
+    private $appointment_right = self::APPOINTMENT_CREATE;
 
     /**
      * Constructor
