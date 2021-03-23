@@ -11,6 +11,9 @@ class ilViteroSettings
     const PHONE_DIAL_OUT = 2;
     const PHONE_DIAL_OUT_PART = 3;
 
+    const APPOINTMENT_CREATE = 1;
+    const APPOINTMENT_EDIT_CREATE = 2;
+
     private static $instance = null;
 
     private $storage = null;
@@ -35,6 +38,10 @@ class ilViteroSettings
     private $session_recorder = false;
     private $enable_learning_progress = false;
     private $inspire = false;
+
+    private bool $enable_adv_access_rules = false;
+    private array $white_list = array();
+    private int $appointment_right = self::APPOINTMENT_CREATE;
 
     private $grace_period_before = 15;
     private $grace_period_after = 15;
@@ -460,6 +467,56 @@ class ilViteroSettings
             $this->isPhoneConferenceEnabled() ||
             $this->isPhoneDialOutEnabled() ||
             $this->isPhoneDialOutParticipantsEnabled();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdvancedAccessRulesEnabled() : bool
+    {
+        return $this->enable_adv_access_rules;
+    }
+
+    /**
+     * @param bool $enable_adv_access_rules
+     */
+    public function setAdvancedAccessRules(bool $enable_adv_access_rules) : void
+    {
+        $this->enable_adv_access_rules = $enable_adv_access_rules;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWhiteList() : array
+    {
+        return $this->white_list;
+    }
+
+    /**
+     * @param array $white_list
+     */
+    public function setWhiteList(array $white_list) : void
+    {
+        $this->white_list = $white_list;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAppointmentRight() : int
+    {
+        return $this->appointment_right;
+    }
+
+    /**
+     * @param int $appointment_right
+     */
+    public function setAppointmentRight(int $appointment_right) : void
+    {
+        if($appointment_right === self::APPOINTMENT_CREATE || $appointment_right === self::APPOINTMENT_EDIT_CREATE) {
+            $this->appointment_right = $appointment_right;
+        }
     }
 
 }

@@ -30,7 +30,8 @@ edit#:#Edit
 status#:#Status
 offline#:#Offline
 created_vitero#:#Created new vitero session
-vitero_plugin_configuration#:#vitero Plugin Configuration
+vitero_plugin_configuration#:#Vitero Plugin Configuration
+access_configuration#:#Access Rights Configuration
 saving_invoked#:#Save procedure has been executed. Please note that this example does not save anything to DB.
 server_uri#:#Webservice Server URL
 webstart_url#:#Webstart URL
@@ -109,6 +110,7 @@ il_xvit_member#:#Member
 il_xvit_admin#:#Team Leader
 tab_settings#:#Settings
 tab_appointments#:#Appointments
+tab_access_settings#:#Extended Access Regulation
 account_unlocked#:#Access
 unlocked_txt#:#Access Allowed
 locked_txt#:#Access Denied
@@ -224,4 +226,10 @@ filemanager_folder_agenda_info#:#Files can be opened with the "Agenda" button.
 filemanager_folder_welcome_info#:#Files are automatically displayed on the meeting table when entering the virtual team room.
 filemanager_file_name_info#:#An optional filename which overwrites the original filename.
 filemanager_file_name#:#Filename
-
+enable_adv_access#:#Activate Regulation
+allowed_users#:#Allowed Users
+allowed_users_info#:#Enter the names of the persons, that should get the chosen permissions for Vitero-Objects
+app_rights#:#Appointment Rights
+app_create_op#:#Create
+app_create_edit_op#:#Create / Change
+missing_create_rights#:#You do not have the permission to create a Vitero-Object.

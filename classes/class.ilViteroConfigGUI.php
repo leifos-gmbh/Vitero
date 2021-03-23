@@ -71,9 +71,17 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             );
         }
 
+        $ilTabs->addTab(
+            'access_settings',
+            ilViteroPlugin::getInstance()->txt('tab_access_settings'),
+            $GLOBALS['ilCtrl']->getLinkTarget($this, 'configureAccessRights')
+        );
+
         switch ($cmd) {
-            case "configure":
-            case "save":
+            case 'configure':
+            case 'save':
+            case 'saveAccessRights':
+            case 'configureAccessRights':
             case 'listAppointments':
                 $this->$cmd();
                 break;
@@ -82,9 +90,79 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
     }
 
     /**
+     * Access Rights Settings configuration Screen
+     *
+     * @return void
+     */
+    private function configureAccessRights() : void
+    {
+        global $DIC;
+
+        $ilTabs = $DIC->tabs();
+        $tpl = $DIC['tpl'];
+
+        $ilTabs->activateTab('access_settings');
+
+        $form = $this->initAccessRightsConfigurationForm();
+        $tpl->setContent($form->getHTML());
+    }
+
+    /**
+     * @return ilPropertyFormGUI
+     * @throws ilFormException
+     */
+    private function initAccessRightsConfigurationForm() : ilPropertyFormGUI
+    {
+        global $DIC;
+
+        $ilCtrl = $DIC->ctrl();
+        $lng = $DIC->language();
+
+        $pl = $this->getPluginObject();
+
+        $pl->includeClass('class.ilViteroAccessSettings.php');
+        $settings = ilViteroAccessSettings::getInstance();
+
+        $form = new ilPropertyFormGUI();
+        $form->setTitle($pl->txt('access_configuration'));
+        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->addCommandButton('saveAccessRights', $lng->txt('save'));
+        $form->setShowTopButtons(false);
+
+        //Enable Extended Access Rights
+        $enable = new ilCheckboxInputGUI($pl->txt('enable_adv_access'), 'adv_access_rules');
+        $enable->setChecked($settings->isAdvancedAccessRulesEnabled() ? 1 : 0);
+
+        $form->addItem($enable);
+
+        //Whitelist
+        $whitelist = new ilTextInputGUI($pl->txt('allowed_users'), 'whitelist');
+        $whitelist->setInfo($pl->txt('allowed_users_info'));
+        $whitelist->setMulti(true);
+        $whitelist->setValue($settings->getWhiteList(true));
+
+        $form->addItem($whitelist);
+
+        //Appointment Rights
+        $app_rights_sel = new ilRadioGroupInputGUI($pl->txt('app_rights'), 'appointment_right');
+
+        $cr_op = new ilRadioOption($pl->txt('app_create_op'), ilViteroAccessSettings::APPOINTMENT_CREATE);
+        $app_rights_sel->addOption($cr_op);
+
+        $cr_ed_op = new ilRadioOption($pl->txt('app_create_edit_op'), ilViteroAccessSettings::APPOINTMENT_EDIT_CREATE);
+        $app_rights_sel->addOption($cr_ed_op);
+
+        $app_rights_sel->setValue($settings->getAppointmentRight());
+        $form->addItem($app_rights_sel);
+
+
+        return $form;
+    }
+
+    /**
      * Configure screen
      */
-    public function configure()
+    private function configure()
     {
         global $tpl, $ilTabs;
 
@@ -93,16 +171,13 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $form = $this->initConfigurationForm();
         $tpl->setContent($form->getHTML());
 
-        #$soap = new ilViteroUserSoapConnector();
-        #$soap->call();
-
     }
 
     /**
      * Init configuration form.
      * @return ilPropertyFormGUI form
      */
-    public function initConfigurationForm()
+    private function initConfigurationForm() : ilPropertyFormGUI
     {
         global $lng, $ilCtrl;
 
@@ -287,25 +362,6 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $ava->setInfo($this->getPluginObject()->txt('avatar_info'));
         $form->addItem($ava);
 
-        /*
-        if(!class_exists('WSMessage'))
-        {
-            $ava->setDisabled(true);
-            $ava->setAlert($this->getPluginObject()->txt('avatar_warning'));
-        }
-
-        $cert = new ilTextInputGUI($this->getPluginObject()->txt('mtom_cert'),'mtom_cert');
-        $cert->setValue($settings->getMTOMCert());
-        $cert->setSize(100);
-        $cert->setMaxLength(512);
-        $cert->setInfo($this->getPluginObject()->txt('mtom_cert_info'));
-        if(!class_exists('WSMessage'))
-        {
-            $cert->setDisabled(true);
-        }
-        $ava->addSubItem($cert);
-        */
-
         // grace period before
         $gpb = new ilSelectInputGUI($this->getPluginObject()->txt('std_grace_period_before'), 'grace_period_before');
         $gpb->setInfo($this->getPluginObject()->txt('std_grace_period_before_info'));
@@ -376,7 +432,7 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
      * @return bool
      * Check if learning progress should be available
      */
-    private function hasAccessToLearningProgress()
+    private function hasAccessToLearningProgress() : bool
     {
         if (
             ilObjUserTracking::_enabledLearningProgress() &&
@@ -394,7 +450,12 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
      */
     public function save()
     {
-        global $tpl, $lng, $ilCtrl, $ilTabs;
+        global $DIC;
+
+        $tpl = $DIC['tpl'];
+        $lng = $DIC->language();
+        $ilCtrl = $DIC->ctrl();
+        $ilTabs = $DIC->tabs();
 
         $ilTabs->activateTab('settings');
 
@@ -437,6 +498,64 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
         }
+    }
+
+    /**
+     * Save extended access rights form input
+     */
+    private function saveAccessRights() : void
+    {
+        global $DIC;
+
+        $tpl = $DIC['tpl'];
+        $lng = $DIC->language();
+        $ilCtrl = $DIC->ctrl();
+        $ilTabs = $DIC->tabs();
+
+        $ilTabs->activateTab('access_settings');
+
+        $pl = $this->getPluginObject();
+
+        $form = $this->initAccessRightsConfigurationForm();
+        if ($form->checkInput()) {
+
+            $this->getPluginObject()->includeClass('class.ilViteroAccessSettings.php');
+            $settings = ilViteroAccessSettings::getInstance();
+
+            $user_ids = array();
+            $whitelist_entries = array_filter((array) $form->getInput('whitelist'));
+
+            $users_valid = true;
+            foreach ($whitelist_entries as $username) {
+                $username = trim($username);
+                $id = ilObjUser::_lookupId($username);
+                if (empty($id)) {
+                    $users_valid = false;
+                    break;
+                }
+                $user_ids[] = $id;
+            }
+
+            if($users_valid === true) {
+                $settings->enableAdvancedAccessRules($form->getInput('adv_access_rules'));
+                $settings->setWhiteList($user_ids);
+                $settings->setAppointmentRight($form->getInput('appointment_right'));
+                $settings->save();
+
+                ilUtil::sendSuccess($lng->txt('settings_saved'), true);
+                $ilCtrl->redirect($this, "configureAccessRights");
+            } else {
+                ilUtil::sendFailure(sprintf($pl->txt('user_not_found'), $username), true);
+
+                $form->setValuesByPost();
+                $tpl->setContent($form->getHtml());
+            }
+        } else {
+            ilUtil::sendFailure($lng->txt('err_check_input'), true);
+            $form->setValuesByPost();
+            $tpl->setContent($form->getHtml());
+        }
+
     }
 
 }

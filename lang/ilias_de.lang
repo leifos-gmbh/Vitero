@@ -29,7 +29,8 @@ edit#:#Bearbeiten
 status#:#Status
 offline#:#Offline
 created_vitero#:#Eine neue vitero-Sitzung wurde angelegt.
-vitero_plugin_configuration#:#vitero-Plugin-Konfiguration
+vitero_plugin_configuration#:#Vitero-Plugin-Konfiguration
+access_configuration#:#Konfiguration Zugfriffsregelungen
 server_uri#:#Webservice Server URL
 webstart_url#:#Webstart URL
 admin_user#:#Webservice Benutzername
@@ -107,6 +108,7 @@ il_xvit_member#:#Teilnehmer
 il_xvit_admin#:#Gruppenleiter
 tab_settings#:#Einstellungen
 tab_appointments#:#Termine
+tab_access_settings#:#Erweiterte Zugriffsregelung
 account_unlocked#:#Zutritt
 unlocked_txt#:#Zutritt erlaubt
 locked_txt#:#Zutritt verweigert
@@ -223,3 +225,11 @@ filemanager_folder_agenda_info#:#Dateien können über den "Agenda" Button geöf
 filemanager_folder_welcome_info#:#Dateien werden beim Betreten des virtual team room automatisch auf dem Besprechungstisch angezeigt.
 filemanager_file_name_info#:#Ein optionaler Dateiname, der den Original-Dateinamen überschreibt.
 filemanager_file_name#:#Dateiname
+enable_adv_access#:#Regelung aktivieren
+allowed_users#:#Erlaubte Benutzer
+allowed_users_info#:#Tragen Sie hier die Benutzernamen der Personen ein, welche die ausgewählten Rechte für Vitero-Objekte erhalten sollen
+app_rights#:#Terminrechte
+app_create_op#:#Erstellen
+app_create_edit_op#:#Erstellen / Ändern
+user_not_found#:#Benutzer %s konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Eingabe.
+missing_create_rights#:#Sie haben nicht das Recht, um ein Vitero-Objekt anzulegen.
