@@ -22,16 +22,14 @@ ViteroSingleLogout, ViteroLPCron
 [ILIAS MantisBT](http://www.ilias.de/mantis/search.php?project_id=3&category=Vitero)
 
 ### Quick Installation Guide
-1. Copy the content of this folder in <ILIAS_directory>/Customizing/global/plugins/Services/Repository/RepositoryObject/Vitero
+1. Copy the content of this folder to <ILIAS_directory>/Customizing/global/plugins/Services/Repository/RepositoryObject/Vitero
 
-2. Access to ILIAS and go to the administration page.
+2. Login to ILIAS with an administrator account. 
 
-3. Select "Plugins" in the menu on the right.
+3. Open "Administration -> Extending ILIAS -> Plugins".
 
-5. Look for the Vitero plugin in the table and hit the "Action" button and select "Update".
+5. Find the Vitero plugin in the table, open the "Actions Menu" and select "Install".
 
-6. When ILIAS update the plugin, hit the "Action" button and select "Activate" that will appear instead of the "Update" link.
+6. After the installation is complete, open the "Actions Menu" and select "Configure" for the main configuration of the plugin.
 
-7. Hit the "Action" button and select "Configure" to insert connection informations to a Vitero server.
-
-8. Now, you can create bew Vitero sessions to your repository.
+7. Now, you can create bew Vitero sessions to your repository.
