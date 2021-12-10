@@ -4,7 +4,7 @@
 $id = "xvit";
  
 // code version; must be changed for all code changes
-$version = '6.6.11';
+$version = '6.6.12';
  
 // ilias min and max version; must always reflect the versions that should
 // run with the plugin

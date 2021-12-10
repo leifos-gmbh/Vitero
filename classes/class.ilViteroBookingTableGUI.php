@@ -93,6 +93,7 @@ class ilViteroBookingTableGUI extends ilTable2GUI
      */
     public function fillRow($a_set)
     {
+        global $DIC;
         $this->tpl->setVariable('TIME', $a_set['time']);
         $this->tpl->setVariable('DURATION', $a_set['duration']);
         $this->tpl->setVariable('REC', ilViteroUtils::recurrenceToString($a_set['rec']));
@@ -102,7 +103,11 @@ class ilViteroBookingTableGUI extends ilTable2GUI
             $path = new ilPathGUI();
             $path->setUseImages(false);
             $path->enableTextOnly(false);
-            $this->tpl->setVariable('OBJ_PATH', $path->getPath(ROOT_FOLDER_ID, end(ilObject::_getAllReferences($a_set['group']))));
+
+            $nodes = ilObject::_getAllReferences($a_set['group']);
+            if(!empty($nodes) && !in_array(0, $nodes)) {
+                $this->tpl->setVariable('OBJ_PATH', $path->getPath(ROOT_FOLDER_ID, end($nodes)));
+            }
         }
 
         if ($a_set['rec']) {
