@@ -116,7 +116,7 @@ class ilViteroSoapWsseAuthHeader extends SoapHeader
                                         'name'   => 'Nonce',
                                         'ns'     => self::WSS_NS,
                                         'prefix' => 'wsse',
-                                        'data'   => base64_encode(sha1($a_pass . $a_user . microtime(true)))
+                                        'data'   => base64_encode(sha1($pass . $user . microtime(true)))
                                     )
                                 ),
                                 new WSHeader(

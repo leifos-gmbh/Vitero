@@ -115,6 +115,7 @@ class ilViteroFileSync
             $storage = new ilViteroFileStorage($this->assignment->getObjId());
             return $storage->getAbsolutePath() . '/' . $this->assignment->getAssignmentId();
         }
+        return '';
     }
 
     public function determineName()

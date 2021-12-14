@@ -16,7 +16,7 @@ class ilViteroAvatarSoapConnector extends ilViteroSoapConnector
      * Overwrite
      * @var null|SoapClient
      */
-    private $client = null;
+    protected $client = null;
 
     public function __construct()
     {
