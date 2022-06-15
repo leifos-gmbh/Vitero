@@ -41,6 +41,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 {
     public const SUB_TAB_FH_ILIAS = 'subtab_fh_ilias';
     public const SUB_TAB_FH_VITERO = 'subtab_fh_vitero';
+    private const STANDARD_ROOMSIZE = 20;
 
     /**
      * @var ilLogger
@@ -169,7 +170,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $this->initFormRecorder($form);
         $this->initFormMobileAccess($form);
         $this->initFormAnonymousAccess($form);
-        $this->initFormRoomSize($form);
+
+        if (!$this->initFormRoomSize($form)) {
+            $hidden = new ilHiddenInputGUI('room_size');
+            $hidden->setValue(ilObjViteroGUI::STANDARD_ROOMSIZE);
+            $form->addItem($hidden);
+        }
 
         return $form;
     }
@@ -253,7 +259,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $dur->setEndText($this->getPlugin()->txt('event_end_date'));
         $dur->setShowTime(true);
 
-        $start = new ilDate(time(), IL_CAL_UNIX);
+        $start = new ilDateTime(time(), IL_CAL_UNIX);
         $end   = clone $start;
 
         $dur->setStart($start);
@@ -327,11 +333,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         return true;
     }
 
-    /**
-     * @param ilPropertyFormGUI $form
-     * @return bool
-     */
-    protected function initFormPhone(ilPropertyFormGUI $form)
+    protected function initFormPhone(ilPropertyFormGUI $form, ?stdClass $booking = null) : void
     {
         $settings = ilViteroSettings::getInstance();
 
@@ -345,6 +347,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
                 ilViteroPlugin::getInstance()->txt('form_phone_conference_info')
             );
             $conference->setValue(1);
+
+            if ($booking) {
+                $conference->setChecked($booking->booking->phone->isShowDialogueEnabled());
+            }
+
             $form->addItem($conference);
         }
 
@@ -358,6 +365,11 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $dial_out->setInfo(
                 ilViteroPlugin::getInstance()->txt('form_phone_dial_out_info')
             );
+
+            if ($booking) {
+                $dial_out->setChecked($booking->booking->phone->isDialoutEnabled());
+            }
+
             $form->addItem($dial_out);
         }
 
@@ -370,15 +382,16 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $dial_out_phone_part->setInfo(
                 ilViteroPlugin::getInstance()->txt('form_phone_dial_out_part_info')
             );
+
+            if ($booking) {
+                $dial_out_phone_part->setChecked($booking->booking->phone->isDialoutParticipantEnabled());
+            }
+
             $form->addItem($dial_out_phone_part);
         }
     }
 
-    /**
-     * @param ilPropertyFormGUI $form
-     * @return bool
-     */
-    protected function initFormRecorder(ilPropertyFormGUI $form)
+    protected function initFormRecorder(ilPropertyFormGUI $form, ?stdClass $booking = null) : bool
     {
         if (!ilViteroSettings::getInstance()->isSessionRecorderEnabled()) {
             return false;
@@ -392,7 +405,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $this->getPlugin()->txt('form_recorder_info')
         );
         $recorder->setValue(1);
+
+        if ($booking) {
+            $recorder->setChecked($booking->booking->capture);
+        }
+
         $form->addItem($recorder);
+
         return true;
     }
 
@@ -448,10 +467,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
     /**
      * Ini form for room size
-     * @param ilPropertyFormGUI $form
-     * @return bool
+     * @TODO is $a_create doing anything?
      */
-    protected function initFormRoomSize(ilPropertyFormGUI $form, $a_create = true)
+    protected function initFormRoomSize(ilPropertyFormGUI $form, $a_create = true, ?stdClass $booking = null) : bool
     {
         $room_size_list = ilViteroUtils::getRoomSizeList();
 
@@ -464,6 +482,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         if (!$a_create) {
             $room_size->setDisabled(true);
+        }
+
+        if ($booking) {
+            $room_size->setValue((int) $booking->booking->roomsize);
         }
 
         $form->addItem($room_size);
@@ -911,7 +933,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
     protected function deleteBooking()
     {
-        foreach ((array) $_REQUEST['bookid'] as $bookid) {
+        foreach ((array) $_POST['bookid'] as $bookid) {
             try {
                 $booking_service = new ilViteroBookingSoapConnector();
                 $booking_service->deleteBooking($bookid);
@@ -926,9 +948,9 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
     protected function deleteBookingInSeries()
     {
-        foreach ((array) $_REQUEST['bookid'] as $bookid) {
+        foreach ((array) $_POST['bookid'] as $bookid) {
             $excl = new ilViteroBookingReccurrenceExclusion();
-            $excl->setDate(new ilDate($_REQUEST['atime'], IL_CAL_UNIX));
+            $excl->setDate(new ilDate($_GET['atime'], IL_CAL_UNIX));
             $excl->setEntryId($bookid);
             $excl->save();
         }
@@ -1026,7 +1048,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $this->initFormRecorder($form);
         $this->initFormMobileAccess($form);
         $this->initFormAnonymousAccess($form);
-        $this->initFormRoomSize($form, $a_create);
+
+        if (!$this->initFormRoomSize($form, $a_create)) {
+            $hidden = new ilHiddenInputGUI('room_size');
+            $hidden->setValue(ilObjViteroGUI::STANDARD_ROOMSIZE);
+            $form->addItem($hidden);
+        }
 
         return $form;
     }
@@ -1052,7 +1079,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $settings = ilViteroSettings::getInstance();
 
         $room = new ilViteroRoom();
-        $room->enableRecorder($form->getInput('recorder'));
+        $room->enableRecorder($form->getInput('recorder') ?? $room->isRecorderEnabled());
 
         $phone = new ilViteroPhone();
         $phone->initFromForm($form);
@@ -1097,14 +1124,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
     {
         global $ilTabs;
 
-        $this->ctrl->setParameter($this, 'bookid', (int) $_REQUEST['bookid']);
+        $this->ctrl->setParameter($this, 'bookid', (int) $_GET['bookid']);
 
         $ilTabs->activateTab('content');
 
         try {
 
             $booking_service = new ilViteroBookingSoapConnector();
-            $booking         = $booking_service->getBookingById((int) $_REQUEST['bookid']);
+            $booking         = $booking_service->getBookingById((int) $_GET['bookid']);
         } catch (ilViteroConnectorException $e) {
             ilUtil::sendFailure($e->getMessage(), true);
             $this->ctrl->redirect($this, 'showContent');
@@ -1123,6 +1150,8 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $lng->loadLanguageModule('dateplaner');
         $lng->loadLanguageModule('crs');
+
+        $settings = ilViteroSettings::getInstance();
 
         include_once './Services/Form/classes/class.ilPropertyFormGUI.php';
         $form = new ilPropertyFormGUI();
@@ -1155,8 +1184,22 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $form->getItemByPostVar('buffer_before')->setValue($booking->booking->startbuffer);
             $form->getItemByPostVar('buffer_after')->setValue($booking->booking->endbuffer);
         }
+
+        if ($settings->getViteroVersion() >= ilViteroSettings::VITERO_VERSION_ELEVEN) {
+            $this->initFormPhone($form, $booking);
+            $this->initFormRecorder($form, $booking);
+        }
+
         $this->initFormMobileAccess($form, $booking->booking->bookingid);
         $this->initFormAnonymousAccess($form, $booking->booking->bookingid);
+
+        if ($settings->getViteroVersion() >= ilViteroSettings::VITERO_VERSION_ELEVEN) {
+            if (!$this->initFormRoomSize($form, true, $booking)) {
+                $hidden = new ilHiddenInputGUI('room_size');
+                $hidden->setValue($booking->booking->roomsize);
+                $form->addItem($hidden);
+            }
+        }
 
         return $form;
     }
@@ -1170,11 +1213,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         global $ilTabs;
 
         $ilTabs->activateTab('content');
-        $this->ctrl->setParameter($this, 'bookid', (int) $_REQUEST['bookid']);
+        $this->ctrl->setParameter($this, 'bookid', (int) $_GET['bookid']);
+
+        $settings = ilViteroSettings::getInstance();
 
         try {
             $booking_service = new ilViteroBookingSoapConnector();
-            $booking         = $booking_service->getBookingById((int) $_REQUEST['bookid']);
+            $booking         = $booking_service->getBookingById((int) $_GET['bookid']);
         } catch (ilViteroConnectorException $e) {
             ilUtil::sendFailure($e->getMessage(), true);
             $this->ctrl->redirect($this, 'showContent');
@@ -1196,6 +1241,14 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $room->setBufferBefore((int) $_POST['buffer_before']);
         $room->setBufferAfter((int) $_POST['buffer_after']);
 
+        if ($settings->getViteroVersion() >= ilViteroSettings::VITERO_VERSION_ELEVEN) {
+            $room->enableRecorder($form->getInput('recorder'));
+            $phone = new ilViteroPhone();
+            $phone->initFromForm($form);
+            $room->setPhone($phone);
+            $room->setRoomSize($form->getInput('room_size'));
+        }
+
         // Set end date for cafe room
         if ($booking->booking->cafe) {
             $start = $form->getItemByPostVar('cstart')->getDate();
@@ -1214,13 +1267,13 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $this->object->handleMobileAccess(
             (bool) $form->getInput('mobile'),
-            (int) $_REQUEST['bookid']
+            (int) $_GET['bookid']
         );
 
         // handle update of anonymous access
         $code = new ilViteroBookingCode(
             $this->object->getVGroupId(),
-            (int) $_REQUEST['bookid']
+            (int) $_GET['bookid']
         );
 
         $code_checked = (int) $_POST['anonymous_access'];
@@ -1229,7 +1282,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         if (!$code_checked && $code->exists()) {
             try {
                 $con = new ilViteroSessionCodeSoapConnector();
-                $con->deleteSessionCodes([(int) $_REQUEST['bookid']]);
+                $con->deleteSessionCodes([(int) $_GET['bookid']]);
                 $code->delete();
             } catch (ilViteroConnectorException $e) {
                 ilUtil::sendFailure($e->getViteroMessage(), true);
@@ -1240,7 +1293,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         elseif ($code_checked && !$code->exists()) {
             try {
                 $session = new ilViteroSessionCodeSoapConnector();
-                $session->createBookingSessionCode((int) $_REQUEST['bookid'], $this->object->getVGroupId());
+                $session->createBookingSessionCode((int) $_GET['bookid'], $this->object->getVGroupId());
             } catch (ilViteroConnectorException $e) {
                 ilUtil::sendFailure($e->getViteroMessage(), true);
                 $form->setValuesByPost();
@@ -1351,7 +1404,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $room = new ilViteroRoom();
         $room->setRoomSize($form->getInput('room_size'));
-        $room->enableRecorder($form->getInput('recorder'));
+        $room->enableRecorder($form->getInput('recorder') ?? $room->isRecorderEnabled());
 
         if ($settings->isInspireSelectable()) {
             $room->setClientType($form->getInput('essentials_selection'));
@@ -1580,7 +1633,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
             $start->increment(ilDateTime::HOUR, -1);
         }
 
-        $end->increment(IL_CAL_YEAR, 1);
+        $end->increment(IL_CAL_YEAR, 5);
 
         try {
             $table->parse(
@@ -2096,7 +2149,6 @@ class ilObjViteroGUI extends ilObjectPluginGUI
                         $vuid,
                         array(
                             'name' => 'usr_image.jpg',
-                            'type' => ilViteroAvatarSoapConnector::FILE_TYPE_NORMAL,
                             'file' => $usr_image_path
                         )
                     );
@@ -2169,7 +2221,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         try {
 
             $booking_service = new ilViteroBookingSoapConnector();
-            $book            = $booking_service->getBookingById($_REQUEST['bookid']);
+            $book            = $booking_service->getBookingById($_GET['bookid']);
         } catch (ilViteroConnectorException $e) {
             ilUtil::sendFailure($e->getMessage(), true);
             $GLOBALS['ilCtrl']->redirect($this, 'showContent');
@@ -2188,7 +2240,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $confirm->addItem(
             'bookid[]',
-            (int) $_REQUEST['bookid'],
+            (int) $_GET['bookid'],
             sprintf(
                 ilViteroPlugin::getInstance()->txt('confirm_delete_series_txt'),
                 ilDatePresentation::formatDate($start),
@@ -2251,7 +2303,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         try {
             $booking_service = new ilViteroBookingSoapConnector();
-            $book            = $booking_service->getBookingById($_REQUEST['bookid']);
+            $book            = $booking_service->getBookingById($_GET['bookid']);
         } catch (ilViteroConnectorException $e) {
             ilUtil::sendFailure($e->getMessage(), true);
             $GLOBALS['ilCtrl']->redirect($this, 'showContent');
@@ -2265,7 +2317,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
         $confirm->setHeaderText(ilViteroPlugin::getInstance()->txt('sure_delete_appointment'));
 
         if ($inRecurrence) {
-            $start = new ilDateTime($_REQUEST['atime'], IL_CAL_UNIX);
+            $start = new ilDateTime($_GET['atime'], IL_CAL_UNIX);
             $confirm->setConfirm($GLOBALS['lng']->txt('delete'), 'deleteBookingInSeries');
         } else {
             $start = ilViteroUtils::parseSoapDate($book->booking->start);
@@ -2276,12 +2328,12 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $confirm->addItem(
             'bookid[]',
-            (int) $_REQUEST['bookid'],
+            (int) $_GET['bookid'],
             ilDatePresentation::formatDate($start)
         );
 
         if ($inRecurrence) {
-            $confirm->addHiddenItem('atime', $_REQUEST['atime']);
+            $confirm->addHiddenItem('atime', $_GET['atime']);
         }
 
         $confirm->setCancel($GLOBALS['lng']->txt('cancel'), 'showContent');

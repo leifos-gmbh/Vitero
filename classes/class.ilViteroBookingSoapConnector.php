@@ -29,6 +29,8 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             $booking            = new stdClass();
             $booking->bookingid = $room->bookingid;
 
+            $settings = ilViteroSettings::getInstance();
+
             if ($room->isCafe()) {
                 $booking->start = $room->getStart()->get(IL_CAL_FKT_DATE, 'YmdHi', self::CONVERT_TIMZONE);
                 $booking->end   = $room->getEnd()->get(IL_CAL_FKT_DATE, 'YmdHi', self::CONVERT_TIMZONE);
@@ -41,6 +43,12 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             $booking->startbuffer = $room->getBufferBefore();
             $booking->endbuffer   = $room->getBufferAfter();
 
+            if ($settings->getViteroVersion() >= ilViteroSettings::VITERO_VERSION_ELEVEN) {
+                $booking->roomsize = $room->getRoomSize();
+                $booking->phone = $room->getPhone();
+                $booking->capture = $room->isRecorderEnabled();
+            }
+
             $this->getClient()->updateBooking($booking);
             $this->getLogger()->dump($booking, ilLogLevel::DEBUG);
             $this->getLogger()->dump($this->getClient()->__getLastRequest(), ilLogLevel::DEBUG);
@@ -50,6 +58,9 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             $code = $this->parseErrorCode($e);
             $this->getLogger()->logStack();
             $this->getLogger()->warning('Update vitero booking failed with message code: ' . $code);
+            $this->getLogger()->dump($booking, ilLogLevel::DEBUG);
+            $this->getLogger()->dump($this->getClient()->__getLastRequest(), ilLogLevel::DEBUG);
+            $this->getLogger()->dump($this->getClient()->__getLastResponse(), ilLogLevel::DEBUG);
             throw new ilViteroConnectorException($e->getMessage(), $code);
         }
 
@@ -163,7 +174,7 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             $booking->startbuffer = $room->getBufferBefore();
             $booking->endbuffer   = $room->getBufferAfter();
             $booking->groupid     = $a_group_id;
-            $booking->roomsize    = $room->getRoomSize();
+            $booking->roomsize    = (int) $room->getRoomSize();
 
             $booking->phone   = $room->getPhone();
             $booking->capture = $room->isRecorderEnabled();
@@ -226,16 +237,21 @@ class ilViteroBookingSoapConnector extends ilViteroSoapConnector
             $ret = $this->getClient()->getBookingById($req);
             $this->getLogger()->dump($ret, ilLogLevel::DEBUG);
             $this->getLogger()->debug('Last request: ' . $this->getClient()->__getLastRequest());
+            $this->getLogger()->debug('Last response: ' . $this->getClient()->__getLastResponse());
 
             return $ret;
         } catch (SoapFault $e) {
             $code = $this->parseErrorCode($e);
             $GLOBALS['ilLog']->write(__METHOD__ . ': Get booking by id failed with message code: ' . $code);
             $GLOBALS['ilLog']->write(__METHOD__ . ': Last request: ' . $this->getClient()->__getLastRequest());
+            $this->getLogger()->debug('Last response: ' . $this->getClient()->__getLastResponse());
             throw new ilViteroConnectorException($e->getMessage(), $code);
         }
     }
 
+    /*
+     * This function is removed in vitero version 11
+     */
     public function getBookingByBookingTimeId($a_booking_time_id)
     {
         try {

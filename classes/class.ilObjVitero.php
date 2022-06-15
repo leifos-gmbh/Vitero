@@ -710,12 +710,15 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
         }
 
         $min_percent         = $this->getLearningProgressMinPercentage();
-        $min_sessions_passed = $this->getLearningProgressMinSessions();
+        $min_sessions_passed = $this->isLearningProgressModeMultiActive() ? $this->getLearningProgressMinSessions() : 1;
 
         $sql = "SELECT user_id," .
             " COUNT( CASE WHEN percentage >= " . $this->db->quote($min_percent, "integer") . " THEN 1 END) count_passed" .
-            " FROM rep_robj_xvit_recs" .
-            " WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
+            " FROM ( SELECT user_id, SUM(percentage) AS percentage" .
+                " FROM rep_robj_xvit_recs" .
+                " WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
+                " GROUP BY IFNULL(app_start, recording_id), user_id" .
+                " ) AS derived_table" .
             " GROUP BY user_id";
 
         $this->logger->debug($sql);
@@ -802,15 +805,18 @@ class ilObjVitero extends ilObjectPlugin implements ilLPStatusPluginInterface
         }
 
         $min_percent         = $this->getLearningProgressMinPercentage();
-        $min_sessions_passed = $this->getLearningProgressMinSessions();
+        $min_sessions_passed = $this->isLearningProgressModeMultiActive() ? $this->getLearningProgressMinSessions() : 1;
 
         $this->logger->debug('Minimum percentage required: ' . $min_percent);
         $this->logger->debug('Minimum sessions required: ' . $min_sessions_passed);
 
         $sql = "SELECT user_id," .
-            " COUNT( CASE WHEN percentage > " . $this->db->quote($min_percent, "integer") . " THEN 1 END) count_passed" .
-            " FROM rep_robj_xvit_recs" .
-            " WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
+            " COUNT( CASE WHEN percentage >= " . $this->db->quote($min_percent, "integer") . " THEN 1 END) count_passed" .
+            " FROM ( SELECT user_id, SUM(percentage) AS percentage" .
+                " FROM rep_robj_xvit_recs" .
+                " WHERE obj_id = " . $this->db->quote($this->getId(), "integer") .
+                " GROUP BY IFNULL(app_start, recording_id), user_id" .
+                " ) AS derived_table" .
             " GROUP BY user_id";
 
         $res = $db->query($sql);
