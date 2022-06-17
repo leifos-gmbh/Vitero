@@ -12,12 +12,13 @@ xvit_read#:#Lesezugriff auf vitero-Sitzungen
 xvit_write#:#vitero-Sitzung bearbeiten
 xvit_delete#:#vitero-Sitzung löschen
 xvit_visible#:#vitero-Sitzung ist sichtbar
-xvit_edit_permission#:#rechteeinstellungen ändern
+xvit_edit_permission#:#Rechteeinstellungen ändern
 crs_create_xvit#:#Neue vitero-Sitzung anlegen
 grp_create_xvit#:#Neue vitero-Sitzung anlegen
 fold_create_xvit#:#Neue vitero-Sitzung anlegen
 root_create_xvit#:#Neue vitero-Sitzung anlegen
 cat_create_xvit#:#Neue vitero-Sitzung anlegen
+rbac_create_xvit#:#Neue vitero-Sitzung anlegen
 content#:#Inhalt
 properties#:#Einstellungen
 edit_properties#:#Einstellungen bearbeiten

@@ -19,6 +19,7 @@ grp_create_xvit#:#Create vitero session
 fold_create_xvit#:#Create vitero session
 root_create_xvit#:#Create vitero session
 cat_create_xvit#:#Create vitero session
+rbac_create_xvit#:#Create vitero session
 content#:#Content
 properties#:#Settings
 edit_properties#:#Edit Settings

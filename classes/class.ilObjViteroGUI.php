@@ -1586,7 +1586,7 @@ class ilObjViteroGUI extends ilObjectPluginGUI
 
         $settings = ilViteroAccessSettings::getInstance();
 
-        $user_has_write_access = $ilAccess->checkAccess('write', '', $this->object->getRefId());
+        $user_has_write_access = $ilAccess->checkAccess('write', $this->object->getRefId());
         $user_is_whitelisted = $settings->isUserWhitelisted($user->getId());
         $advanced_access_rules = $settings->isAdvancedAccessRulesEnabled();
 
