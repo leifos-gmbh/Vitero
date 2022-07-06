@@ -1518,11 +1518,10 @@ class ilObjViteroGUI extends ilObjectPluginGUI
      */
     public function showContent()
     {
-        global $DIC;
+        global $DIC, $ilAccess;
 
         $tpl = $DIC['tpl'];
         $ilTabs = $DIC->tabs();
-        $ilAccess = $DIC->rbac()->system();
         $ilToolbar = $DIC->toolbar();
         $user = $DIC->user();
 
