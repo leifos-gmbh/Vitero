@@ -14,14 +14,14 @@ class ilViteroUtils
     const REC_WEEKDAYS = 3;
     const REC_WEEKENDS = 4;
 
-    public static function randPassword($length = 8)
+    public static function randPassword() : string
     {
         mt_srand((double) microtime() * 1000000);
         $charset = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
         $length  = strlen($charset) - 1;
         $code    = '';
         for ($i = 0; $i < $length; $i++) {
-            $code .= $charset{mt_rand(0, $length)};
+            $code .= substr($charset, mt_rand(0, $length-1), 1);
         }
         return $code;
     }
@@ -84,6 +84,14 @@ class ilViteroUtils
             $apps = self::calculateBookingAppointments($start, $end, $booking);
 
             foreach ($apps as $app) {
+                //skip the appointments that are today but already over
+                $app_closed = clone $app;
+                $app_closed->setDate($app->get(IL_CAL_UNIX) + $duration, IL_CAL_UNIX);
+                $app_closed->increment(ilDateTime::MINUTE, $buffer_end);
+                if (ilDateTime::_before($app_closed, $start)) {
+                    continue;
+                }
+
                 if ($next_booking['start'] instanceof ilDateTime) {
                     if (ilDateTime::_before($app, $next_booking['start'])) {
                         $next_booking['start'] = $app;
@@ -209,9 +217,12 @@ class ilViteroUtils
      */
     public static function getRoomSizeList()
     {
+        global $DIC;
+
         try {
             $licence_service = new ilViteroLicenceSoapConnector();
             $modules         = $licence_service->getModulesForCustomer(ilViteroSettings::getInstance()->getCustomer());
+            $DIC->logger()->xvit()->dump($modules, ilLogLevel::DEBUG);
         } catch (ilViteroConnectorException $e) {
             return array();
         }
@@ -229,7 +240,7 @@ class ilViteroUtils
     /**
      * @return bool
      */
-    public static function hasCustomerMonitoringMode()
+    public static function hasCustomerMonitoringMode() : bool
     {
         global $DIC;
         $logger = $DIC->logger()->xvit();

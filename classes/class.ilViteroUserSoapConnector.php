@@ -169,8 +169,9 @@ class ilViteroUserSoapConnector extends ilViteroSoapConnector
 
             $avatar           = new stdClass();
             $avatar->userid   = $a_vuser_id;
+            //this parameter is supposed to be deprecated according to the documentation, but the wsdl definition still requires it
+            $avatar->type     = 0;
             $avatar->filename = $a_file_info['name'];
-            $avatar->type     = $a_file_info['type'];
             $avatar->file     = base64_encode(file_get_contents($a_file_info['file']));
 
             return $this->getClient()->storeAvatarUsingBase64String($avatar);

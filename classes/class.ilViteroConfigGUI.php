@@ -34,9 +34,9 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $table->init();
 
         $start = new ilDateTime(time(), IL_CAL_UNIX);
-        $start->increment(ilDateTime::HOUR, -1);
+        $start->increment(ilDateTime::YEAR, -1);
         $end = clone $start;
-        $end->increment(IL_CAL_YEAR, 2);
+        $end->increment(ilDateTime::YEAR, 5);
 
         try {
             $table->parseAdminTable(
@@ -251,6 +251,27 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $ws->setValue($settings->getWebstartUrl());
         $form->addItem($ws);
 
+        // Vitero version (every version below 11 is set in the settings as 10)
+        $version = new ilRadioGroupInputGUI(
+            $this->getPluginObject()->txt('vitero_version_setting'),
+            'vitero_version',
+
+        );
+        $version->setRequired(true);
+
+        $version_eleven = new ilRadioOption(
+            $this->getPluginObject()->txt('vitero_version_setting_eleven'), ilViteroSettings::VITERO_VERSION_ELEVEN);
+        $version_eleven->setInfo($this->getPluginObject()->txt('vitero_version_setting_eleven_info'));
+
+        $version_below_eleven = new ilRadioOption(
+            $this->getPluginObject()->txt('vitero_version_setting_below_eleven'), ilViteroSettings::VITERO_VERSION_BELOW_ELEVEN);
+
+        $version->addOption($version_eleven);
+        $version->addOption($version_below_eleven);
+        $version->setValue($settings->getViteroVersion());
+
+        $form->addItem($version);
+
         //  Client Section
         $client = new ilFormSectionHeaderGUI();
         $client->setTitle($this->getPluginObject()->txt('client_settings'));
@@ -425,6 +446,12 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
         $file_vitero->setChecked($settings->isFileHandlingViteroEnabled());
         $form->addItem($file_vitero);
 
+        $lng->loadLanguageModule('log');
+        $log_level = new ilSelectInputGUI($this->getPluginObject()->txt('form_tab_settings_loglevel'), 'log_level');
+        $log_level->setOptions(ilLogLevel::getLevelOptions());
+        $log_level->setValue($settings->getLogLevel());
+        $form->addItem($log_level);
+
         return $form;
     }
 
@@ -489,15 +516,60 @@ class ilViteroConfigGUI extends ilPluginConfigGUI
             $settings->setInspireSelectable($form->getInput('inspire'));
             $settings->setFileHandlingViteroEnabled($form->getInput('file_handling_vitero'));
             $settings->setFileHandlingIliasEnabled($form->getInput('file_handling_ilias'));
-            $settings->save();
+            $settings->setLogLevel($form->getInput('log_level'));
+            $settings->setViteroVersion( (int) $form->getInput('vitero_version'));
 
-            ilUtil::sendSuccess($lng->txt('settings_saved'), true);
-            $ilCtrl->redirect($this, "configure");
+            if (empty($error = $this->validateVersionRestrictions())) {
+                $settings->save();
+                ilUtil::sendSuccess($lng->txt('settings_saved'), true);
+                $ilCtrl->redirect($this, "configure");
+            } else {
+                $form->setValuesByPost();
+
+                foreach ($error as $version => $restrictions) {
+                    ilUtil::sendFailure($this->getPluginObject()->txt('settings_invalid_version_' . (int) $version), true);
+                    foreach ($restrictions as $item => $alert) {
+                        $form->getItemByPostVar($item)->setAlert($alert);
+                    }
+                }
+
+                $tpl->setContent($form->getHtml());
+            }
+
         } else {
             ilUtil::sendFailure($lng->txt('err_check_input'), true);
             $form->setValuesByPost();
             $tpl->setContent($form->getHtml());
         }
+    }
+
+    /**
+     * Check if any options clash with the version restrictions, and if so save the appropriate errors in an
+     * array with the structure [version responsible for restriction][post var of restricted setting],
+     * otherwise an empty array.
+     * @return array[int => array[string => string]]
+     */
+    private function validateVersionRestrictions() : array
+    {
+        $settings = ilViteroSettings::getInstance();
+        $error = array();
+
+        if ($settings->getViteroVersion() >= ilViteroSettings::VITERO_VERSION_ELEVEN) {
+            if ($settings->isMobileAccessEnabled()) {
+                $error[ilViteroSettings::VITERO_VERSION_ELEVEN]['mobile'] = sprintf(
+                    $this->getPluginObject()->txt('settings_version_restriction_disable_alert'),
+                    ilViteroSettings::VITERO_VERSION_ELEVEN
+                );
+            }
+            if ($settings->isInspireSelectable()) {
+                $error[ilViteroSettings::VITERO_VERSION_ELEVEN]['inspire'] = sprintf(
+                    $this->getPluginObject()->txt('settings_version_restriction_disable_alert'),
+                    ilViteroSettings::VITERO_VERSION_ELEVEN
+                );
+            }
+        }
+
+        return $error;
     }
 
     /**

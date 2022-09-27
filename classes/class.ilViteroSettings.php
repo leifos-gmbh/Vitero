@@ -14,6 +14,9 @@ class ilViteroSettings
     const APPOINTMENT_CREATE = 1;
     const APPOINTMENT_EDIT_CREATE = 2;
 
+    public const VITERO_VERSION_ELEVEN = 11;
+    public const VITERO_VERSION_BELOW_ELEVEN = 10;
+
     private static $instance = null;
 
     private $storage = null;
@@ -22,6 +25,7 @@ class ilViteroSettings
     private $webstart = 'http://yourserver.de/vitero/start.htm';
     private $admin = '';
     private $pass = '';
+    private $vitero_version = ilViteroSettings::VITERO_VERSION_ELEVEN;
 
     private $customer = null;
     private $use_ldap = false;
@@ -45,6 +49,8 @@ class ilViteroSettings
 
     private $grace_period_before = 15;
     private $grace_period_after = 15;
+
+    private $log_level = 100;
 
     /**
      * @var bool
@@ -95,6 +101,8 @@ class ilViteroSettings
         $this->setInspireSelectable($this->getStorage()->get('inspire', $this->isInspireSelectable()));
         $this->setFileHandlingIliasEnabled($this->getStorage()->get('file_handling_ilias',$this->isFileHandlingIliasEnabled()));
         $this->setFileHandlingViteroEnabled($this->getStorage()->get('file_handling_vitero', $this->isFileHandlingViteroEnabled()));
+        $this->setLogLevel($this->getStorage()->get('log_level', $this->getLogLevel()));
+        $this->setViteroVersion($this->getStorage()->get('vitero_version', $this->getViteroVersion()));
     }
 
     public function setServerUrl($a_url)
@@ -322,6 +330,8 @@ class ilViteroSettings
         $this->getStorage()->set('inspire', $this->isInspireSelectable());
         $this->getStorage()->set('file_handling_ilias', (int) $this->isFileHandlingIliasEnabled());
         $this->getStorage()->set('file_handling_vitero', (int) $this->isFileHandlingViteroEnabled());
+        $this->getStorage()->set('log_level', $this->getLogLevel());
+        $this->getStorage()->set('vitero_version', $this->getViteroVersion());
 
     }
 
@@ -517,6 +527,26 @@ class ilViteroSettings
         if($appointment_right === self::APPOINTMENT_CREATE || $appointment_right === self::APPOINTMENT_EDIT_CREATE) {
             $this->appointment_right = $appointment_right;
         }
+    }
+
+    public function setLogLevel(int $a_val) : void
+    {
+        $this->log_level = $a_val;
+    }
+
+    public function getLogLevel() : int
+    {
+        return $this->log_level;
+    }
+
+    public function setViteroVersion(int $a_val) : void
+    {
+        $this->vitero_version = $a_val;
+    }
+
+    public function getViteroVersion() : int
+    {
+        return $this->vitero_version;
     }
 
 }

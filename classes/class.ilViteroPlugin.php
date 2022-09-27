@@ -94,6 +94,10 @@ class ilViteroPlugin extends ilRepositoryObjectPlugin
     protected function init()
     {
         $this->initAutoLoad();
+        // set configured log level
+        foreach (ilLoggerFactory::getLogger('xvit')->getLogger()->getHandlers() as $handler) {
+            $handler->setLevel(ilViteroSettings::getInstance()->getLogLevel());
+        }
     }
 
     /**

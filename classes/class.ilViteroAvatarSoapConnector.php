@@ -9,9 +9,6 @@ class ilViteroAvatarSoapConnector extends ilViteroSoapConnector
 {
     const WSDL_NAME = 'mtom.wsdl';
 
-    const FILE_TYPE_NORMAL = 0;
-    const FILE_TYPE_SMILE = 1;
-
     /**
      * Overwrite
      * @var null|SoapClient
@@ -42,11 +39,14 @@ class ilViteroAvatarSoapConnector extends ilViteroSoapConnector
             $avatar         = new stdClass();
             $avatar->userid = $a_vuserid;
 
+            /*
+             * Note: type is removed here, but might still be obligatory according to the vitero wsdl.
+             * Currently this function is not in use.
+            */
             $payload =
                 '<ns1:storeAvatarRequest xmlns:ns1="http://www.vitero.de/schema/mtom">' .
                 '<ns1:userid>' . $a_vuserid . '</ns1:userid>' .
                 '<ns1:filename>' . $a_file_info['name'] . '</ns1:filename>' .
-                '<ns1:type>' . $a_file_info['type'] . '</ns1:type>' .
                 '<ns1:file><xop:Include xmlns:xop="http://www.w3.org/2004/08/xop/include" href="cid:myid"/></ns1:file>' .
                 '</ns1:storeAvatarRequest>';
 

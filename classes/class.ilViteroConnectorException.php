@@ -11,11 +11,19 @@ include_once './Services/Exceptions/classes/class.ilException.php';
 class ilViteroConnectorException extends ilException
 {
 
-    public function getViteroMessage()
+    public function getViteroMessage() : string
     {
         if ((int) $this->getCode() > 0) {
-            return ilViteroPlugin::getInstance()->txt('err_soap_' . (int) $this->getCode());
+            $error_name = 'err_soap_' . (int) $this->getCode();
+            $plugin = ilViteroPlugin::getInstance();
+
+            if ($plugin->txt($error_name) === '-' . $plugin->getPrefix() . '_' . $error_name . '-') {
+                return sprintf($plugin->txt('err_soap_generic'), (int) $this->getCode());
+            } else {
+                return ilViteroPlugin::getInstance()->txt($error_name);
+            }
         }
+
         return $this->getMessage();
     }
 }

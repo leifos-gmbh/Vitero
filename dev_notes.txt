@@ -3,13 +3,27 @@ Comments about development
 
 1 - Booking id issue in getSessionAndUserRecordingsByTimeSlot
 
-Method getSessionAndUserRecordingsByTimeSlot from vitero returns bookingid value.
+Vitero Version below 11: Method getSessionAndUserRecordingsByTimeSlot from vitero returns bookingid value.
 This bookingid id, is in fact, a booking time id. They did not change the "bookingid" name to keep back compatibility.
-
 To obtain a booking object from  this booking time id we use the method getBookingByBookingTimeId($bookingTimeId);
+
+Vitero Version 11: Method getSessionAndUserRecordingsByTimeSlot from vitero returns bookingid value.
+In this version, the bookingid is a proper booking id, and can be used as expected.
 
 3- Percentage round issue
 
 After doing the maths with the attendance percentage we can obtain decimal values like for example 74.6666%
 The current values are stored discriminating the decimals. For this example the stored value is 74%
 
+4- recording_id in the recs table
+
+The recording_id in the recs table is now a session recording id instead of a user recording id, which so far was not
+used for anything besides identifying table entries. Be aware of this change to ensure backwards compatibility - on
+older installations not every stored recording_id is necessarily a valid session recording id. Further, entries in the
+recs table are now uniquely identified by the pair (user_id, recording_id), and not just the recording_id by itself.
+
+5- Updating the Learning Progress whith deleted bookings
+
+Beware that updating the learning progress properly requires the relevant bookings to still be available. Some of the
+sessions might not be counted towards the learning progress if the learning progress is not synchronized regularly, or
+bookings are deleted right after the session ends.

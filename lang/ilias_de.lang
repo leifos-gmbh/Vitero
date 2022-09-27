@@ -165,12 +165,12 @@ activate_learning_progress_info#:#Vitero-Objekte können Lernfortschritt-Funktio
 min_percentage#:#Minimale Prozentzahl
 min_percentage_info#:#Minimale Anwesenheitszeit, die notwendig ist, um den Status "Bestanden" zu erhalten.
 mode#:#Modus
-one_session#:#"Ein Sitzungstermin"
-multi_session#:#"Mehrere Sitzungstermine"
-min_sessions#:#Anzahl Sitzungen
-min_sessions_info#:#Die minimale Anzahl von Sitzungen, an denen die Benutzer teilgenommen haben müssen.
-currently_multi_appointments#:#Dieses vitero-Objekt besitzt mehrere Sitzungstermine.
-currently_one_appointment#:#Dieses vitero-Objekt besitzt maximal einen Sitzungstermin.
+one_session#:#Ein Sitzungstermin
+multi_session#:#Mehrere Sitzungstermine
+min_sessions#:#Anzahl Termine
+min_sessions_info#:#Die minimale Anzahl von Terminen, an denen die Benutzer teilgenommen haben müssen.
+currently_multi_appointments#:#Diese Option ist deaktiviert, weil dieses vitero-Objekt mehrere Sitzungstermine besitzt.
+currently_one_appointment#:#Diese Option ist deaktiviert, weil dieses vitero-Objekt maximal einen Sitzungstermin besitzt.
 learning_progress#:#Lernfortschritt
 delete_info_minimum_app#:#Für die aktuellen Lernfortschritt-Einstellungen müssen mindestens zwei Sitzungstermine vorhanden sein.
 delete_info_disable_lp#:#Für die aktuellen Lernfortschritt-Einstellungen muss mindestens ein Sitzungstermin vorhanden sein.
@@ -193,7 +193,7 @@ filemanager_start#:#vitero-Dateiverwaltung öffnen
 settings_file_handling#:#Dateiverwaltung in ILIAS
 settings_file_handling_info#:#Wenn aktiviert, können Dateien, die in vitero-Sitzungen verwendet werden sollen, direkt in ILIAS verwaltet werden.
 settings_file_handling_vitero#:#Dateiverwaltung in vitero
-settings_file_handling_info#:#Wenn aktiviert, können Dateien, die in vitero-Sitzungen verwendet werden sollen, über einen vitero-Link verwaltet.
+settings_file_handling_vitero_info#:#Wenn aktiviert, können Dateien, die in vitero-Sitzungen verwendet werden sollen, über einen vitero-Link verwaltet.
 filemanager_add_file_button#:#Neue Datei zuordnen
 filemanager_add_file_tbl#:#Neue zuordnen
 filemanager_add_file_tbl_info#:#Neu erstellte bzw. referenzierte ILIAS-Dateiobjekte werden automatisch mit vitero synchronisiert und stehen in vitero-Sitzungen zur Verfügung.
@@ -233,3 +233,11 @@ app_create_op#:#Erstellen
 app_create_edit_op#:#Erstellen / Ändern
 user_not_found#:#Benutzer %s konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Eingabe.
 missing_create_rights#:#Sie haben nicht das Recht, um ein Vitero-Objekt anzulegen.
+form_tab_settings_loglevel#:#Log-Level
+vitero_version_setting#:#vitero Version
+vitero_version_setting_eleven_info#:#In Version 11 können keine Termine vom Typ "Essentials" angelegt werden, und Zugangscodes für den Zugriff auf Buchungen über mobile Endgeräte stehen nicht zur Verfügung.
+vitero_version_setting_eleven#:#11
+vitero_version_setting_below_eleven#:#unter 11
+settings_invalid_version_11#:#In vitero Version 11 dürfen die Optionen "Zugriff über mobile Endgeräte" und "Essentials Auswahl" nicht ausgewählt sein.
+settings_version_restriction_disable_alert#:# In vitero Version %u darf diese Option nicht ausgewählt sein.
+err_soap_generic#:#Ein Fehler mit Code %u ist aufgetreten, siehe die vitero Dokumentation.
