@@ -84,7 +84,10 @@ class ilViteroUtils
             $apps = self::calculateBookingAppointments($start, $end, $booking);
 
             foreach ($apps as $app) {
-                //skip the appointments that are today but already over
+                /*
+                 * skip the appointments that are already over
+                 * (might not be strictly necessary, but shouldn't hurt either)
+                 */
                 $app_closed = clone $app;
                 $app_closed->setDate($app->get(IL_CAL_UNIX) + $duration, IL_CAL_UNIX);
                 $app_closed->increment(ilDateTime::MINUTE, $buffer_end);
